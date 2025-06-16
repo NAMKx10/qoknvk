@@ -34,6 +34,8 @@ $allowed_pages = [
     'branches/add'  => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
     'properties'    => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'], // <-- جديد
     'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'], // <-- جديد
+    'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], // <-- جديد
+    'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'], 
     'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
 ];
 
