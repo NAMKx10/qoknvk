@@ -36,9 +36,12 @@ $allowed_pages = [
     'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
     'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], 
     'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
-    'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], // <-- جديد
-    'clients/add'   => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'], // <-- جديد
-    'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة'], // <-- جديد
+    'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], 
+    'clients/add'   => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'], 
+    'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
+    'suppliers'        => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'], // <-- جديد
+    'suppliers/add'    => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'], // <-- جديد
+    'suppliers/branches_modal' => ['path' => 'suppliers/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
     'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
 ];
 
