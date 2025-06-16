@@ -32,10 +32,13 @@ $allowed_pages = [
     'dashboard'     => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
     'branches'      => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
     'branches/add'  => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
-    'properties'    => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'], // <-- جديد
-    'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'], // <-- جديد
-    'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], // <-- جديد
-    'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'], 
+    'properties'    => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'],
+    'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
+    'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], 
+    'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
+    'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], // <-- جديد
+    'clients/add'   => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'], // <-- جديد
+    'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة'], // <-- جديد
     'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
 ];
 
