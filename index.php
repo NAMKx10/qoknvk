@@ -42,6 +42,9 @@ $allowed_pages = [
     'suppliers'        => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'], // <-- جديد
     'suppliers/add'    => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'], // <-- جديد
     'suppliers/branches_modal' => ['path' => 'suppliers/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
+    'contracts'        => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'], // <-- جديد
+    'contracts/add'    => ['path' => 'contracts/add_view.php', 'title' => 'إضافة عقد إيجار'], // <-- جديد
+    'contracts/view'   => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
 ];
 
