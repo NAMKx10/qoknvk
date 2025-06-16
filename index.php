@@ -39,12 +39,15 @@ $allowed_pages = [
     'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], 
     'clients/add'   => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'], 
     'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
-    'suppliers'        => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'], // <-- جديد
-    'suppliers/add'    => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'], // <-- جديد
+    'suppliers'        => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'], 
+    'suppliers/add'    => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'], 
     'suppliers/branches_modal' => ['path' => 'suppliers/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
-    'contracts'        => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'], // <-- جديد
-    'contracts/add'    => ['path' => 'contracts/add_view.php', 'title' => 'إضافة عقد إيجار'], // <-- جديد
+    'contracts'        => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'], 
+    'contracts/add'    => ['path' => 'contracts/add_view.php', 'title' => 'إضافة عقد إيجار'], 
     'contracts/view'   => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'supply_contracts' => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'], // <-- جديد
+    'supply_contracts/add' => ['path' => 'supply_contracts/add_view.php', 'title' => 'إضافة عقد توريد'], // <-- جديد
+    'supply_contracts/view' => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
 ];
 
