@@ -40,21 +40,48 @@
     <script src="./assets/js/tabler.min.js" defer></script>
     <!-- JavaScript المخصص لنظامنا -->
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.body.addEventListener('show.bs.modal', function(e) {
-            if (e.target.id !== 'main-modal') return;
-            let button = e.relatedTarget;
-            if (!button) return;
-            let url = button.getAttribute('data-bs-url');
-            if (!url) return;
-            let modalContent = e.target.querySelector('.modal-content');
-            modalContent.innerHTML = '<div class="modal-body"><div class="d-flex justify-content-center p-5"><div class="spinner-border"></div></div></div>';
-            fetch(url)
-                .then(response => response.text())
-                .then(html => { modalContent.innerHTML = html; })
-                .catch(err => { modalContent.innerHTML = '<div class="modal-body"><div class="alert alert-danger">فشل تحميل المحتوى.</div></div>'; });
-        });
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // هذا الكود يستمع لحدث فتح أي نافذة منبثقة في الصفحة
+    document.body.addEventListener('show.bs.modal', function(e) {
+        
+        // نحدد النافذة والزر الذي فتحها
+        let modal = e.target;
+        let button = e.relatedTarget;
+        
+        // نتأكد أن الزر لديه رابط لجلب المحتوى
+        if (!button) return;
+        let url = button.getAttribute('data-bs-url');
+        if (!url) return;
+
+        // نجد المكان الذي سنضع فيه المحتوى داخل النافذة
+        let modalBody = modal.querySelector('.modal-body');
+        
+        // نعرض مؤشر تحميل
+        modalBody.innerHTML = '<div class="d-flex justify-content-center p-5"><div class="spinner-border" role="status"></div></div>';
+
+        // نستخدم fetch لجلب المحتوى من الرابط
+        fetch(url)
+            .then(response => {
+                // نتأكد أن الطلب نجح
+                if (!response.ok) {
+                    throw new Error('فشل تحميل المحتوى');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // نضع المحتوى الذي تم جلبه داخل جسم النافذة
+                modalBody.innerHTML = html;
+            })
+            .catch(err => {
+                // في حالة الفشل، نعرض رسالة خطأ
+                modalBody.innerHTML = '<div class="alert alert-danger">فشل الاتصال بالخادم أو الصفحة غير موجودة.</div>';
+            });
     });
-    </script>
+
+    // لاحقًا، سنضيف كود إرسال النماذج هنا...
+
+});
+</script>
   </body>
 </html>
