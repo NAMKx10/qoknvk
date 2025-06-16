@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/src/core/functions.php';
 
-// 3. التوجيه البسيط
+// 3. التوجيه (Routing)
 $page = $_GET['page'] ?? 'dashboard';
 
 // --- معالجة طلبات AJAX أولاً ---
@@ -20,37 +20,58 @@ if (strpos($page, 'handle_') !== false) {
     header('Content-Type: application/json');
     $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
     
-    // يمكنك إضافة التحقق من تسجيل الدخول هنا إذا أردت
+    // يمكنك إضافة التحقق من تسجيل الدخول هنا
+    // if (!isset($_SESSION['user_id'])) { ... }
     
     try {
         // --- Branches AJAX Handler ---
         if ($page === 'branches/handle_add_ajax' || $page === 'branches/handle_edit_ajax') {
             $is_add = ($page === 'branches/handle_add_ajax');
+            
+            // استخراج البيانات من POST للوضوح
+            $branch_name = $_POST['branch_name'] ?? '';
+            $branch_code = $_POST['branch_code'] ?? null;
+            $branch_type = $_POST['branch_type'] ?? 'منشأة';
+            $reg_number = $_POST['registration_number'] ?? null;
+            $tax_number = $_POST['tax_number'] ?? null;
+            $phone = $_POST['phone'] ?? null;
+            $email = $_POST['email'] ?? null;
+            $address = $_POST['address'] ?? null;
+            $notes = $_POST['notes'] ?? null;
+
             if ($is_add) {
                 $sql = "INSERT INTO branches (branch_name, branch_code, branch_type, registration_number, tax_number, phone, email, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                $params = [$_POST['branch_name'], $_POST['branch_code'], $_POST['branch_type'], $_POST['registration_number'], $_POST['tax_number'], $_POST['phone'], $_POST['email'], $_POST['address'], $_POST['notes']];
+                $params = [$branch_name, $branch_code, $branch_type, $reg_number, $tax_number, $phone, $email, $address, $notes];
             } else {
                 // منطق التعديل سيأتي هنا لاحقًا
+                // حاليًا نرسل ردًا ناجحًا للتجربة
+                 $response = ['success' => true, 'message' => 'تم التعديل (افتراضيًا).'];
             }
-            $stmt = $pdo->prepare($sql);
-            if ($stmt->execute($params)) {
-                $response = ['success' => true, 'message' => 'تم الحفظ بنجاح.'];
+            
+            if (isset($sql)) {
+                $stmt = $pdo->prepare($sql);
+                if ($stmt->execute($params)) {
+                    $response = ['success' => true, 'message' => 'تم الحفظ بنجاح.'];
+                } else {
+                    $response['message'] = 'فشل حفظ البيانات في قاعدة البيانات.';
+                }
             }
         }
-        // --- يمكنك إضافة معالجات AJAX أخرى هنا باستخدام elseif ---
+        // --- يمكنك إضافة معالجات AJAX أخرى هنا ---
 
     } catch (PDOException $e) {
-        // يمكنك تسجيل الخطأ الفعلي في ملف logs
-        $response['message'] = 'خطأ في قاعدة البيانات.';
-        if ($e->errorInfo[1] == 1062) { // خطأ تكرار قيمة فريدة
-            $response['message'] = 'كود الفرع مستخدم بالفعل. يرجى إدخال كود آخر.';
+        if ($e->errorInfo[1] == 1062) {
+            $response['message'] = 'كود الفرع أو رقم السجل مستخدم بالفعل.';
+        } else {
+            $response['message'] = 'خطأ في قاعدة البيانات.';
         }
     } catch (Exception $e) {
         $response['message'] = $e->getMessage();
     }
     
+    // --- الجزء الأهم: إرسال الرد دائمًا ---
     echo json_encode($response);
-    exit(); // إنهاء التنفيذ بعد معالجة AJAX
+    exit();
 }
 
 
