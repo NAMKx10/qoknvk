@@ -1,8 +1,9 @@
 <?php
-// PHP - جلب البيانات والفلترة (منطق مشابه للمسار الأول)
-$sql_where = " WHERE deleted_at IS NULL ";
+// PHP - جلب البيانات والفلترة
+$sql_where = " WHERE p.deleted_at IS NULL "; // <-- تم تحديد p.deleted_at
 $params = [];
 // لاحقًا، سنضيف هنا الفلترة والبحث والترقيم
+
 $data_sql = "SELECT p.*, b.branch_code FROM properties p LEFT JOIN branches b ON p.branch_id = b.id {$sql_where} ORDER BY p.id DESC";
 $data_stmt = $pdo->prepare($data_sql);
 $data_stmt->execute($params);
@@ -39,7 +40,9 @@ $properties = $data_stmt->fetchAll();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($properties as $property): ?>
+                <?php if(empty($properties)): ?>
+                    <tr><td colspan="5" class="text-center">لا توجد عقارات مضافة بعد.</td></tr>
+                <?php else: foreach($properties as $property): ?>
                 <tr>
                     <td>
                         <div class="d-flex align-items-center">
@@ -64,10 +67,8 @@ $properties = $data_stmt->fetchAll();
                         <a href="#" class="btn btn-sm">تعديل</a>
                     </td>
                 </tr>
-                <?php endforeach; ?>
+                <?php endforeach; endif; ?>
             </tbody>
         </table>
     </div>
 </div>
-
-<!-- لا ننسى إضافة الصفحات الجديدة إلى index.php -->
