@@ -15,60 +15,82 @@ $chart_data = [
 ];
 ?>
 
-<!-- 1. صف بطاقات الإحصائيات -->
-<div class="row row-deck row-cards">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">الفروع النشطة</div>
-        </div>
-        <div class="h1 mb-3"><?= $stats['active_branches'] ?? 0 ?></div>
-      </div>
+<div class="page-header">
+  <div class="row align-items-center">
+    <div class="col">
+      <h2 class="page-title">لوحة التحكم</h2>
+      <div class="text-muted mt-1">آخر تحديث: <?= date('Y-m-d H:i') ?></div>
     </div>
-  </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">العقارات النشطة</div>
-        </div>
-        <div class="h1 mb-3"><?= $stats['active_properties'] ?? 0 ?></div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">الوحدات المتاحة</div>
-        </div>
-        <div class="h1 mb-3"><?= $stats['available_units'] ?? 0 ?></div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6 col-lg-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="subheader">العملاء النشطين</div>
-        </div>
-        <div class="h1 mb-3"><?= $stats['active_clients'] ?? 0 ?></div>
+    <div class="col-auto ms-auto">
+      <div class="btn-list">
+        <a href="#" class="btn btn-primary"><i class="ti ti-report-money me-2"></i>عرض التقارير</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 2. بطاقة الرسم البياني -->
-<div class="row row-deck row-cards mt-2">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">إيرادات آخر 6 أشهر (مثال)</h3>
-                <div id="chart-revenue-bg" class="w-100" style="height: 300px;"></div>
-            </div>
+<div class="row row-deck row-cards">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card card-sm">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-auto"><span class="bg-primary text-white avatar"><i class="ti ti-building-community"></i></span></div>
+          <div class="col">
+            <div class="font-weight-medium">5 العقارات</div>
+            <div class="text-muted">3 منها نشطة</div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+   <div class="col-sm-6 col-lg-3">
+    <div class="card card-sm">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-auto"><span class="bg-green text-white avatar"><i class="ti ti-door"></i></span></div>
+          <div class="col">
+            <div class="font-weight-medium">12 وحدة</div>
+            <div class="text-muted">6 منها متاحة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <div class="col-sm-6 col-lg-3">
+    <div class="card card-sm">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-auto"><span class="bg-twitter text-white avatar"><i class="ti ti-users"></i></span></div>
+          <div class="col">
+            <div class="font-weight-medium">11 عميل</div>
+            <div class="text-muted">10 منهم نشطين</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <div class="col-sm-6 col-lg-3">
+    <div class="card card-sm">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-auto"><span class="bg-facebook text-white avatar"><i class="ti ti-truck"></i></span></div>
+          <div class="col">
+            <div class="font-weight-medium">5 موردين</div>
+            <div class="text-muted">جميعهم نشطين</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">إيرادات ومصروفات آخر 6 أشهر</h3>
+        <div id="chart-revenue-bg" class="w-100" style="height: 300px;"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
