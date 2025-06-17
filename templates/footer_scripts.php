@@ -7,6 +7,10 @@
     </div>
 </div>
 
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <!-- Tabler Core & Libs -->
 <script src="./assets/js/tabler.min.js" defer></script>
 <script src="./assets/libs/apexcharts/dist/apexcharts.min.js" defer></script>
@@ -113,6 +117,31 @@ document.addEventListener("DOMContentLoaded", function() {
             submitButton.innerHTML = originalButtonHtml;
         });
     });
+
+        // === بداية الإضافة: دالة تأكيد الحذف ===
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.confirm-delete')) {
+            e.preventDefault();
+            const url = e.target.closest('.confirm-delete').href;
+
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "سيتم نقل العنصر إلى الأرشيف!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، قم بالحذف!',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+    });
+    // === نهاية الإضافة ===
+
     
 });
 </script>
