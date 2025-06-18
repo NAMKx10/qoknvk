@@ -87,12 +87,16 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
         <form action="index.php" method="GET">
             <input type="hidden" name="page" value="properties">
             <div class="row g-3">
-                <div class="col-md-3"><label class="form-label">بحث شامل</label><input type="search" name="q" class="form-control" placeholder="ابحث..." value="<?= htmlspecialchars($filter_q ?? '') ?>"></div>
+                <div class="col-md-2"><label class="form-label">بحث شامل</label><input type="search" name="q" class="form-control" placeholder="ابحث..." value="<?= htmlspecialchars($filter_q ?? '') ?>"></div>
                 <div class="col-md-2"><label class="form-label">الفرع</label><select class="form-select" name="branch_id"><option value="">الكل</option><?php foreach($branches_for_filter as $branch):?><option value="<?=$branch['id']?>" <?= ($filter_branch_id == $branch['id']) ? 'selected' : '' ?>><?=htmlspecialchars($branch['branch_name'])?></option><?php endforeach;?></select></div>
                 <div class="col-md-2"><label class="form-label">النوع</label><select class="form-select" name="type"><option value="">الكل</option><?php foreach($property_types_for_filter as $type):?><option value="<?=$type?>" <?= ($filter_type == $type) ? 'selected' : '' ?>><?=htmlspecialchars($type)?></option><?php endforeach;?></select></div>
                 <div class="col-md-2"><label class="form-label">التملك</label><select class="form-select" name="ownership"><option value="">الكل</option><option value="ملك">ملك</option><option value="استثمار">استثمار</option></select></div>
                 <div class="col-md-2"><label class="form-label">الحالة</label><select class="form-select" name="status"><option value="">الكل</option><option value="نشط">نشط</option><option value="ملغي">ملغي</option></select></div>
-                <div class="col-md-1 d-flex align-items-end"><button type="submit" class="btn btn-primary">تطبيق</button></div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">تطبيق</button>
+                    <a href="index.php?page=properties" class="btn btn-secondary ms-2" title="إعادة تعيين الفرز">
+                    <i class="ti ti-refresh"></i></a>
+                </div>
             </div>
         </form>
     </div>
