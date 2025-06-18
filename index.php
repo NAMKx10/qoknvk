@@ -27,6 +27,22 @@ if ($page === 'branches/handle_add') {
 }
 // --- يمكنك إضافة معالجات أخرى هنا ---
 
+        // --- Properties AJAX Handler ---
+        if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
+            $is_add = ($page === 'properties/handle_add');
+            $fields = ['branch_id', 'property_name', 'property_code', 'property_type', 'ownership_type', 'status', 'owner_name', 'deed_number', 'property_value', 'district', 'city', 'area', 'notes'];
+            $params = [];
+            foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
+            if ($is_add) {
+                $sql = "INSERT INTO properties (branch_id, property_name, ...) VALUES (?, ?, ...)";
+            } else {
+                $sql = "UPDATE properties SET branch_id = ?, property_name = ?, ... WHERE id = ?";
+                $params[] = $_POST['id'];
+            }
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute($params)) $response = ['success' => true];
+        }
+
 // --- عرض الصفحات ---
 $allowed_pages = [
     'dashboard'     => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
@@ -34,6 +50,7 @@ $allowed_pages = [
     'branches/add'  => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
     'properties'    => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'],
     'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
+    'properties/edit'  => ['path' => 'properties/edit_view.php', 'title' => 'تعديل عقار'],
     'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], 
     'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
     'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], 
