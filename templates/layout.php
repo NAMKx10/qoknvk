@@ -72,6 +72,16 @@
       </div>
     </div>
     
+    <!-- jQuery (يجب أن يكون هنا أولاً) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Tabler Core & Libs (يأتي بعد jQuery) -->
+    <script src="./assets/js/tabler.min.js" defer></script>
+    <script src="./assets/libs/apexcharts/dist/apexcharts.min.js" defer></script>
+    
+    <!-- ملف السكربتات المخصص يأتي أخيرًا -->
+
+
     <?php require_once __DIR__ . '/footer_scripts.php'; ?>
   </body>
 </html>
