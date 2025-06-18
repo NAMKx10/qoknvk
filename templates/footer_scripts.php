@@ -18,6 +18,10 @@ $(document).ready(function() {
         var modal = $(this);
         modal.find('.modal-content').html('<div class="modal-body p-5 text-center"><div class="spinner-border"></div></div>');
         
+            // === بداية الإضافة: تفعيل Select2 في الصفحة الرئيسية ===
+        initializeSelect2(document.body);
+            // === نهاية الإضافة ===
+
         // جلب المحتوى باستخدام jQuery.get
         $.get(url, function(data) {
             modal.find('.modal-content').html(data);
@@ -29,6 +33,26 @@ $(document).ready(function() {
             modal.find('.modal-content').html('<div class="modal-body"><div class="alert alert-danger">فشل تحميل المحتوى.</div></div>');
         });
     });
+
+    // --- دالة مركزية لتفعيل Select2 (النسخة المطورة) ---
+function initializeSelect2(context) {
+    $(context).find('.select2-init').each(function() {
+        var $this = $(this);
+        // نتأكد من عدم تفعيله مرة أخرى
+        if (!$this.data('select2')) {
+            // تحديد الحاوية الأب (النافذة المنبثقة أو جسم الصفحة)
+            var parentDropdown = $this.closest('.modal').length ? $this.closest('.modal') : $(document.body);
+            
+            $this.select2({
+                theme: "bootstrap-5",
+                dir: "rtl",
+                placeholder: $this.data('placeholder') || "اختر...",
+                dropdownParent: parentDropdown, // <-- الاستخدام الديناميكي للحاوية
+                width: '100%' // لضمان تطابق العرض
+            });
+        }
+    });
+}
 
     // --- 2. منطق إرسال النماذج عبر AJAX ---
     $('body').on('submit', '.ajax-form', function(e) {
