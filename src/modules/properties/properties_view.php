@@ -76,12 +76,54 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
         </div>
 
         <!-- 1b. صف بطاقات الإحصائيات -->
-        <div class="row row-cards mb-4">
-            <div class="col-md-3"><div class="card card-sm"><div class="card-body"><div class="d-flex align-items-center"><span class="bg-primary text-white avatar me-3"><i class="ti ti-building-arch"></i></span><div><div>إجمالي العقارات</div><div class="h3 fw-bold"><?= $total_records ?? 0 ?></div></div></div></div></div></div>
-            <div class="col-md-3"><div class="card card-sm"><div class="card-body"><div class="d-flex align-items-center"><span class="bg-green text-white avatar me-3"><i class="ti ti-door"></i></span><div><div>إجمالي الوحدات</div><div class="h3 fw-bold"><?= $stats['total_units'] ?? 0 ?></div></div></div></div></div></div>
-            <div class="col-md-3"><div class="card card-sm"><div class="card-body"><div class="d-flex align-items-center"><span class="bg-warning text-white avatar me-3"><i class="ti ti-currency-real"></i></span><div><div>إجمالي قيمة العقارات</div><div class="h3 fw-bold"><?= number_format($stats['total_value'] ?? 0, 2) ?></div></div></div></div></div></div>
-            <div class="col-md-3"><div class="card card-sm"><div class="card-body"><div class="d-flex align-items-center"><span class="bg-azure text-white avatar me-3"><i class="ti ti-ruler-measure"></i></span><div><div>إجمالي المساحة</div><div class="h3 fw-bold"><?= number_format($stats['total_area'] ?? 0, 2) ?> م²</div></div></div></div></div></div>
+        <!-- Stat Cards with Background and Icons (Compact Version) -->
+<div class="row row-cards mb-4">
+    
+    <!-- البطاقة الأولى -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card bg-primary text-primary-fg">
+            <div class="card-stamp"><div class="card-stamp-icon bg-white text-primary"><i class="ti ti-building-arch"></i></div></div>
+            <div class="card-body">
+                <h3 class="card-title m-0">إجمالي العقارات</h3>
+                <p class="h1 mt-1 mb-0"><?= $total_records ?? 0 ?></p>
+            </div>
         </div>
+    </div>
+
+    <!-- البطاقة الثانية -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card bg-green text-green-fg">
+            <div class="card-stamp"><div class="card-stamp-icon bg-white text-green"><i class="ti ti-door"></i></div></div>
+            <div class="card-body">
+                <h3 class="card-title m-0">إجمالي الوحدات</h3>
+                <p class="h1 mt-1 mb-0"><?= $stats['total_units'] ?? 0 ?></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- البطاقة الثالثة -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card bg-warning text-warning-fg">
+            <div class="card-stamp"><div class="card-stamp-icon bg-white text-warning"><i class="ti ti-currency-real"></i></div></div>
+            <div class="card-body">
+                <h3 class="card-title m-0">إجمالي قيمة العقارات</h3>
+                <p class="h1 mt-1 mb-0"><?= number_format($stats['total_value'] ?? 0, 0) ?></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- البطاقة الرابعة -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card bg-azure text-azure-fg">
+            <div class="card-stamp"><div class="card-stamp-icon bg-white text-azure"><i class="ti ti-ruler-measure"></i></div></div>
+            <div class="card-body">
+                <h3 class="card-title m-0">إجمالي المساحة</h3>
+                <p class="h1 mt-1 mb-0"><?= number_format($stats['total_area'] ?? 0, 2) ?> <small>م²</small></p>
+            </div>
+        </div>
+    </div>
+
+</div>
 
         <!-- 1c. صف الفلترة والبحث -->
         <form action="index.php" method="GET">
@@ -89,7 +131,7 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
             <div class="row g-3">
                 <div class="col-md-3"><label class="form-label">بحث شامل</label><input type="search" name="q" class="form-control" placeholder="ابحث..." value="<?= htmlspecialchars($filter_q ?? '') ?>"></div>
                 <div class="col-md-2"><label class="form-label">الفرع</label><select class="form-select select2-init" name="branch_id"><option value="">الكل</option><?php foreach($branches_for_filter as $branch):?><option value="<?=$branch['id']?>" <?= ($filter_branch_id == $branch['id']) ? 'selected' : '' ?>><?=htmlspecialchars($branch['branch_name'])?></option><?php endforeach;?></select></div>
-                <div class="col-md-2"><label class="form-label">النوع</label><select class="form-select" name="type"><option value="">الكل</option><?php foreach($property_types_for_filter as $type):?><option value="<?=$type?>" <?= ($filter_type == $type) ? 'selected' : '' ?>><?=htmlspecialchars($type)?></option><?php endforeach;?></select></div>
+                <div class="col-md-2"><label class="form-label">النوع</label><select class="form-select select2-init" name="type"><option value="">الكل</option><?php foreach($property_types_for_filter as $type):?><option value="<?=$type?>" <?= ($filter_type == $type) ? 'selected' : '' ?>><?=htmlspecialchars($type)?></option><?php endforeach;?></select></div>
                 <div class="col-md-2"><label class="form-label">التملك</label><select class="form-select" name="ownership"><option value="">الكل</option><option value="ملك">ملك</option><option value="استثمار">استثمار</option></select></div>
                 <div class="col-md-1"><label class="form-label">الحالة</label><select class="form-select" name="status"><option value="">الكل</option><option value="نشط">نشط</option><option value="ملغي">ملغي</option></select></div>
                 <div class="col-md-2">
