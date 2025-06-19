@@ -10,11 +10,11 @@
     <style>
     
     body { font-feature-settings: "cv03", "cv04", "cv11"; } .navbar-nav .nav-link-title { font-weight: 600 !important; }
-    /* === بداية الإضافة: تحسين لون تحديد الصفوف في الجداول === */
-.table-selectable .form-check-input:checked ~ td {
-    background-color: var(--tblr-primary-lt) !important; /* استخدام متغيرات ألوان Tabler */
+     /* === تحسين لون وحدود تحديد الصفوف في الجداول === */
+.table-selectable tr:has(input.form-check-input:checked) {
+    background-color: var(--tblr-primary-lt) !important;
+    box-shadow: inset -3px 0 0 0 var(--tblr-primary) !important; /* <-- السطر الجديد */
 }
-/* === نهاية الإضافة === */
 
     </style>
   </head>
