@@ -6,7 +6,17 @@
     <!-- CSS files -->
     <link href="./assets/css/tabler.rtl.min.css" rel="stylesheet"/>
     <link href="./assets/css/tabler-icons.min.css" rel="stylesheet"/>
-    <style> body { font-feature-settings: "cv03", "cv04", "cv11"; } .navbar-nav .nav-link-title { font-weight: 600 !important; } </style>
+    
+    <style>
+    
+    body { font-feature-settings: "cv03", "cv04", "cv11"; } .navbar-nav .nav-link-title { font-weight: 600 !important; }
+    /* === بداية الإضافة: تحسين لون تحديد الصفوف في الجداول === */
+.table-selectable .form-check-input:checked ~ td {
+    background-color: var(--tblr-primary-lt) !important; /* استخدام متغيرات ألوان Tabler */
+}
+/* === نهاية الإضافة === */
+
+    </style>
   </head>
   <body class="layout-fluid">
     <div class="page">

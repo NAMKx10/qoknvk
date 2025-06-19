@@ -150,7 +150,7 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
 <!-- Main Data Table Card -->
 <div class="card">
     <div class="table-responsive">
-        <table class="table card-table table-vcenter text-nowrap">
+        <table class="table card-table table-vcenter text-nowrap table-hover table-selectable">
             <thead>
     <tr>
         <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
