@@ -166,41 +166,56 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
                 </tr>
             </thead>
             <tbody>
-    <?php if(empty($properties)): ?><tr><td colspan="10" class="text-center">لا توجد نتائج.</td></tr><?php else: $row_counter = $offset + 1; foreach($properties as $property): ?>
-    <tr>
-        <td><input class="form-check-input m-0 align-middle" type="checkbox" name="row_id[]" value="<?= $property['id'] ?>"></td>
-        <td><span class="text-muted"><?= $row_counter++ ?></span></td>
-        <td><span class="avatar" style="background-image: url(./assets/static/properties/default.jpg)"></span></td>
+                <?php if(empty($properties)): ?><tr><td colspan="10" class="text-center">لا توجد نتائج.</td></tr><?php else: $row_counter = $offset + 1; foreach($properties as $property): ?>
+                <tr>
+                    <td><input class="form-check-input m-0 align-middle" type="checkbox" name="row_id[]" value="<?= $property['id'] ?>"></td>
+                    <td><span class="text-muted"><?= $row_counter++ ?></span></td>
+                    <td><span class="avatar" style="background-image: url(./assets/static/properties/default.jpg)"></span></td>
+                    
+                <!-- === بداية عمود العقار المدمج === -->
+                <td>
+                    <div class="fw-bold"><?= htmlspecialchars($property['property_name']) ?></div>
+                    <div class="text-muted" style="font-size: 0.9em;">
+                        <?= htmlspecialchars($property['branch_code'] ?? 'بدون فرع') ?> •
+                        <?= htmlspecialchars($property['property_type'] ?? 'بدون نوع') ?> •
+                        <?= htmlspecialchars($property['ownership_type'] ?? '') ?> •
+                        <?= number_format($property['area'] ?? 0, 0) ?> م² •
+                        <?= htmlspecialchars($property['city'] ?? '') ?>
+                    </div>
+                </td>
+                        <!-- === نهاية عمود العقار المدمج === -->
+
+                <!-- === بداية عمود المالك المدمج === -->
+                <td>
+                    <div><?= htmlspecialchars($property['owner_name'] ?? '—') ?></div>
+                    <div class="text-muted" style="font-size: 0.9em;">صك: <?= htmlspecialchars($property['deed_number'] ?? '—') ?></div>
+                    <td><?= number_format($property['property_value'] ?? 0, 2) ?></td>
+                </td>
+                <!-- === نهاية عمود المالك المدمج === -->
+
+                <td><div class="text-center"><?= $property['units_count'] ?></div></td>
+                <td><span class="badge bg-<?= ($property['status'] === 'نشط') ? 'success' : 'danger' ?>-lt"><?= htmlspecialchars($property['status']) ?></span></td>
+                <td><?php if (!empty($property['notes'])): ?><i class="ti ti-info-circle text-primary" data-bs-toggle="tooltip" title="<?= htmlspecialchars($property['notes']) ?>"></i><?php endif; ?></td>
+                    <td class="text-end">
+    <div class="d-flex justify-content-end gap-1">
         
-        <!-- === بداية عمود العقار المدمج === -->
-        <td>
-            <div class="fw-bold"><?= htmlspecialchars($property['property_name']) ?></div>
-            <div class="text-muted" style="font-size: 0.9em;">
-                <?= htmlspecialchars($property['branch_code'] ?? 'بدون فرع') ?> •
-                <?= htmlspecialchars($property['property_type'] ?? 'بدون نوع') ?> •
-                <?= htmlspecialchars($property['ownership_type'] ?? '') ?> •
-                <?= number_format($property['area'] ?? 0, 0) ?> م² •
-                <?= htmlspecialchars($property['city'] ?? '') ?>
-            </div>
-        </td>
-        <!-- === نهاية عمود العقار المدمج === -->
+        <!-- زر الطباعة -->
+        <a href="print.php?template=property_profile_print&id=<?= $property['id'] ?>" class="btn btn-icon btn-sm btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" title="طباعة ملف العقار">
+            <i class="ti ti-printer"></i>
+        </a>
 
-        <!-- === بداية عمود المالك المدمج === -->
-        <td>
-            <div><?= htmlspecialchars($property['owner_name'] ?? '—') ?></div>
-            <div class="text-muted" style="font-size: 0.9em;">صك: <?= htmlspecialchars($property['deed_number'] ?? '—') ?></div>
-            <td><?= number_format($property['property_value'] ?? 0, 2) ?></td>
-        </td>
-        <!-- === نهاية عمود المالك المدمج === -->
+        <!-- زر التعديل -->
+        <a href="#" class="btn btn-icon btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=properties/edit&id=<?= $property['id'] ?>&view_only=true" data-bs-title="تعديل العقار" data-bs-toggle="tooltip" title="تعديل">
+            <i class="ti ti-edit"></i>
+        </a>
 
-        <td><div class="text-center"><?= $property['units_count'] ?></div></td>
-        <td><span class="badge bg-<?= ($property['status'] === 'نشط') ? 'success' : 'danger' ?>-lt"><?= htmlspecialchars($property['status']) ?></span></td>
-        <td><?php if (!empty($property['notes'])): ?><i class="ti ti-info-circle text-primary" data-bs-toggle="tooltip" title="<?= htmlspecialchars($property['notes']) ?>"></i><?php endif; ?></td>
-        <td class="text-end">
-                        <a href="print.php?template=property_profile_print&id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-secondary" target="_blank">طباعة</a>
-                        <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=properties/edit&id=<?= $property['id'] ?>&view_only=true" data-bs-title="تعديل العقار">تعديل</a>
-                        <a href="index.php?page=properties/delete&id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-danger confirm-delete">حذف</a>
-                    </td>
+        <!-- زر الحذف -->
+        <a href="index.php?page=properties/delete&id=<?= $property['id'] ?>" class="btn btn-icon btn-sm btn-outline-danger confirm-delete" data-bs-toggle="tooltip" title="حذف (أرشفة)">
+            <i class="ti ti-trash"></i>
+        </a>
+
+    </div>
+</td>
                 </tr>
                 <?php endforeach; endif; ?>
             </tbody>
