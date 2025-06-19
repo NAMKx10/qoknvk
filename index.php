@@ -1,71 +1,106 @@
+
 <?php
+// =================================================================
+// INDEX.PHP - المسار الثاني (TABLER) - النسخة النهائية الكاملة
+// =================================================================
+
+// 1. الإعدادات الأساسية
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
+// 2. تضمين الملفات الأساسية
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/src/core/functions.php';
 
+// 3. التوجيه (Routing)
 $page = $_GET['page'] ?? 'dashboard';
 
-// --- معالجة الطلبات أولاً (الطريقة التقليدية) ---
-if ($page === 'branches/handle_add') {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $sql = "INSERT INTO branches (branch_name, branch_code, branch_type, registration_number, tax_number, phone, email, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $params = [
-            $_POST['branch_name'], $_POST['branch_code'], $_POST['branch_type'],
-            $_POST['registration_number'], $_POST['tax_number'], $_POST['phone'],
-            $_POST['email'], $_POST['address'], $_POST['notes']
-        ];
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        
-        // إعادة التوجيه إلى صفحة الفروع بعد الحفظ
-        header("Location: index.php?page=branches");
-        exit();
-    }
-}
-// --- يمكنك إضافة معالجات أخرى هنا ---
-
-        // --- Properties AJAX Handler ---
-        if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
-            $is_add = ($page === 'properties/handle_add');
-            $fields = ['branch_id', 'property_name', 'property_code', 'property_type', 'ownership_type', 'status', 'owner_name', 'deed_number', 'property_value', 'district', 'city', 'area', 'notes'];
+// --- معالجة طلبات AJAX أولاً ---
+if (strpos($page, 'handle_') !== false) {
+    header('Content-Type: application/json; charset=utf-8');
+    $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
+    
+    try {
+        // --- Branches AJAX Handler ---
+        if ($page === 'branches/handle_add' || $page === 'branches/handle_edit') {
+            $is_add = ($page === 'branches/handle_add');
+            $fields = ['branch_name', 'branch_code', 'branch_type', 'registration_number', 'tax_number', 'phone', 'email', 'address', 'notes'];
+            $sql_fields = implode(', ', $fields);
+            $sql_placeholders = implode(', ', array_fill(0, count($fields), '?'));
             $params = [];
             foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
+            
             if ($is_add) {
-                $sql = "INSERT INTO properties (branch_id, property_name, ...) VALUES (?, ?, ...)";
+                $sql = "INSERT INTO branches ($sql_fields) VALUES ($sql_placeholders)";
             } else {
-                $sql = "UPDATE properties SET branch_id = ?, property_name = ?, ... WHERE id = ?";
+                $update_fields = "branch_name = ?, branch_code = ?, branch_type = ?, registration_number = ?, tax_number = ?, phone = ?, email = ?, address = ?, notes = ?, status = ?";
+                $sql = "UPDATE branches SET {$update_fields} WHERE id = ?";
+                $params[] = $_POST['status'] ?? 'نشط';
                 $params[] = $_POST['id'];
             }
             $stmt = $pdo->prepare($sql);
-            if ($stmt->execute($params)) $response = ['success' => true];
+            if ($stmt->execute($params)) { $response = ['success' => true, 'message' => 'تمت العملية بنجاح.']; }
         }
+        // --- Properties AJAX Handler ---
+        elseif ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
+            $is_add = ($page === 'properties/handle_add');
+            $fields = ['branch_id', 'property_name', 'property_code', 'property_type', 'ownership_type', 'owner_name', 'deed_number', 'property_value', 'district', 'city', 'area', 'notes'];
+            $params = [];
+            foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
+            
+            if ($is_add) {
+                $sql_fields = implode(', ', $fields) . ', status';
+                $sql_placeholders = implode(', ', array_fill(0, count($fields) + 1, '?'));
+                $params[] = $_POST['status'] ?? 'نشط';
+                $sql = "INSERT INTO properties ($sql_fields) VALUES ($sql_placeholders)";
+            } else {
+                $update_fields = "branch_id = ?, property_name = ?, property_code = ?, property_type = ?, ownership_type = ?, owner_name = ?, deed_number = ?, property_value = ?, district = ?, city = ?, area = ?, notes = ?, status = ?";
+                $sql = "UPDATE properties SET {$update_fields} WHERE id = ?";
+                $params[] = $_POST['status'] ?? 'نشط';
+                $params[] = $_POST['id'];
+            }
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute($params)) { $response = ['success' => true, 'message' => 'تمت العملية بنجاح.']; }
+        }
+
+    } catch (PDOException $e) {
+        $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
+    } catch (Exception $e) {
+        $response['message'] = $e->getMessage();
+    }
+    
+    echo json_encode($response);
+    exit();
+}
 
 // --- عرض الصفحات ---
 $allowed_pages = [
-    'dashboard'     => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
-    'branches'      => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
-    'branches/add'  => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
-    'properties'    => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'],
-    'properties/add' => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
-    'properties/edit'  => ['path' => 'properties/edit_view.php', 'title' => 'تعديل عقار'],
-    'units'          => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'], 
-    'units/add'      => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
-    'clients'       => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'], 
-    'clients/add'   => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'], 
-    'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
-    'suppliers'        => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'], 
-    'suppliers/add'    => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'], 
-    'suppliers/branches_modal' => ['path' => 'suppliers/branches_modal_view.php', 'title' => 'الفروع المرتبطة'],
-    'contracts'        => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'], 
-    'contracts/add'    => ['path' => 'contracts/add_view.php', 'title' => 'إضافة عقد إيجار'], 
-    'contracts/view'   => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
-    'supply_contracts' => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'], // <-- جديد
-    'supply_contracts/add' => ['path' => 'supply_contracts/add_view.php', 'title' => 'إضافة عقد توريد'], // <-- جديد
+    'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
+    'about'             => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
+    // الإدارة الأساسية
+    'branches'          => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
+    'branches/add'      => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
+    'branches/edit'     => ['path' => 'branches/edit_view.php', 'title' => 'تعديل فرع'],
+    'properties'        => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'],
+    'properties/add'    => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
+    'properties/edit'   => ['path' => 'properties/edit_view.php', 'title' => 'تعديل عقار'],
+    'units'             => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'],
+    'units/add'         => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
+    'clients'           => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'],
+    'clients/add'       => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'],
+    'suppliers'         => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'],
+    'suppliers/add'     => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'],
+    // العقود والمالية
+    'contracts'         => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'],
+    'contracts/view'    => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'supply_contracts'  => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
     'supply_contracts/view' => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
-    'about'         => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
+    // إدارة النظام
+    'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
+    'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
+    'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
+    'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
 ];
 
 $page_path = null;
