@@ -152,31 +152,51 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
     <div class="table-responsive">
         <table class="table card-table table-vcenter text-nowrap">
             <thead>
-                <tr>
-                    <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
-                    <th>م</th><th>كود</th><th>صورة</th><th>الفرع</th><th>العقار</th><th>النوع</th><th>التملك</th><th>المالك</th><th>الصك</th><th>القيمة</th><th>المساحة</th><th>الوحدات</th><th>المدينة</th><th>الحالة</th><th>ملاحظات</th><th>الإجراءات</th>
+    <tr>
+        <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
+        <th>م</th>
+        <th>صورة</th>
+        <th>العقار</th> <!-- تم تغيير الاسم -->
+        <th>المالك / الصك</th> <!-- تم دمج عمودين -->
+        <th>قيمة العقار</th>
+        <th>الوحدات</th>
+        <th>الحالة</th>
+        <th>ملاحظات</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if(empty($properties)): ?><tr><td colspan="16" class="text-center">لا توجد نتائج.</td></tr><?php else: $row_counter = $offset + 1; foreach($properties as $property): ?>
-                <tr>
-                    <td><input class="form-check-input m-0 align-middle" type="checkbox" name="row_id[]" value="<?= $property['id'] ?>"></td>
-                    <td><span class="text-muted"><?= $row_counter++ ?></span></td>
-                    <td><?= htmlspecialchars($property['property_code'] ?? '—') ?></td>
-                    <td><span class="avatar" style="background-image: url(./assets/static/properties/default.jpg)"></span></td>
-                    <td><span class="badge bg-secondary-lt"><?= htmlspecialchars($property['branch_code'] ?? '—') ?></span></td>
-                    <td><?= htmlspecialchars($property['property_name']) ?></td>
-                    <td><?= htmlspecialchars($property['property_type'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($property['ownership_type'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($property['owner_name'] ?? '—') ?></td>
-                    <td><?= htmlspecialchars($property['deed_number'] ?? '—') ?></td>
-                    <td><?= number_format($property['property_value'] ?? 0, 2) ?></td>
-                    <td><?= number_format($property['area'] ?? 0, 2) ?> م²</td>
-                    <td><?= $property['units_count'] ?></td>
-                    <td><?= htmlspecialchars($property['city'] ?? '—') ?></td>
-                    <td><span class="badge bg-<?= ($property['status'] === 'نشط') ? 'success' : 'danger' ?>-lt"><?= htmlspecialchars($property['status']) ?></span></td>
-                    <td><?php if (!empty($property['notes'])): ?><i class="ti ti-info-circle text-primary" data-bs-toggle="tooltip" title="<?= htmlspecialchars($property['notes']) ?>"></i><?php endif; ?></td>
-                    <td class="text-end">
+    <?php if(empty($properties)): ?><tr><td colspan="10" class="text-center">لا توجد نتائج.</td></tr><?php else: $row_counter = $offset + 1; foreach($properties as $property): ?>
+    <tr>
+        <td><input class="form-check-input m-0 align-middle" type="checkbox" name="row_id[]" value="<?= $property['id'] ?>"></td>
+        <td><span class="text-muted"><?= $row_counter++ ?></span></td>
+        <td><span class="avatar" style="background-image: url(./assets/static/properties/default.jpg)"></span></td>
+        
+        <!-- === بداية عمود العقار المدمج === -->
+        <td>
+            <div class="fw-bold"><?= htmlspecialchars($property['property_name']) ?></div>
+            <div class="text-muted" style="font-size: 0.9em;">
+                <?= htmlspecialchars($property['branch_code'] ?? 'بدون فرع') ?> •
+                <?= htmlspecialchars($property['property_type'] ?? 'بدون نوع') ?> •
+                <?= htmlspecialchars($property['ownership_type'] ?? '') ?> •
+                <?= number_format($property['area'] ?? 0, 0) ?> م² •
+                <?= htmlspecialchars($property['city'] ?? '') ?>
+            </div>
+        </td>
+        <!-- === نهاية عمود العقار المدمج === -->
+
+        <!-- === بداية عمود المالك المدمج === -->
+        <td>
+            <div><?= htmlspecialchars($property['owner_name'] ?? '—') ?></div>
+            <div class="text-muted" style="font-size: 0.9em;">صك: <?= htmlspecialchars($property['deed_number'] ?? '—') ?></div>
+            <td><?= number_format($property['property_value'] ?? 0, 2) ?></td>
+        </td>
+        <!-- === نهاية عمود المالك المدمج === -->
+
+        <td><div class="text-center"><?= $property['units_count'] ?></div></td>
+        <td><span class="badge bg-<?= ($property['status'] === 'نشط') ? 'success' : 'danger' ?>-lt"><?= htmlspecialchars($property['status']) ?></span></td>
+        <td><?php if (!empty($property['notes'])): ?><i class="ti ti-info-circle text-primary" data-bs-toggle="tooltip" title="<?= htmlspecialchars($property['notes']) ?>"></i><?php endif; ?></td>
+        <td class="text-end">
                         <a href="print.php?template=property_profile_print&id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-secondary" target="_blank">طباعة</a>
                         <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=properties/edit&id=<?= $property['id'] ?>&view_only=true" data-bs-title="تعديل العقار">تعديل</a>
                         <a href="index.php?page=properties/delete&id=<?= $property['id'] ?>" class="btn btn-sm btn-outline-danger confirm-delete">حذف</a>
