@@ -200,17 +200,17 @@ $property_types_for_filter = $pdo->query("SELECT DISTINCT property_type FROM pro
     <div class="d-flex justify-content-end gap-1">
         
         <!-- زر الطباعة -->
-        <a href="print.php?template=property_profile_print&id=<?= $property['id'] ?>" class="btn btn-icon btn-sm btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" title="طباعة ملف العقار">
+        <a href="print.php?template=property_profile_print&id=<?= $property['id'] ?>" class="btn btn-icon btn-outline-secondary" target="_blank" data-bs-toggle="tooltip" title="طباعة ملف العقار">
             <i class="ti ti-printer"></i>
         </a>
 
         <!-- زر التعديل -->
-        <a href="#" class="btn btn-icon btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=properties/edit&id=<?= $property['id'] ?>&view_only=true" data-bs-title="تعديل العقار" data-bs-toggle="tooltip" title="تعديل">
+        <a href="#" class="btn btn-icon btn-outline-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=properties/edit&id=<?= $property['id'] ?>&view_only=true" data-bs-title="تعديل العقار" data-bs-toggle="tooltip" title="تعديل">
             <i class="ti ti-edit"></i>
         </a>
 
         <!-- زر الحذف -->
-        <a href="index.php?page=properties/delete&id=<?= $property['id'] ?>" class="btn btn-icon btn-sm btn-outline-danger confirm-delete" data-bs-toggle="tooltip" title="حذف (أرشفة)">
+        <a href="index.php?page=properties/delete&id=<?= $property['id'] ?>" class="btn btn-icon btn-outline-danger confirm-delete" data-bs-toggle="tooltip" title="حذف (أرشفة)">
             <i class="ti ti-trash"></i>
         </a>
 
