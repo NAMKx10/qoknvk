@@ -35,6 +35,7 @@ $is_admin_active = in_array($current_page, $admin_pages);
   <li class="nav-item dropdown <?= ($is_admin_active) ? 'active' : '' ?>">
     <a class="nav-link dropdown-toggle" href="#navbar-admin" data-bs-toggle="dropdown" role="button" aria-expanded="<?= ($is_admin_active) ? 'true' : 'false' ?>"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="ti ti-settings"></i></span><span class="nav-link-title">إدارة النظام</span></a>
     <div class="dropdown-menu">
+      <a class="dropdown-item" href="index.php?page=documents">الوثائق</a> 
       <a class="dropdown-item" href="index.php?page=users">المستخدمين</a>
       <a class="dropdown-item" href="index.php?page=roles">الأدوار</a>
       <a class="dropdown-item" href="index.php?page=permissions">الصلاحيات</a>

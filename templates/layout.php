@@ -13,9 +13,21 @@
      /* === تحسين لون وحدود تحديد الصفوف في الجداول === */
 .table-selectable tr:has(input.form-check-input:checked) {
     background-color: var(--tblr-primary-lt) !important;
-    box-shadow: inset -3px 0 0 0 var(--tblr-primary) !important; /* <-- السطر الجديد */
+    box-shadow: inset 3px 0 0 0 var(--tblr-primary) !important; /* <-- السطر الجديد */
 }
 
+          .scroll-buttons {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1050;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+
+  
     </style>
   </head>
   <body class="layout-fluid">
@@ -84,6 +96,8 @@
     
     <!-- jQuery (يجب أن يكون هنا أولاً) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
     
     <!-- Tabler Core & Libs (يأتي بعد jQuery) -->
     <script src="./assets/js/tabler.min.js" defer></script>
@@ -93,5 +107,12 @@
 
 
     <?php require_once __DIR__ . '/footer_scripts.php'; ?>
+
+<div class="scroll-buttons">
+    <a href="#" id="scroll-to-bottom-btn" class="btn btn-icon btn-primary" title="النزول للأسفل"><i class="ti ti-arrow-down"></i></a>
+    <a href="#" id="scroll-to-top-btn" class="btn btn-icon btn-primary" title="الصعود للأعلى" style="display: none;"><i class="ti ti-arrow-up"></i></a>
+</div>
+
+
   </body>
 </html>

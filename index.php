@@ -216,6 +216,39 @@ elseif ($page === 'owners/handle_update_branches') {
         exit();
     }
 
+// --- (جديد) معالج جلب مخطط الحقول المخصصة ---
+elseif ($page === 'documents/get_custom_fields_schema_ajax') {
+    $type_key = $_GET['document_type'] ?? '';
+    $sql = "SELECT custom_fields_schema FROM lookup_options WHERE group_key = 'document_type' AND option_key = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$type_key]);
+    $schema_json = $stmt->fetchColumn();
+    
+    header('Content-Type: application/json; charset=utf-8');
+    echo $schema_json ?: '[]';
+    exit(); // مهم جداً الخروج بعد طباعة الـ JSON
+}
+
+// --- (جديد) معالج حفظ الوثيقة الجديدة ---
+elseif ($page === 'documents/handle_add') {
+    try {
+        $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
+        
+        $sql = "INSERT INTO documents (document_type, document_number, issue_date, expiry_date, details) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $_POST['document_type'],
+            $_POST['document_number'],
+            $_POST['issue_date'] ?: null,
+            $_POST['expiry_date'] ?: null,
+            $details_json
+        ]);
+        $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة بنجاح.'];
+    } catch (Exception $e) {
+        $response['message'] = $e->getMessage();
+    }
+}
+
 
 
     } catch (PDOException $e) {
@@ -255,6 +288,8 @@ $allowed_pages = [
     'supply_contracts'  => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
     'supply_contracts/view' => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     // إدارة النظام
+    'documents'         => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
+    'documents/add'     => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
