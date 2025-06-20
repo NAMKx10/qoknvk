@@ -119,6 +119,103 @@ elseif ($page === 'owners/handle_update_branches') {
     $response = ['success' => true, 'message' => 'تم تحديث الفروع بنجاح.'];
 }
 
+        // --- Settings (Lookups) AJAX Handlers ---
+    elseif ($page === 'settings/handle_add_lookup_group_ajax') {
+        $pdo->beginTransaction();
+        try {
+            // إضافة سجل لاسم المجموعة نفسها
+            $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_POST['group_key'], $_POST['group_key'], $_POST['option_value']]);
+            $pdo->commit();
+            $response = ['success' => true, 'message' => 'تمت إضافة المجموعة بنجاح.'];
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $response['message'] = $e->getMessage();
+        }
+    }
+    elseif ($page === 'settings/handle_edit_lookup_group_ajax') {
+        $pdo->beginTransaction();
+        try {
+            // تحديث كل الخيارات التي تنتمي للمجموعة القديمة
+            $sql_update_children = "UPDATE lookup_options SET group_key = ? WHERE group_key = ?";
+            $stmt_update_children = $pdo->prepare($sql_update_children);
+            $stmt_update_children->execute([$_POST['new_group_key'], $_POST['original_group_key']]);
+
+            // تحديث سجل اسم المجموعة نفسه
+            $sql_update_parent = "UPDATE lookup_options SET option_key = ?, option_value = ? WHERE group_key = ? AND id = (SELECT id FROM (SELECT id FROM lookup_options WHERE group_key = ? AND option_key = ?) AS x)";
+            $stmt_update_parent = $pdo->prepare($sql_update_parent);
+            $stmt_update_parent->execute([$_POST['new_group_key'], $_POST['new_option_value'], $_POST['new_group_key'], $_POST['new_group_key'], $_POST['new_group_key']]);
+
+            $pdo->commit();
+            $response = ['success' => true, 'message' => 'تم تحديث المجموعة بنجاح.'];
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $response['message'] = $e->getMessage();
+        }
+    }
+    elseif ($page === 'settings/handle_add_lookup_option_ajax') {
+        $option_key = $_POST['option_key'] ?: str_replace(' ', '_', trim(strtolower($_POST['option_value'])));
+        $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        if ($stmt->execute([$_POST['group_key'], $option_key, $_POST['option_value']])) {
+            $response = ['success' => true, 'message' => 'تم إضافة الخيار بنجاح.'];
+        }
+    }
+    elseif ($page === 'settings/handle_edit_lookup_option_ajax') {
+        $pdo->beginTransaction();
+        try {
+            // --- 1. تحديث البيانات الأساسية ---
+            $sql = "UPDATE lookup_options SET option_value = ?, option_key = ?, color = ?, bg_color = ? WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $_POST['option_value'], $_POST['option_key'],
+                $_POST['color'] ?? '#ffffff', $_POST['bg_color'] ?? '#6c757d', $_POST['id']
+            ]);
+
+            // --- 2. تحديث مخطط الحقول المخصصة إذا كان موجوداً ---
+            if (isset($_POST['custom_fields'])) {
+                $filtered_fields = array_filter($_POST['custom_fields'], function($field) {
+                    return !empty($field['label']) && !empty($field['name']);
+                });
+                
+                $schema_json = json_encode(array_values($filtered_fields), JSON_UNESCAPED_UNICODE);
+                
+                $schema_sql = "UPDATE lookup_options SET custom_fields_schema = ? WHERE id = ?";
+                $schema_stmt = $pdo->prepare($schema_sql);
+                $schema_stmt->execute([$schema_json, $_POST['id']]);
+            }
+            
+            $pdo->commit();
+            $response = ['success' => true, 'message' => 'تم تحديث الخيار بنجاح.'];
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $response['message'] = 'فشل في تحديث الخيار: ' . $e->getMessage();
+        }
+    }
+
+    // --- (جديد) معالج حذف خيار واحد ---
+    elseif ($page === 'settings/delete_lookup_option') {
+        if (isset($_GET['id'])) {
+            $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_GET['id']]);
+        }
+        header("Location: index.php?page=settings/lookups");
+        exit();
+    }
+    // --- (جديد) معالج حذف مجموعة كاملة ---
+    elseif ($page === 'settings/delete_lookup_group') {
+        if (isset($_GET['group'])) {
+            // حذف كل الخيارات التابعة للمجموعة + سجل المجموعة نفسه
+            $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE group_key = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_GET['group']]);
+        }
+        header("Location: index.php?page=settings/lookups");
+        exit();
+    }
+
 
 
     } catch (PDOException $e) {
@@ -162,6 +259,13 @@ $allowed_pages = [
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
+    'settings/lookups'              => ['path' => 'settings/lookups_view.php', 'title' => 'تهيئة المدخلات'],
+    'settings/add_lookup_group'     => ['path' => 'settings/add_lookup_group_view.php', 'title' => 'إضافة مجموعة'],
+    'settings/edit_lookup_group'    => ['path' => 'settings/edit_lookup_group_view.php', 'title' => 'تعديل مجموعة'],
+    'settings/add_lookup_option'    => ['path' => 'settings/add_lookup_option_view.php', 'title' => 'إضافة خيار'],
+    'settings/edit_lookup_option'   => ['path' => 'settings/edit_lookup_option_view.php', 'title' => 'تعديل خيار'],
+
+    
 ];
 
 $page_path = null;
