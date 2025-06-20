@@ -64,6 +64,63 @@ if (strpos($page, 'handle_') !== false) {
             if ($stmt->execute($params)) { $response = ['success' => true, 'message' => 'تمت العملية بنجاح.']; }
         }
 
+        // --- Owners AJAX Handler ---
+elseif ($page === 'owners/handle_add' || $page === 'owners/handle_edit') {
+    $is_add = ($page === 'owners/handle_add');
+    $pdo->beginTransaction();
+
+    $fields = ['owner_name', 'owner_type', 'owner_code', 'id_number', 'mobile', 'email', 'notes'];
+    $params = [];
+    foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
+    
+    if ($is_add) {
+        $sql = "INSERT INTO owners (owner_name, owner_type, owner_code, id_number, mobile, email, notes) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $owner_id = $pdo->lastInsertId();
+        
+        // ربط الفروع
+        if (!empty($_POST['branches'])) {
+            $branch_sql = "INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)";
+            $branch_stmt = $pdo->prepare($branch_sql);
+            foreach ($_POST['branches'] as $branch_id) {
+                $branch_stmt->execute([$owner_id, $branch_id]);
+            }
+        }
+    } else {
+        $update_fields = "owner_name=?, owner_type=?, owner_code=?, id_number=?, mobile=?, email=?, notes=?, status=?";
+        $sql = "UPDATE owners SET {$update_fields} WHERE id = ?";
+        $params[] = $_POST['status'] ?? 'نشط';
+        $params[] = $_POST['id'];
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+    }
+    
+    $pdo->commit();
+    $response = ['success' => true, 'message' => 'تمت العملية بنجاح.'];
+}
+elseif ($page === 'owners/handle_update_branches') {
+    $owner_id = $_POST['owner_id'];
+    $branches = $_POST['branches'] ?? [];
+    
+    $pdo->beginTransaction();
+    // حذف الروابط القديمة
+    $delete_stmt = $pdo->prepare("DELETE FROM owner_branches WHERE owner_id = ?");
+    $delete_stmt->execute([$owner_id]);
+    
+    // إضافة الروابط الجديدة
+    if (!empty($branches)) {
+        $insert_stmt = $pdo->prepare("INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)");
+        foreach ($branches as $branch_id) {
+            $insert_stmt->execute([$owner_id, $branch_id]);
+        }
+    }
+    $pdo->commit();
+    $response = ['success' => true, 'message' => 'تم تحديث الفروع بنجاح.'];
+}
+
+
+
     } catch (PDOException $e) {
         $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
     } catch (Exception $e) {
@@ -79,6 +136,10 @@ $allowed_pages = [
     'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
     'about'             => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
     // الإدارة الأساسية
+    'owners'            => ['path' => 'owners/owners_view.php', 'title' => 'إدارة الملاك'],
+    'owners/add'        => ['path' => 'owners/add_view.php', 'title' => 'إضافة مالك'],
+    'owners/edit'       => ['path' => 'owners/edit_view.php', 'title' => 'تعديل مالك'],
+    'owners/branches_modal' => ['path' => 'owners/branches_modal_view.php', 'title' => 'إدارة فروع المالك'],
     'branches'          => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
     'branches/add'      => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
     'branches/edit'     => ['path' => 'branches/edit_view.php', 'title' => 'تعديل فرع'],

@@ -18,6 +18,7 @@ $is_admin_active = in_array($current_page, $admin_pages);
     <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" role="button" aria-expanded="<?= ($is_base_active) ? 'true' : 'false' ?>"><span class="nav-link-icon d-md-none d-lg-inline-block"><i class="ti ti-building-community"></i></span><span class="nav-link-title">الإدارة الأساسية</span></a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="index.php?page=branches">الفروع</a>
+      <a class="dropdown-item" href="index.php?page=owners">الملاك</a>
       <a class="dropdown-item" href="index.php?page=properties">العقارات</a>
       <a class="dropdown-item" href="index.php?page=units">الوحدات</a>
       <a class="dropdown-item" href="index.php?page=clients">العملاء</a>
