@@ -53,8 +53,10 @@ $documents = $stmt->fetchAll();
                             <td><span class="badge bg-success-lt"><?= htmlspecialchars($doc['status']) ?></span></td>
                             <td><?= htmlspecialchars($doc['expiry_date']) ?></td>
                             <td class="text-end">
-                                <a href="#" class="btn">تعديل</a>
-                            </td>
+    <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=documents/edit&id=<?= $doc['id'] ?>&view_only=true">
+        تعديل
+    </a>
+</td>
                         </tr>
                         <?php endforeach; endif; ?>
                     </tbody>

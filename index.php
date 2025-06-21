@@ -249,6 +249,24 @@ elseif ($page === 'documents/handle_add') {
     }
 }
 
+elseif ($page === 'documents/handle_edit') {
+    try {
+        $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
+        
+        $sql = "UPDATE documents SET document_number = ?, issue_date = ?, expiry_date = ?, details = ? WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $_POST['document_number'],
+            $_POST['issue_date'] ?: null,
+            $_POST['expiry_date'] ?: null,
+            $details_json,
+            $_POST['id']
+        ]);
+        $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
+    } catch (Exception $e) {
+        $response['message'] = $e->getMessage();
+    }
+}
 
 
     } catch (PDOException $e) {
@@ -290,6 +308,7 @@ $allowed_pages = [
     // إدارة النظام
     'documents'         => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
     'documents/add'     => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
+    'documents/edit'    => ['path' => 'documents/edit_view.php', 'title' => 'تعديل وثيقة'],
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
