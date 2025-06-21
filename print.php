@@ -20,11 +20,3 @@ if (isset($allowed_templates[$template]) && file_exists($allowed_templates[$temp
 } else {
     die('Template not found.');
 }
-
-/*
-ملاحظات:
-- الكود منظم لطباعة تقارير بقوالب محددة فقط (أمان).
-- يمكنك إضافة تحقق من تسجيل الدخول قبل عرض القالب.
-- لإضافة قوالب أخرى، أضفها لمصفوفة $allowed_templates بنفس الطريقة.
-- يمنع تنفيذ أي ملف غير مسموح به عبر الرابط.
-*/
