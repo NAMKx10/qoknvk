@@ -43,6 +43,11 @@ $statuses = $pdo->query("SELECT option_key, option_value FROM lookup_options WHE
                     <label class="form-label">نوع الوثيقة</label>
                     <input type="text" class="form-control" value="<?= htmlspecialchars($document['document_type']) ?>" readonly disabled>
                 </div>
+                    <div class="col-md-6">
+        <label class="form-label">اسم الوثيقة (اختياري)</label>
+        <input type="text" class="form-control" name="document_name" value="<?= htmlspecialchars($document['document_name']) ?>">
+    </div>
+
                 <div class="col-md-6">
                     <label class="form-label">رقم الوثيقة</label>
                     <input type="text" class="form-control" name="document_number" value="<?= htmlspecialchars($document['document_number']) ?>">

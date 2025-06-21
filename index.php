@@ -244,13 +244,16 @@ elseif ($page === 'documents/handle_add') {
     try {
         $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
         
-        $sql = "INSERT INTO documents (document_type, document_number, issue_date, expiry_date, details) VALUES (?, ?, ?, ?, ?)";
+        // (مُحسَّن) إضافة حقل status إلى الاستعلام
+        $sql = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, details) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $_POST['document_type'],
+                $_POST['document_name'], // <-- الحقل الجديد
             $_POST['document_number'],
             $_POST['issue_date'] ?: null,
             $_POST['expiry_date'] ?: null,
+            $_POST['status'], // <--- الحقل الجديد
             $details_json
         ]);
         $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة بنجاح.'];
@@ -263,14 +266,16 @@ elseif ($page === 'documents/handle_edit') {
     try {
         $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
         
-        $sql = "UPDATE documents SET document_number = ?, issue_date = ?, expiry_date = ?, details = ? status = ? WHERE id = ?";
+        // (مُصحَّح) تمت إضافة الفاصلة الناقصة قبل status
+        $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ? WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
+                $_POST['document_name'], // <-- الحقل الجديد
             $_POST['document_number'],
             $_POST['issue_date'] ?: null,
             $_POST['expiry_date'] ?: null,
             $details_json,
-             $_POST['status'], // <--- هذا الحقل مهم
+            $_POST['status'],
             $_POST['id']
         ]);
         $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];

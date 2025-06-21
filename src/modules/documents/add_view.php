@@ -1,16 +1,12 @@
 <?php
-// src/modules/documents/add_view.php (الإصدار المصحح والنهائي جدًا)
+// src/modules/documents/add_view.php (الإصدار المطور مع حقل الحالة)
 
-// --- (مُصحَّح) الاستعلام يستخدم الآن 'documents_type' الصحيح ---
-$stmt = $pdo->prepare("SELECT option_key, option_value FROM lookup_options WHERE group_key = 'documents_type' AND deleted_at IS NULL");
-$stmt->execute();
-$all_options = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// جلب أنواع الوثائق المتاحة
+$types_stmt = $pdo->query("SELECT option_key, option_value FROM lookup_options WHERE group_key = 'documents_type' AND option_key != 'documents_type' AND deleted_at IS NULL");
+$document_types = $types_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// --- (مُحسَّن) الفلترة الآن تتم بشكل صحيح ومضمون ---
-$document_types = array_filter($all_options, function($option) {
-    // استبعاد السجل الذي يمثل اسم المجموعة نفسها
-    return $option['option_key'] !== 'documents_type'; 
-});
+// (جديد) جلب الحالات المتاحة
+$statuses = $pdo->query("SELECT option_key, option_value FROM lookup_options WHERE group_key = 'status' AND option_key != 'status' AND deleted_at IS NULL")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="modal-header">
@@ -18,14 +14,12 @@ $document_types = array_filter($all_options, function($option) {
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
-<!-- بقية الملف (النموذج والجافاسكريبت) يبقى كما هو تمامًا -->
-
 <form method="POST" action="index.php?page=documents/handle_add" class="ajax-form">
     <div class="modal-body">
         <div id="form-error-message" class="alert alert-danger" style="display:none;"></div>
         
-        <div class="row">
-            <div class="col-md-6 mb-3">
+        <div class="row g-3">
+            <div class="col-md-6">
                 <label class="form-label required">نوع الوثيقة</label>
                 <select class="form-select" name="document_type" id="document-type-select" required>
                     <option value="" disabled selected>-- اختر النوع --</option>
@@ -34,17 +28,32 @@ $document_types = array_filter($all_options, function($option) {
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-6 mb-3">
+                <div class="col-md-6">
+                <label class="form-label">اسم الوثيقة (اختياري)</label>
+                <input type="text" class="form-control" name="document_name" placeholder="مثال: صك أرض النهضة">
+                 </div>
+            <div class="col-md-6">
                 <label class="form-label">رقم الوثيقة</label>
                 <input type="text" class="form-control" name="document_number">
             </div>
-             <div class="col-md-6 mb-3">
+             <div class="col-md-6">
                 <label class="form-label">تاريخ الإصدار</label>
                 <input type="date" class="form-control" name="issue_date">
             </div>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6">
                 <label class="form-label">تاريخ الانتهاء</label>
                 <input type="date" class="form-control" name="expiry_date">
+            </div>
+            <!-- (جديد) حقل الحالة -->
+            <div class="col-md-6">
+                <label class="form-label">الحالة</label>
+                <select class="form-select" name="status">
+                    <?php foreach($statuses as $status): ?>
+                        <option value="<?= htmlspecialchars($status['option_key']) ?>" <?= ($status['option_key'] == 'active') ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($status['option_value']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
         </div>
         
@@ -54,6 +63,7 @@ $document_types = array_filter($all_options, function($option) {
             <h4 class="mb-3">تفاصيل إضافية</h4>
             <div id="custom-fields-container" class="row g-3"></div>
         </div>
+
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-bs-dismiss="modal">إلغاء</button>
@@ -61,6 +71,7 @@ $document_types = array_filter($all_options, function($option) {
     </div>
 </form>
 
+<!-- كود الجافاسكريبت يبقى كما هو تمامًا -->
 <script>
 $(document).ready(function() {
     $('#document-type-select').on('change', function() {
