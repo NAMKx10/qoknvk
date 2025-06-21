@@ -34,8 +34,17 @@ $current_permissions = $current_permissions_stmt->fetchAll(PDO::FETCH_COLUMN);
                 <div class="text-muted mt-1"><?= htmlspecialchars($role['description']) ?></div>
             </div>
             <div class="col-auto ms-auto d-print-none">
-                <a href="index.php?page=roles" class="btn"><i class="ti ti-arrow-left me-2"></i>العودة لقائمة الأدوار</a>
-            </div>
+    <div class="btn-list">
+        <!-- (جديد) زر تعديل بيانات الدور -->
+        <a href="#" class="btn btn-outline-secondary"
+           data-bs-toggle="modal" 
+           data-bs-target="#main-modal" 
+           data-bs-url="index.php?page=roles/edit_role&id=<?= $role['id'] ?>&view_only=true">
+            تعديل بيانات الدور
+        </a>
+        <a href="index.php?page=roles" class="btn"><i class="ti ti-arrow-left me-2"></i>العودة لقائمة الأدوار</a>
+    </div>
+</div>
         </div>
     </div>
 </div>
