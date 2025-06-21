@@ -1,7 +1,7 @@
 
 <?php
 // =================================================================
-// INDEX.PHP - المسار الثاني (TABLER) - النسخة النهائية الكاملة
+// INDEX.PHP - الإصدار النهائي والمصحح بالكامل
 // =================================================================
 
 // 1. الإعدادات الأساسية
@@ -13,8 +13,39 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/src/core/functions.php';
 
-// 3. التوجيه (Routing)
+// 3. التوجيه (Routing) وتحديد الصفحة
 $page = $_GET['page'] ?? 'dashboard';
+
+// ==========================================================
+// 4. جدار الحماية والتحقق من الجلسة
+// ==========================================================
+$public_pages = ['login', 'handle_login', 'logout'];
+
+if (!isset($_SESSION['user_id']) && !in_array($page, $public_pages)) {
+    header('Location: index.php?page=login');
+    exit();
+}
+
+if (isset($_SESSION['user_id']) && !isset($_SESSION['user_permissions'])) {
+    $user_stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $user_stmt->execute([$_SESSION['user_id']]);
+    $current_user = $user_stmt->fetch(PDO::FETCH_ASSOC);
+    if($current_user) {
+        $permissions_stmt = $pdo->prepare("SELECT p.permission_key FROM permissions p JOIN role_permissions rp ON p.id = rp.permission_id WHERE rp.role_id = ?");
+        $permissions_stmt->execute([$current_user['role_id']]);
+        $_SESSION['user_permissions'] = $permissions_stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $branches_stmt = $pdo->prepare("SELECT branch_id FROM user_branches WHERE user_id = ?");
+        $branches_stmt->execute([$_SESSION['user_id']]);
+        $user_branch_ids = $branches_stmt->fetchAll(PDO::FETCH_COLUMN);
+        $_SESSION['user_branch_ids'] = empty($user_branch_ids) ? 'ALL' : $user_branch_ids;
+    } else {
+        session_destroy();
+        header('Location: index.php?page=login');
+        exit();
+    }
+}
+
 
 // ==========================================================
 // القسم الأول: معالجة كل طلبات AJAX أولاً
@@ -31,6 +62,32 @@ if ($is_ajax_request) {
 
     
     try {
+
+                // --- (جديد) Login Handler ---
+        if ($page === 'handle_login') {
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND is_active = 1");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+
+            if ($user && password_verify($password, $user['password'])) {
+                // تم التحقق بنجاح، قم بإنشاء الجلسة
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                header("Location: index.php?page=dashboard"); // إعادة توجيه للوحة التحكم
+                exit();
+            } else {
+                // فشل تسجيل الدخول
+                $_SESSION['login_error'] = "اسم المستخدم أو كلمة المرور غير صحيحة.";
+                header("Location: index.php?page=login");
+                exit();
+            }
+        }
+
+
         // --- Branches AJAX Handler ---
         if ($page === 'branches/handle_add' || $page === 'branches/handle_edit') {
             $is_add = ($page === 'branches/handle_add');
@@ -241,23 +298,37 @@ elseif ($page === 'owners/handle_update_branches') {
     
 // --- (جديد) معالج حفظ الوثيقة الجديدة ---
 elseif ($page === 'documents/handle_add') {
+    $pdo->beginTransaction();
     try {
         $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
         
-        // (مُحسَّن) إضافة حقل status إلى الاستعلام
-        $sql = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, details) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            $_POST['document_type'],
-                $_POST['document_name'], // <-- الحقل الجديد
-            $_POST['document_number'],
-            $_POST['issue_date'] ?: null,
-            $_POST['expiry_date'] ?: null,
-            $_POST['status'], // <--- الحقل الجديد
-            $details_json
+        // 1. حفظ الوثيقة الأساسية
+        $sql_doc = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, notes, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt_doc = $pdo->prepare($sql_doc);
+        $stmt_doc->execute([
+            $_POST['document_type'], $_POST['document_name'], $_POST['document_number'],
+            $_POST['issue_date'] ?: null, $_POST['expiry_date'] ?: null,
+            $_POST['status'], $_POST['notes'], $details_json
         ]);
-        $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة بنجاح.'];
+        $new_doc_id = $pdo->lastInsertId();
+
+        // 2. (جديد) حفظ الكيانات المرتبطة
+        if (isset($_POST['links']) && is_array($_POST['links'])) {
+            $sql_link = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
+            $stmt_link = $pdo->prepare($sql_link);
+            
+            foreach ($_POST['links'] as $link) {
+                if (!empty($link['entity_type']) && !empty($link['entity_id'])) {
+                    $stmt_link->execute([$new_doc_id, $link['entity_type'], $link['entity_id']]);
+                }
+            }
+        }
+        
+        $pdo->commit();
+        $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة وربطها بنجاح.'];
+
     } catch (Exception $e) {
+        $pdo->rollBack();
         $response['message'] = $e->getMessage();
     }
 }
@@ -266,16 +337,17 @@ elseif ($page === 'documents/handle_edit') {
     try {
         $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
         
-        // (مُصحَّح) تمت إضافة الفاصلة الناقصة قبل status
-        $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ? WHERE id = ?";
+        // (مُصحَّح) تم تعديل الاستعلام وعدد المتغيرات ليتطابقا تمامًا
+        $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ?, notes = ? WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-                $_POST['document_name'], // <-- الحقل الجديد
+            $_POST['document_name'],
             $_POST['document_number'],
             $_POST['issue_date'] ?: null,
             $_POST['expiry_date'] ?: null,
             $details_json,
             $_POST['status'],
+            $_POST['notes'],
             $_POST['id']
         ]);
         $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
@@ -297,58 +369,108 @@ elseif ($page === 'documents/handle_edit') {
     }
 
     // --- (جديد) Document Linking AJAX Handlers ---
-    elseif ($page === 'documents/get_entities_for_linking_ajax') {
+        elseif ($page === 'documents/get_entities_for_linking_ajax') {
         $type = $_GET['type'] ?? '';
+        $branch_id = $_GET['branch_id'] ?? null;
         $data = [];
+        $params = [];
         $sql = '';
-        
-        switch ($type) {
-            case 'property': $sql = "SELECT id, property_name as text FROM properties WHERE deleted_at IS NULL ORDER BY text"; break;
-            case 'owner': $sql = "SELECT id, owner_name as text FROM owners WHERE deleted_at IS NULL ORDER BY text"; break;
-            case 'client': $sql = "SELECT id, client_name as text FROM clients WHERE deleted_at IS NULL ORDER BY text"; break;
-            case 'supplier': $sql = "SELECT id, supplier_name as text FROM suppliers WHERE deleted_at IS NULL ORDER BY text"; break;
+
+        $branch_condition = '';
+        if ($branch_id) {
+            $params[] = $branch_id;
         }
 
-        if ($sql) { $data = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); }
+        switch ($type) {
+            case 'property': 
+                $sql = "SELECT id, property_name as text FROM properties WHERE deleted_at IS NULL ";
+                if ($branch_id) { $sql .= ' AND branch_id = ?'; }
+                $sql .= " ORDER BY text"; 
+                break;
+            case 'owner':
+                $sql = "SELECT DISTINCT o.id, o.owner_name as text FROM owners o ";
+                if ($branch_id) { $sql .= " JOIN owner_branches ob ON o.id = ob.owner_id WHERE o.deleted_at IS NULL AND ob.branch_id = ?"; }
+                else { $sql .= " WHERE o.deleted_at IS NULL"; }
+                $sql .= " ORDER BY text";
+                break;
+            case 'client':
+                $sql = "SELECT DISTINCT c.id, c.client_name as text FROM clients c ";
+                if ($branch_id) { $sql .= " JOIN client_branches cb ON c.id = cb.client_id WHERE c.deleted_at IS NULL AND cb.branch_id = ?"; }
+                else { $sql .= " WHERE c.deleted_at IS NULL"; }
+                $sql .= " ORDER BY text";
+                break;
+            case 'supplier':
+                $sql = "SELECT DISTINCT s.id, s.supplier_name as text FROM suppliers s ";
+                if ($branch_id) { $sql .= " JOIN supplier_branches sb ON s.id = sb.supplier_id WHERE s.deleted_at IS NULL AND sb.branch_id = ?"; }
+                else { $sql .= " WHERE s.deleted_at IS NULL"; }
+                $sql .= " ORDER BY text";
+                break;
+        }
+        
+        if ($sql) { 
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data);
         exit();
     }
     
-        elseif ($page === 'documents/get_linked_entities_ajax') {
+           elseif ($page === 'documents/get_linked_entities_ajax') {
         header('Content-Type: text/html; charset=utf-8');
         $doc_id = $_GET['doc_id'] ?? 0;
-        $sql = "SELECT * FROM entity_documents WHERE document_id = ?";
+        
+        // 1. جلب كل الروابط الأساسية
+        $sql = "SELECT id, entity_type, entity_id FROM entity_documents WHERE document_id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$doc_id]);
-        $links = $stmt->fetchAll();
+        $links = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 2. قاموس لترجمة نوع الكيان
+        $entity_type_names = ['property' => 'عقار', 'owner' => 'مالك', 'client' => 'عميل', 'supplier' => 'مورد', 'branch' => 'فرع'];
         
-        echo '<table class="table table-sm table-hover mb-0">';
-        echo '<thead><tr><th>نوع الكيان</th><th>اسم الكيان</th><th class="w-1"></th></tr></thead><tbody>';
+        // 3. بناء جدول HTML
+        echo '<table class="table table-sm table-hover table-striped mb-0">';
+        echo '<thead><tr><th>الفرع</th><th>نوع الكيان</th><th>اسم الكيان</th><th class="w-1"></th></tr></thead><tbody>';
         
         if (empty($links)) {
-            echo '<tr><td colspan="3" class="text-center text-muted p-3">لم يتم ربط أي كيانات بهذه الوثيقة بعد.</td></tr>';
+            echo '<tr><td colspan="4" class="text-center text-muted p-3">لم يتم ربط أي كيانات.</td></tr>';
         } else {
             foreach ($links as $link) {
                 $entity_name = 'غير معروف (ID: ' . $link['entity_id'] . ')';
+                $branch_name = '<span class="text-muted">—</span>'; // قيمة افتراضية للفرع
                 $table_name = '';
-                $column_name = '';
-
+                $name_column = '';
+                
+                // 4. تحديد الجدول والعمود لجلب الاسم
                 switch ($link['entity_type']) {
-                    case 'property': $table_name = 'properties'; $column_name = 'property_name'; break;
-                    case 'owner':    $table_name = 'owners';     $column_name = 'owner_name'; break;
-                    case 'client':   $table_name = 'clients';    $column_name = 'client_name'; break;
-                    case 'supplier': $table_name = 'suppliers';  $column_name = 'supplier_name'; break;
+                    case 'property': $table_name = 'properties'; $name_column = 'property_name'; break;
+                    case 'owner':    $table_name = 'owners';     $name_column = 'owner_name'; break;
+                    case 'client':   $table_name = 'clients';    $name_column = 'client_name'; break;
+                    case 'supplier': $table_name = 'suppliers';  $name_column = 'supplier_name'; break;
+                    case 'branch':   $table_name = 'branches';   $name_column = 'branch_name'; break;
                 }
 
+                // 5. جلب اسم الكيان والفرع المرتبط به
                 if ($table_name) {
-                    $name_stmt = $pdo->prepare("SELECT {$column_name} FROM {$table_name} WHERE id = ?");
+                    // جلب اسم الكيان
+                    $name_stmt = $pdo->prepare("SELECT {$name_column} FROM {$table_name} WHERE id = ?");
                     $name_stmt->execute([$link['entity_id']]);
                     $entity_name = $name_stmt->fetchColumn() ?: $entity_name;
+
+                    // جلب اسم الفرع (يعمل للعقارات حاليًا، ويمكن توسيعه)
+                    if ($link['entity_type'] === 'property') {
+                        $branch_stmt = $pdo->prepare("SELECT b.branch_name FROM branches b JOIN properties p ON b.id = p.branch_id WHERE p.id = ?");
+                        $branch_stmt->execute([$link['entity_id']]);
+                        $branch_name = $branch_stmt->fetchColumn() ?: $branch_name;
+                    }
                 }
                 
+                // 6. طباعة الصف في الجدول
                 echo '<tr>';
-                echo '<td><span class="badge bg-secondary-lt">' . htmlspecialchars($link['entity_type']) . '</span></td>';
+                echo '<td>' . htmlspecialchars($branch_name) . '</td>';
+                echo '<td><span class="badge bg-secondary-lt">' . htmlspecialchars($entity_type_names[$link['entity_type']] ?? $link['entity_type']) . '</span></td>';
                 echo '<td>' . htmlspecialchars($entity_name) . '</td>';
                 echo '<td><a href="#" class="btn btn-sm btn-ghost-danger delete-link-btn" data-link-id="' . $link['id'] . '">حذف</a></td>';
                 echo '</tr>';
@@ -371,7 +493,67 @@ elseif ($page === 'documents/handle_edit') {
         $response = ['success' => true];
     }
 
+    // --- Users AJAX Handlers ---
+elseif ($page === 'users/handle_add') {
+    $pdo->beginTransaction();
+    try {
+        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_POST['full_name'], $_POST['username'], $_POST['email'], $_POST['mobile'], $hashed_password, $_POST['role_id']]);
+        $user_id = $pdo->lastInsertId();
 
+        // حفظ الفروع المرتبطة
+        if (!empty($_POST['branches'])) {
+            $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
+            $branch_stmt = $pdo->prepare($branch_sql);
+            foreach ($_POST['branches'] as $branch_id) {
+                $branch_stmt->execute([$user_id, $branch_id]);
+            }
+        }
+        $pdo->commit();
+        $response = ['success' => true, 'message' => 'تم إضافة المستخدم بنجاح.'];
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $response['message'] = $e->getMessage();
+    }
+}
+elseif ($page === 'users/handle_edit') {
+    $pdo->beginTransaction();
+    try {
+        $user_id = $_POST['id'];
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        
+        // تحديث البيانات الأساسية
+        $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=? WHERE id=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_POST['full_name'], $_POST['username'], $_POST['email'], $_POST['mobile'], $_POST['role_id'], $is_active, $user_id]);
+
+        // تحديث كلمة المرور فقط إذا لم تكن فارغة
+        if (!empty($_POST['password'])) {
+            $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $pw_stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+            $pw_stmt->execute([$hashed_password, $user_id]);
+        }
+
+        // تحديث الفروع (حذف القديم ثم إضافة الجديد)
+        $delete_stmt = $pdo->prepare("DELETE FROM user_branches WHERE user_id = ?");
+        $delete_stmt->execute([$user_id]);
+        if (!empty($_POST['branches'])) {
+            $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
+            $branch_stmt = $pdo->prepare($branch_sql);
+            foreach ($_POST['branches'] as $branch_id) {
+                $branch_stmt->execute([$user_id, $branch_id]);
+            }
+        }
+
+        $pdo->commit();
+        $response = ['success' => true, 'message' => 'تم تحديث المستخدم بنجاح.'];
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $response['message'] = $e->getMessage();
+    }
+}
 
 
     } catch (PDOException $e) {
@@ -387,6 +569,7 @@ elseif ($page === 'documents/handle_edit') {
 // --- عرض الصفحات ---
 $allowed_pages = [
     'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
+    'login'             => ['path' => 'login/login_view.php', 'title' => 'تسجيل الدخول'], // <<< أضف هذا السطر
     'about'             => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
     // الإدارة الأساسية
     'owners'            => ['path' => 'owners/owners_view.php', 'title' => 'إدارة الملاك'],
@@ -420,6 +603,8 @@ $allowed_pages = [
     'documents/add_link_ajax'                 => ['path' => ''], // لا يحتاج ملف
     'documents/delete_link_ajax'              => ['path' => ''], // لا يحتاج ملف
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
+    'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
+    'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
@@ -432,25 +617,35 @@ $allowed_pages = [
     
 ];
 
-$page_path = null;
-$page_title = "الصفحة غير موجودة";
-if (isset($allowed_pages[$page])) {
-    $page_path = __DIR__ . '/src/modules/' . $allowed_pages[$page]['path'];
-    $page_title = $allowed_pages[$page]['title'];
-}
+$page_path_suffix = $allowed_pages[$page]['path'] ?? null;
+$page_title = $allowed_pages[$page]['title'] ?? 'الصفحة غير موجودة';
 
-ob_start();
-if (isset($_GET['view_only'])) {
-    if ($page_path && file_exists($page_path)) { require $page_path; }
-} else {
-    if ($page_path && file_exists($page_path)) { require $page_path; } 
-    else { http_response_code(404); echo "<h1>404 - Page Not Found</h1>"; }
+// إذا كانت الصفحة عامة (مثل تسجيل الدخول)، اعرضها مباشرة
+if (in_array($page, $public_pages) && $page !== 'handle_login') {
+    $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
+    if (file_exists($page_path)) {
+        require $page_path;
+    } else {
+        echo "404 - Page not found.";
+    }
+} 
+// إذا كانت نافذة منبثقة فقط
+elseif (isset($_GET['view_only'])) {
+    $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
+    if ($page_path && file_exists($page_path)) {
+        require $page_path;
+    }
 }
-$page_content = ob_get_clean();
-
-if (isset($_GET['view_only'])) {
-    echo $page_content;
-    exit();
+// إذا كانت صفحة محمية عادية
+else {
+    ob_start();
+    $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
+    if ($page_path && file_exists($page_path)) {
+        require $page_path;
+    } else {
+        http_response_code(404);
+        echo "<h1>404 - Page Not Found</h1>";
+    }
+    $page_content = ob_get_clean();
+    require __DIR__ . '/templates/layout.php';
 }
-
-require __DIR__ . '/templates/layout.php';

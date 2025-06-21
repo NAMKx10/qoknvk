@@ -62,7 +62,7 @@
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="#" class="dropdown-item">تسجيل الخروج</a>
+                <a href="logout.php" class="dropdown-item">تسجيل الخروج</a>
               </div>
             </div>
           </div>
