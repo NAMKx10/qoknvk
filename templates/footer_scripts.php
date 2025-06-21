@@ -141,5 +141,27 @@ $(document).ready(function() {
         $('html, body').animate({ scrollTop: $(document).height() }, 'smooth');
     });
 
+        // (جديد) منطق تأكيد الحذف النهائي
+    $('body').on('click', '.confirm-force-delete', function(e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        Swal.fire({
+            title: 'هل أنت متأكد تمامًا؟',
+            text: "سيتم حذف هذا العنصر نهائيًا! لا يمكن التراجع عن هذا الإجراء.",
+            icon: 'error', // أيقونة خطأ للتأكيد على خطورة الإجراء
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'نعم، قم بالحذف النهائي!',
+            cancelButtonText: 'إلغاء'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    });
+
+
+
 });
 </script>

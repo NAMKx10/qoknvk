@@ -498,9 +498,16 @@ elseif ($page === 'users/handle_add') {
     $pdo->beginTransaction();
     try {
         $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id) VALUES (?, ?, ?, ?, ?, ?)";
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
+        $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_POST['full_name'], $_POST['username'], $_POST['email'], $_POST['mobile'], $hashed_password, $_POST['role_id']]);
+$stmt->execute([
+    $_POST['full_name'], $_POST['username'], $_POST['email'], 
+    $_POST['mobile'], $hashed_password, $_POST['role_id'],
+    $is_active, 
+    $created_at
+]);
         $user_id = $pdo->lastInsertId();
 
         // حفظ الفروع المرتبطة
@@ -525,10 +532,16 @@ elseif ($page === 'users/handle_edit') {
         $is_active = isset($_POST['is_active']) ? 1 : 0;
         
         // تحديث البيانات الأساسية
-        $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=? WHERE id=?";
+        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
+        $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=?, created_at=? WHERE id=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_POST['full_name'], $_POST['username'], $_POST['email'], $_POST['mobile'], $_POST['role_id'], $is_active, $user_id]);
-
+        $stmt->execute([
+    $_POST['full_name'], $_POST['username'], $_POST['email'], 
+    $_POST['mobile'], $_POST['role_id'], $is_active,
+    $created_at, 
+    $user_id
+]);
+        
         // تحديث كلمة المرور فقط إذا لم تكن فارغة
         if (!empty($_POST['password'])) {
             $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -554,6 +567,72 @@ elseif ($page === 'users/handle_edit') {
         $response['message'] = $e->getMessage();
     }
 }
+
+elseif ($page === 'users/delete') {
+    if (isset($_GET['id'])) {
+        // لا تقم بحذف المستخدم رقم 1 (المدير الخارق)
+        if ($_GET['id'] == 1) {
+            // يمكنك هنا إضافة رسالة خطأ إذا أردت
+        } else {
+            $sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_GET['id']]);
+        }
+    }
+    header("Location: index.php?page=users");
+    exit();
+}
+
+    // --- (جديد) معالجات الأرشيف ---
+    elseif ($page === 'archive/restore') {
+        if (isset($_GET['table']) && isset($_GET['id'])) {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']); // تنظيف اسم الجدول للأمان
+            $id = (int)$_GET['id'];
+            $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+        }
+        header("Location: index.php?page=archive");
+        exit();
+    }
+    elseif ($page === 'archive/force_delete') {
+        if (isset($_GET['table']) && isset($_GET['id'])) {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+            $id = (int)$_GET['id'];
+            $sql = "DELETE FROM `{$table}` WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+        }
+        header("Location: index.php?page=archive");
+        exit();
+    }
+
+        // --- (جديد) معالج الإجراءات الجماعية للأرشيف ---
+    elseif ($page === 'archive/batch_action') {
+        if (isset($_POST['table']) && isset($_POST['action']) && isset($_POST['ids'])) {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['table']);
+            $action = $_POST['action'];
+            $ids = $_POST['ids'];
+
+            // التأكد من أن ids هي مصفوفة من الأرقام الصحيحة للأمان
+            $ids = array_map('intval', $ids);
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            
+            $sql = '';
+            if ($action === 'restore') {
+                $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id IN ({$placeholders})";
+            } elseif ($action === 'force_delete') {
+                $sql = "DELETE FROM `{$table}` WHERE id IN ({$placeholders})";
+            }
+
+            if ($sql) {
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($ids);
+            }
+        }
+        header("Location: index.php?page=archive");
+        exit();
+    }
 
 
     } catch (PDOException $e) {
@@ -605,6 +684,7 @@ $allowed_pages = [
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
+    'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'], // <<< أضف هذا السطر
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
