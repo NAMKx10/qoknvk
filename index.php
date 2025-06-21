@@ -263,13 +263,14 @@ elseif ($page === 'documents/handle_edit') {
     try {
         $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
         
-        $sql = "UPDATE documents SET document_number = ?, issue_date = ?, expiry_date = ?, details = ? WHERE id = ?";
+        $sql = "UPDATE documents SET document_number = ?, issue_date = ?, expiry_date = ?, details = ? status = ? WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $_POST['document_number'],
             $_POST['issue_date'] ?: null,
             $_POST['expiry_date'] ?: null,
             $details_json,
+             $_POST['status'], // <--- هذا الحقل مهم
             $_POST['id']
         ]);
         $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
