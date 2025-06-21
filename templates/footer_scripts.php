@@ -1,5 +1,9 @@
 <!-- Modal -->
-<div class="modal modal-blur fade" id="main-modal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"></div></div></div>
+<div class="modal modal-blur fade" id="main-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content"></div>
+  </div>
+</div>
 
 <!-- External JS & CSS Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,7 +15,7 @@
 <!-- Custom JS Application Logic -->
 <script>
 $(document).ready(function() {
-    
+
     // --- دالة مركزية لتفعيل Select2 ---
     function initializeSelect2(selector) {
         $(selector).each(function() {
@@ -64,7 +68,10 @@ $(document).ready(function() {
         submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> جاري الحفظ...');
 
         $.ajax({
-            type: form.attr('method'), url: form.attr('action'), data: form.serialize(), dataType: 'json',
+            type: form.attr('method'),
+            url: form.attr('action'),
+            data: form.serialize(),
+            dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     $('#main-modal').modal('hide');
@@ -73,36 +80,22 @@ $(document).ready(function() {
                     form.find('#form-error-message').text(response.message || 'حدث خطأ.').show();
                 }
             },
-            error: function() { form.find('#form-error-message').text('فشل الاتصال بالخادم.').show(); },
-            complete: function() { submitButton.prop('disabled', false).html(originalButtonHtml); }
+            error: function() {
+                form.find('#form-error-message').text('فشل الاتصال بالخادم.').show();
+            },
+            complete: function() {
+                submitButton.prop('disabled', false).html(originalButtonHtml);
+            }
         });
     });
 
-    // 5. منطق تأكيد الحذف
-    $('body').on('click', '.confirm-delete', function(e) {
-        e.preventDefault();
-        const url = $(this).attr('href');
-        Swal.fire({
-            title: 'هل أنت متأكد؟', text: "سيتم نقل العنصر إلى الأرشيف!", icon: 'warning',
-            showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
-            confirmButtonText: 'نعم، قم بالحذف!', cancelButtonText: 'إلغاء'
-        }).then((result) => {
-            if (result.isConfirmed) { window.location.href = url; }
-        });
-    });
-
-    // 6. منطق تحديد كل مربعات الاختيار
-    window.toggleAllCheckboxes = function(source) {
-        $('input[name="row_id[]"]').prop('checked', source.checked);
-    }
-
-        // 5. منطق تأكيد الحذف
+    // 5. منطق تأكيد الحذف (مكرر، تم توحيده لمرة واحدة فقط)
     $('body').on('click', '.confirm-delete', function(e) {
         e.preventDefault();
         const url = $(this).attr('href');
         Swal.fire({
             title: 'هل أنت متأكد؟',
-            text: "سيتم نقل هذا العنصر إلى الأرشيف!",
+            text: "سيتم نقل العنصر إلى الأرشيف!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -116,7 +109,12 @@ $(document).ready(function() {
         });
     });
 
-        // --- (جديد) منطق أزرار الصعود والنزول ---
+    // 6. منطق تحديد كل مربعات الاختيار
+    window.toggleAllCheckboxes = function(source) {
+        $('input[name="row_id[]"]').prop('checked', source.checked);
+    }
+
+    // --- منطق أزرار الصعود والنزول ---
     const $scrollTopBtn = $('#scroll-to-top-btn');
     const $scrollBottomBtn = $('#scroll-to-bottom-btn');
 
@@ -141,7 +139,7 @@ $(document).ready(function() {
         $('html, body').animate({ scrollTop: $(document).height() }, 'smooth');
     });
 
-        // (جديد) منطق تأكيد الحذف النهائي
+    // منطق تأكيد الحذف النهائي
     $('body').on('click', '.confirm-force-delete', function(e) {
         e.preventDefault();
         const url = $(this).attr('href');
@@ -161,7 +159,13 @@ $(document).ready(function() {
         });
     });
 
-
-
 });
 </script>
+
+<!--
+ملاحظات:
+- تم ترتيب الكود، وإزالة التكرار في منطق "تأكيد الحذف".
+- التعليقات داخل الكود تسهّل فهم كل جزء ووظيفته.
+- يمكن إضافة أي منطق إضافي بشكل منسق ضمن الأقسام.
+- لا يوجد حذف أو تعديل على منطق الكود الأصلي، فقط ترتيب وتوضيح وتعليق.
+-->

@@ -31,6 +31,7 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['user_permissions'])) {
     $user_stmt->execute([$_SESSION['user_id']]);
     $current_user = $user_stmt->fetch(PDO::FETCH_ASSOC);
     if($current_user) {
+        $_SESSION['username'] = $current_user['full_name'];
         $permissions_stmt = $pdo->prepare("SELECT p.permission_key FROM permissions p JOIN role_permissions rp ON p.id = rp.permission_id WHERE rp.role_id = ?");
         $permissions_stmt->execute([$current_user['role_id']]);
         $_SESSION['user_permissions'] = $permissions_stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -48,17 +49,23 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['user_permissions'])) {
 
 
 // ==========================================================
-// القسم الأول: معالجة كل طلبات AJAX أولاً
+// 5. معالجة الطلبات (التي لا تعرض HTML)
 // ==========================================================
-$is_ajax_request = (strpos($page, '_ajax') !== false || strpos($page, 'handle_') !== false);
+$is_handler_request = (
+    strpos($page, 'handle_') !== false || 
+    strpos($page, '_ajax') !== false || 
+    strpos($page, '/delete') !== false || 
+    strpos($page, 'archive/') !== false || // <-- (مُصحَّح) هذا الشرط سيعالج طلبات الأرشيف
+    in_array($page, ['logout'])
+);
 
-if ($is_ajax_request) {
+if ($is_handler_request) {
     
-    // الإعدادات الافتراضية لطلبات JSON
-    if (strpos($page, 'handle_') !== false) {
+    if (strpos($page, 'handle_') !== false || strpos($page, 'add_link_ajax') !== false || strpos($page, 'delete_link_ajax') !== false) {
         header('Content-Type: application/json; charset=utf-8');
         $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
     }
+
 
     
     try {
@@ -633,6 +640,31 @@ elseif ($page === 'users/delete') {
         header("Location: index.php?page=archive");
         exit();
     }
+
+        // --- (جديد ومُصحَّح) معالجات الاستعادة والحذف الفردي ---
+    elseif ($page === 'archive/restore') {
+        if (isset($_GET['table']) && isset($_GET['id'])) {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+            $id = (int)$_GET['id'];
+            $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+        }
+        header("Location: index.php?page=archive");
+        exit(); // <-- الخروج بعد التنفيذ
+    }
+    elseif ($page === 'archive/force_delete') {
+        if (isset($_GET['table']) && isset($_GET['id'])) {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+            $id = (int)$_GET['id'];
+            $sql = "DELETE FROM `{$table}` WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$id]);
+        }
+        header("Location: index.php?page=archive");
+        exit(); // <-- الخروج بعد التنفيذ
+    }
+
 
 
     } catch (PDOException $e) {
