@@ -665,7 +665,53 @@ elseif ($page === 'users/delete') {
         exit(); // <-- الخروج بعد التنفيذ
     }
 
-
+// --- Roles & Permissions Handlers ---
+    // --- (جديد) معالجات الأدوار ---
+    elseif ($page === 'roles/handle_add') {
+        $sql = "INSERT INTO roles (role_name, description) VALUES (?, ?)";
+        $stmt = $pdo->prepare($sql);
+        if ($stmt->execute([$_POST['role_name'], $_POST['description']])) {
+            $response = ['success' => true, 'message' => 'تم إضافة الدور بنجاح.'];
+        } else {
+            $response = ['success' => false, 'message' => 'فشل إضافة الدور.'];
+        }
+        echo json_encode($response);
+        exit();
+    }
+    elseif ($page === 'roles/handle_edit_permissions') {
+        $role_id = $_POST['role_id'];
+        $permissions = $_POST['permissions'] ?? [];
+        if ($role_id != 1) { // لا تسمح بتعديل المدير الخارق
+            $pdo->beginTransaction();
+            try {
+                $delete_stmt = $pdo->prepare("DELETE FROM role_permissions WHERE role_id = ?");
+                $delete_stmt->execute([$role_id]);
+                if (!empty($permissions)) {
+                    $insert_sql = "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)";
+                    $insert_stmt = $pdo->prepare($insert_sql);
+                    foreach ($permissions as $permission_id) {
+                        $insert_stmt->execute([$role_id, $permission_id]);
+                    }
+                }
+                $pdo->commit();
+            } catch (Exception $e) {
+                $pdo->rollBack();
+            }
+        }
+        header("Location: index.php?page=roles/edit&id=" . $role_id);
+        exit();
+    }
+    elseif ($page === 'roles/delete') {
+        $role_id = $_GET['id'] ?? 0;
+        // لا تسمح بحذف أول دورين (المدير الخارق والمدير)
+        if ($role_id > 2) {
+            $sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$role_id]);
+        }
+        header("Location: index.php?page=roles");
+        exit();
+    }
 
     } catch (PDOException $e) {
         $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();

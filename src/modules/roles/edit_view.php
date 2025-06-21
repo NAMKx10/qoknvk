@@ -1,60 +1,75 @@
 <?php
+// src/modules/roles/edit_view.php (الإصدار المطور)
+
 if (!isset($_GET['id'])) { header('Location: index.php?page=roles'); exit(); }
 $role_id = $_GET['id'];
 
-// جلب معلومات الدور
 $role_stmt = $pdo->prepare("SELECT * FROM roles WHERE id = ?");
 $role_stmt->execute([$role_id]);
 $role = $role_stmt->fetch();
 if (!$role) { die("Role not found."); }
 
-// جلب كل الصلاحيات المتاحة وتجميعها حسب المجموعة الجديدة
 $all_permissions_stmt = $pdo->query("
     SELECT p.id, p.description, pg.group_name
     FROM permissions p
     JOIN permission_groups pg ON p.group_id = pg.id
     WHERE p.deleted_at IS NULL AND pg.deleted_at IS NULL
-    ORDER BY pg.group_name, p.id
+    ORDER BY pg.display_order, p.id
 ");
 $all_permissions = [];
 foreach($all_permissions_stmt->fetchAll() as $perm) {
     $all_permissions[$perm['group_name']][] = $perm;
 }
 
-// جلب الصلاحيات الحالية لهذا الدور
 $current_permissions_stmt = $pdo->prepare("SELECT permission_id FROM role_permissions WHERE role_id = ?");
 $current_permissions_stmt->execute([$role_id]);
 $current_permissions = $current_permissions_stmt->fetchAll(PDO::FETCH_COLUMN);
 ?>
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">تعديل صلاحيات الدور: <?php echo htmlspecialchars($role['role_name']); ?></h1>
-    <a href="index.php?page=roles" class="btn btn-sm btn-outline-secondary">العودة لقائمة الأدوار</a>
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">تعديل صلاحيات الدور: <span class="text-primary"><?= htmlspecialchars($role['role_name']) ?></span></h2>
+                <div class="text-muted mt-1"><?= htmlspecialchars($role['description']) ?></div>
+            </div>
+            <div class="col-auto ms-auto d-print-none">
+                <a href="index.php?page=roles" class="btn"><i class="ti ti-arrow-left me-2"></i>العودة لقائمة الأدوار</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<form method="POST" action="index.php?page=roles/handle_edit">
-    <input type="hidden" name="role_id" value="<?php echo $role['id']; ?>">
-    <?php foreach($all_permissions as $group => $permissions): ?>
-        <fieldset class="mb-4">
-            <legend class="h5"><?php echo htmlspecialchars($group); ?></legend>
-            <div class="row">
-                <?php foreach($permissions as $permission): ?>
-                    <div class="col-md-4">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="permissions[]" value="<?php echo $permission['id']; ?>" id="perm-<?php echo $permission['id']; ?>"
-                                <?php if(in_array($permission['id'], $current_permissions)) echo 'checked'; ?>
-                                <?php if($role['id'] == 1) echo 'disabled'; // Super Admin cannot be edited ?> >
-                            <label class="form-check-label" for="perm-<?php echo $permission['id']; ?>">
-                                <?php echo htmlspecialchars($permission['description']); ?>
-                            </label>
+<div class="page-body">
+    <div class="container-xl">
+        <form method="POST" action="index.php?page=roles/handle_edit_permissions">
+            <input type="hidden" name="role_id" value="<?= $role['id'] ?>">
+            <div class="row row-cards">
+                <?php foreach($all_permissions as $group => $permissions): ?>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title"><?= htmlspecialchars($group) ?></h3></div>
+                            <div class="card-body">
+                                <?php foreach($permissions as $permission): ?>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="permissions[]" value="<?= $permission['id'] ?>" id="perm-<?= $permission['id'] ?>"
+                                            <?= in_array($permission['id'], $current_permissions) ? 'checked' : '' ?>
+                                            <?= ($role['id'] == 1) ? 'disabled' : '' ?> >
+                                        <label class="form-check-label" for="perm-<?= $permission['id'] ?>"><?= htmlspecialchars($permission['description']) ?></label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
-        </fieldset>
-    <?php endforeach; ?>
-    <hr>
-    <?php if($role['id'] != 1): // Super Admin cannot be edited ?>
-    <button type="submit" class="btn btn-primary">حفظ الصلاحيات</button>
-    <?php endif; ?>
-</form>
+            <div class="mt-4">
+                <?php if($role['id'] != 1): ?>
+                    <button type="submit" class="btn btn-primary">حفظ الصلاحيات</button>
+                <?php else: ?>
+                    <div class="alert alert-warning">لا يمكن تعديل صلاحيات دور "المدير الخارق".</div>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+</div>
