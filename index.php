@@ -16,10 +16,19 @@ require_once __DIR__ . '/src/core/functions.php';
 // 3. التوجيه (Routing)
 $page = $_GET['page'] ?? 'dashboard';
 
-// --- معالجة طلبات AJAX أولاً ---
-if (strpos($page, 'handle_') !== false) {
-    header('Content-Type: application/json; charset=utf-8');
-    $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
+// ==========================================================
+// القسم الأول: معالجة كل طلبات AJAX أولاً
+// ==========================================================
+$is_ajax_request = (strpos($page, '_ajax') !== false || strpos($page, 'handle_') !== false);
+
+if ($is_ajax_request) {
+    
+    // الإعدادات الافتراضية لطلبات JSON
+    if (strpos($page, 'handle_') !== false) {
+        header('Content-Type: application/json; charset=utf-8');
+        $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
+    }
+
     
     try {
         // --- Branches AJAX Handler ---
@@ -216,19 +225,20 @@ elseif ($page === 'owners/handle_update_branches') {
         exit();
     }
 
-// --- (جديد) معالج جلب مخطط الحقول المخصصة ---
-elseif ($page === 'documents/get_custom_fields_schema_ajax') {
-    $type_key = $_GET['document_type'] ?? '';
-    $sql = "SELECT custom_fields_schema FROM lookup_options WHERE group_key = 'document_type' AND option_key = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$type_key]);
-    $schema_json = $stmt->fetchColumn();
-    
-    header('Content-Type: application/json; charset=utf-8');
-    echo $schema_json ?: '[]';
-    exit(); // مهم جداً الخروج بعد طباعة الـ JSON
-}
+        // --- معالج جلب مخطط الحقول المخصصة ---
+        elseif ($page === 'documents/get_custom_fields_schema_ajax') {
+            $type_key = $_GET['document_type'] ?? '';
+            $sql = "SELECT custom_fields_schema FROM lookup_options WHERE group_key = 'documents_type' AND option_key = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$type_key]);
+            $schema_json = $stmt->fetchColumn();
+            
+            header('Content-Type: application/json; charset=utf-8');
+            echo $schema_json ?: '[]';
+            exit(); // مهم جداً
+        }
 
+    
 // --- (جديد) معالج حفظ الوثيقة الجديدة ---
 elseif ($page === 'documents/handle_add') {
     try {
@@ -267,6 +277,95 @@ elseif ($page === 'documents/handle_edit') {
         $response['message'] = $e->getMessage();
     }
 }
+
+// --- (جديد) معالج حذف الوثيقة الجديدة ---
+
+    elseif ($page === 'documents/delete') {
+        if (isset($_GET['id'])) {
+            $sql = "UPDATE documents SET deleted_at = NOW() WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_GET['id']]);
+        }
+        header("Location: index.php?page=documents");
+        exit();
+    }
+
+    // --- (جديد) Document Linking AJAX Handlers ---
+    elseif ($page === 'documents/get_entities_for_linking_ajax') {
+        $type = $_GET['type'] ?? '';
+        $data = [];
+        $sql = '';
+        
+        switch ($type) {
+            case 'property': $sql = "SELECT id, property_name as text FROM properties WHERE deleted_at IS NULL ORDER BY text"; break;
+            case 'owner': $sql = "SELECT id, owner_name as text FROM owners WHERE deleted_at IS NULL ORDER BY text"; break;
+            case 'client': $sql = "SELECT id, client_name as text FROM clients WHERE deleted_at IS NULL ORDER BY text"; break;
+            case 'supplier': $sql = "SELECT id, supplier_name as text FROM suppliers WHERE deleted_at IS NULL ORDER BY text"; break;
+        }
+
+        if ($sql) { $data = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); }
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($data);
+        exit();
+    }
+    
+        elseif ($page === 'documents/get_linked_entities_ajax') {
+        header('Content-Type: text/html; charset=utf-8');
+        $doc_id = $_GET['doc_id'] ?? 0;
+        $sql = "SELECT * FROM entity_documents WHERE document_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$doc_id]);
+        $links = $stmt->fetchAll();
+        
+        echo '<table class="table table-sm table-hover mb-0">';
+        echo '<thead><tr><th>نوع الكيان</th><th>اسم الكيان</th><th class="w-1"></th></tr></thead><tbody>';
+        
+        if (empty($links)) {
+            echo '<tr><td colspan="3" class="text-center text-muted p-3">لم يتم ربط أي كيانات بهذه الوثيقة بعد.</td></tr>';
+        } else {
+            foreach ($links as $link) {
+                $entity_name = 'غير معروف (ID: ' . $link['entity_id'] . ')';
+                $table_name = '';
+                $column_name = '';
+
+                switch ($link['entity_type']) {
+                    case 'property': $table_name = 'properties'; $column_name = 'property_name'; break;
+                    case 'owner':    $table_name = 'owners';     $column_name = 'owner_name'; break;
+                    case 'client':   $table_name = 'clients';    $column_name = 'client_name'; break;
+                    case 'supplier': $table_name = 'suppliers';  $column_name = 'supplier_name'; break;
+                }
+
+                if ($table_name) {
+                    $name_stmt = $pdo->prepare("SELECT {$column_name} FROM {$table_name} WHERE id = ?");
+                    $name_stmt->execute([$link['entity_id']]);
+                    $entity_name = $name_stmt->fetchColumn() ?: $entity_name;
+                }
+                
+                echo '<tr>';
+                echo '<td><span class="badge bg-secondary-lt">' . htmlspecialchars($link['entity_type']) . '</span></td>';
+                echo '<td>' . htmlspecialchars($entity_name) . '</td>';
+                echo '<td><a href="#" class="btn btn-sm btn-ghost-danger delete-link-btn" data-link-id="' . $link['id'] . '">حذف</a></td>';
+                echo '</tr>';
+            }
+        }
+        echo '</tbody></table>';
+        exit();
+    }
+
+    elseif ($page === 'documents/add_link_ajax') {
+        $sql = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_POST['doc_id'], $_POST['entity_type'], $_POST['entity_id']]);
+        $response = ['success' => true];
+    }
+    elseif ($page === 'documents/delete_link_ajax') {
+        $sql = "DELETE FROM entity_documents WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_POST['link_id']]);
+        $response = ['success' => true];
+    }
+
+
 
 
     } catch (PDOException $e) {
@@ -309,6 +408,11 @@ $allowed_pages = [
     'documents'         => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
     'documents/add'     => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
     'documents/edit'    => ['path' => 'documents/edit_view.php', 'title' => 'تعديل وثيقة'],
+    'documents/get_custom_fields_schema_ajax' => ['path' => ''], // لا يحتاج ملف، يعالج مباشرة
+    'documents/get_entities_for_linking_ajax' => ['path' => ''], // لا يحتاج ملف
+    'documents/get_linked_entities_ajax'      => ['path' => ''], // لا يحتاج ملف
+    'documents/add_link_ajax'                 => ['path' => ''], // لا يحتاج ملف
+    'documents/delete_link_ajax'              => ['path' => ''], // لا يحتاج ملف
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
