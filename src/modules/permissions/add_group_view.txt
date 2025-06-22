@@ -1,0 +1,20 @@
+<div id="form-error-message" class="alert alert-danger" style="display:none;"></div>
+<form method="POST" action="index.php?page=permissions/handle_add_group_ajax" class="ajax-form">
+    <div class="mb-3">
+        <label for="group_name" class="form-label">اسم المجموعة (للعرض)</label>
+        <input type="text" class="form-control" id="group_name" name="group_name" placeholder="مثال: إدارة العقود" required>
+    </div>
+    <div class="mb-3">
+        <label for="group_key" class="form-label">مفتاح المجموعة (انجليزي، فريد)</label>
+        <input type="text" class="form-control" id="group_key" name="group_key" placeholder="مثال: contracts_management" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">وصف المجموعة (اختياري)</label>
+        <textarea class="form-control" id="description" name="description" rows="2" placeholder="وصف موجز لمحتوى هذه المجموعة..."></textarea>
+    </div>
+    <hr class="my-4">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">إلغاء</button>
+        <button type="submit" class="btn btn-primary">حفظ المجموعة</button>
+    </div>
+</form>
