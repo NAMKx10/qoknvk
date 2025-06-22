@@ -1,7 +1,15 @@
 <?php
 // src/modules/permissions/permissions_view.php (الإصدار المطور)
 
-$groups_stmt = $pdo->query("SELECT * FROM permission_groups WHERE deleted_at IS NULL ORDER BY id ASC");
+// جلب المجموعات مع عدد الصلاحيات في كل منها
+$groups_stmt = $pdo->query("
+    SELECT pg.*, COUNT(p.id) as permissions_count
+    FROM permission_groups pg
+    LEFT JOIN permissions p ON pg.id = p.group_id AND p.deleted_at IS NULL
+    WHERE pg.deleted_at IS NULL
+    GROUP BY pg.id
+    ORDER BY pg.id ASC
+");
 $groups = $groups_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $active_group_id = $_GET['group_id'] ?? ($groups[0]['id'] ?? 0);
@@ -33,8 +41,9 @@ $active_group = array_values(array_filter($groups, fn($g) => $g['id'] == $active
         <div class="col-lg-4">
             <div class="list-group mb-3">
                 <?php foreach ($groups as $group): ?>
-                    <a href="index.php?page=permissions&group_id=<?= $group['id'] ?>" class="list-group-item list-group-item-action <?= ($group['id'] == $active_group_id) ? 'active' : '' ?>">
+                    <a href="index.php?page=permissions&group_id=<?= $group['id'] ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center <?= ($group['id'] == $active_group_id) ? 'active' : '' ?>">
                         <?= htmlspecialchars($group['group_name']) ?>
+                        <span class="badge bg-primary-lt"><?= $group['permissions_count'] ?></span>
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -46,6 +55,7 @@ $active_group = array_values(array_filter($groups, fn($g) => $g['id'] == $active
                         <h3 class="card-title"><?= htmlspecialchars($active_group['group_name']) ?></h3>
                         <div class="card-actions">
                              <a href="#" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=permissions/edit_group&id=<?= $active_group_id ?>&view_only=true">تعديل المجموعة</a>
+                             <a href="index.php?page=permissions/delete_group&id=<?= $active_group['id'] ?>" class="btn btn-outline-danger confirm-delete">حذف المجموعة</a>
                              <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=permissions/add&group_id=<?= $active_group_id ?>&view_only=true"><i class="ti ti-plus me-1"></i> إضافة صلاحية</a>
                         </div>
                     </div>
@@ -60,8 +70,22 @@ $active_group = array_values(array_filter($groups, fn($g) => $g['id'] == $active
                                         <td><?= htmlspecialchars($permission['description']) ?></td>
                                         <td><code><?= htmlspecialchars($permission['permission_key']) ?></code></td>
                                         <td class="text-end">
-                                            <a href="#" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=permissions/edit&id=<?= $permission['id'] ?>&view_only=true">تعديل</a>
-                                        </td>
+    <div class="btn-list flex-nowrap">
+        <!-- زر التعديل (أيقونة) -->
+        <a href="#" class="btn btn-icon" title="تعديل الصلاحية"
+           data-bs-toggle="modal" 
+           data-bs-target="#main-modal" 
+           data-bs-url="index.php?page=permissions/edit&id=<?= $permission['id'] ?>&view_only=true">
+            <i class="ti ti-edit"></i>
+        </a>
+        <!-- زر الحذف (أيقونة) -->
+        <a href="index.php?page=permissions/delete&id=<?= $permission['id'] ?>" 
+           class="btn btn-icon text-danger confirm-delete" 
+           title="حذف الصلاحية">
+            <i class="ti ti-trash"></i>
+        </a>
+    </div>
+</td>
                                     </tr>
                                 <?php endforeach; endif; ?>
                             </tbody>
