@@ -57,8 +57,8 @@ $is_handler_request = (
     strpos($page, 'archive/') !== false || // <-- (مُصحَّح) هذا الشرط سيعالج طلبات الأرشيف
     strpos($page, 'roles/handle_edit_permissions') !== false || // <-- جديد
     strpos($page, 'roles/delete') !== false || // <-- جديد
-    strpos($page, 'permissions/') !== false || // <-- أضف هذا الشرط الجديد
-
+    $page === 'permissions/delete' ||         // <-- الشرط الجديد
+    $page === 'permissions/delete_group' ||  // <-- الشرط الجديد
 
     in_array($page, ['logout'])
 );
@@ -715,14 +715,22 @@ if ($is_handler_request) {
         }
 
     // --- (جديد) Permissions Handlers ---
-    elseif ($page === 'permissions/handle_add_group') {
-        $stmt = $pdo->prepare("INSERT INTO permission_groups (group_name, description, display_order) VALUES (?, ?, ?)");
-        $stmt->execute([$_POST['group_name'], $_POST['description'], $_POST['display_order'] ?? 0]);
+        elseif ($page === 'permissions/handle_add_group') {
+        // (مُصحَّح) إضافة group_key إلى الاستعلام
+        $stmt = $pdo->prepare("INSERT INTO permission_groups (group_name, group_key, description, display_order) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$_POST['group_name'], $_POST['group_key'], $_POST['description'], $_POST['display_order'] ?? 0]);
         $response = ['success' => true, 'message' => 'تمت إضافة المجموعة.'];
     }
-    elseif ($page === 'permissions/handle_edit_group') {
-        $stmt = $pdo->prepare("UPDATE permission_groups SET group_name = ?, description = ?, display_order = ? WHERE id = ?");
-        $stmt->execute([$_POST['group_name'], $_POST['description'], $_POST['display_order'] ?? 0, $_POST['id']]);
+        elseif ($page === 'permissions/handle_edit_group') {
+        // (مُصحَّح) إضافة group_key إلى الاستعلام
+        $stmt = $pdo->prepare("UPDATE permission_groups SET group_name = ?, group_key = ?, description = ?, display_order = ? WHERE id = ?");
+        $stmt->execute([
+            $_POST['group_name'], 
+            $_POST['group_key'], 
+            $_POST['description'], 
+            $_POST['display_order'] ?? 0, 
+            $_POST['id']
+        ]);
         $response = ['success' => true, 'message' => 'تم تحديث المجموعة.'];
     }
     elseif ($page === 'permissions/delete_group') {
@@ -743,15 +751,40 @@ if ($is_handler_request) {
         $stmt->execute([$_POST['permission_key'], $_POST['description'], $_POST['id']]);
         $response = ['success' => true, 'message' => 'تم تحديث الصلاحية.'];
     }
+
+        // --- (جديد ومُصحَّح) معالج حذف صلاحية واحدة ---
     elseif ($page === 'permissions/delete') {
         if (isset($_GET['id'])) {
             $stmt = $pdo->prepare("UPDATE permissions SET deleted_at = NOW() WHERE id = ?");
             $stmt->execute([(int)$_GET['id']]);
         }
+        // العودة إلى نفس المجموعة بعد الحذف
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=permissions'));
         exit();
     }
-        
+    // --- (جديد) معالج حذف مجموعة كاملة ---
+    elseif ($page === 'permissions/delete_group') {
+        if (isset($_GET['id'])) {
+            $group_id = (int)$_GET['id'];
+            $pdo->beginTransaction();
+            try {
+                // أرشفة كل الصلاحيات داخل المجموعة
+                $stmt_perms = $pdo->prepare("UPDATE permissions SET deleted_at = NOW() WHERE group_id = ?");
+                $stmt_perms->execute([$group_id]);
+
+                // أرشفة المجموعة نفسها
+                $stmt_group = $pdo->prepare("UPDATE permission_groups SET deleted_at = NOW() WHERE id = ?");
+                $stmt_group->execute([$group_id]);
+                
+                $pdo->commit();
+            } catch (Exception $e) {
+                $pdo->rollBack();
+            }
+        }
+        // العودة لصفحة الصلاحيات الرئيسية
+        header("Location: index.php?page=permissions");
+        exit();
+    }
 
         } catch (PDOException $e) {
         if(isset($response)) {
