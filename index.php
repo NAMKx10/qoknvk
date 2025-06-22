@@ -753,15 +753,28 @@ if ($is_handler_request) {
     }
         
 
-    } catch (PDOException $e) {
-        $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
+        } catch (PDOException $e) {
+        if(isset($response)) {
+            $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
+        } else {
+            die('خطأ في قاعدة البيانات: ' . $e->getMessage());
+        }
+   
     } catch (Exception $e) {
-        $response['message'] = $e->getMessage();
+        if(isset($response)) {
+            $response['message'] = $e->getMessage();
+        } else {
+            die('خطأ: ' . $e->getMessage());
+        }
     }
     
-    echo json_encode($response);
+    // (مُصحَّح) لا تقم بطباعة الاستجابة إلا إذا كانت موجودة
+    if (isset($response)) {
+        echo json_encode($response);
+    }
     exit();
 }
+
 
 // --- عرض الصفحات ---
 $allowed_pages = [
