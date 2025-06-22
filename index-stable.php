@@ -1,31 +1,23 @@
 <?php
-// ==========================================================================
-// index.php - نقطة الدخول الرئيسية للنظام | تم الترتيب والتنظيم والشرح بالكامل
-// ==========================================================================
+// =================================================================
+// INDEX.PHP - الإصدار النهائي والمصحح بالكامل
+// =================================================================
 
-// --------------------------------------------------------------------------
 // 1. الإعدادات الأساسية
-// --------------------------------------------------------------------------
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// --------------------------------------------------------------------------
 // 2. تضمين الملفات الأساسية
-// --------------------------------------------------------------------------
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/src/core/functions.php';
 
-// --------------------------------------------------------------------------
-// 3. التوجيه (Routing) وتحديد الصفحة المطلوبة
-// --------------------------------------------------------------------------
+// 3. التوجيه (Routing) وتحديد الصفحة
 $page = $_GET['page'] ?? 'dashboard';
 
-// --------------------------------------------------------------------------
+// ==========================================================
 // 4. جدار الحماية والتحقق من الجلسة
-// --------------------------------------------------------------------------
+// ==========================================================
 $public_pages = ['login', 'handle_login', 'logout'];
 
 if (!isset($_SESSION['user_id']) && !in_array($page, $public_pages)) {
@@ -33,22 +25,16 @@ if (!isset($_SESSION['user_id']) && !in_array($page, $public_pages)) {
     exit();
 }
 
-// تحميل الصلاحيات وفروع المستخدم مباشرة بعد تسجيل الدخول
 if (isset($_SESSION['user_id']) && !isset($_SESSION['user_permissions'])) {
     $user_stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $user_stmt->execute([$_SESSION['user_id']]);
     $current_user = $user_stmt->fetch(PDO::FETCH_ASSOC);
-    if ($current_user) {
+    if($current_user) {
         $_SESSION['username'] = $current_user['full_name'];
-        $permissions_stmt = $pdo->prepare("
-            SELECT p.permission_key 
-            FROM permissions p 
-            JOIN role_permissions rp ON p.id = rp.permission_id 
-            WHERE rp.role_id = ?
-        ");
+        $permissions_stmt = $pdo->prepare("SELECT p.permission_key FROM permissions p JOIN role_permissions rp ON p.id = rp.permission_id WHERE rp.role_id = ?");
         $permissions_stmt->execute([$current_user['role_id']]);
         $_SESSION['user_permissions'] = $permissions_stmt->fetchAll(PDO::FETCH_COLUMN);
-
+        
         $branches_stmt = $pdo->prepare("SELECT branch_id FROM user_branches WHERE user_id = ?");
         $branches_stmt->execute([$_SESSION['user_id']]);
         $user_branch_ids = $branches_stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -60,34 +46,26 @@ if (isset($_SESSION['user_id']) && !isset($_SESSION['user_permissions'])) {
     }
 }
 
-// --------------------------------------------------------------------------
-// 5. معالجة الطلبات الخاصة (Handlers & AJAX)
-// --------------------------------------------------------------------------
+
+// ==========================================================
+// 5. معالجة الطلبات (التي لا تعرض HTML)
+// ==========================================================
 $is_handler_request = (
-    // معالجات عامة (إضافة/تعديل/حذف/AJAX)
-    strpos($page, 'handle_') !== false ||
-    strpos($page, '_ajax') !== false ||
-    strpos($page, '/delete') !== false ||
-    strpos($page, 'archive/') !== false ||
-    // معالجات أدوار المستخدمين
-    strpos($page, 'roles/handle_') === 0 ||
-    strpos($page, 'roles/delete') === 0 ||
-    // معالجات صلاحيات النظام
-    strpos($page, 'permissions/handle_') === 0 ||
-    $page === 'permissions/delete' ||
-    $page === 'permissions/delete_group' ||
-    // طلبات الخروج
-    $page === 'logout'
+    strpos($page, 'handle_') !== false || 
+    strpos($page, '_ajax') !== false || 
+    strpos($page, '/delete') !== false || 
+    strpos($page, 'archive/') !== false || // <-- (مُصحَّح) هذا الشرط سيعالج طلبات الأرشيف
+    strpos($page, 'roles/handle_edit_permissions') !== false || // <-- جديد
+    strpos($page, 'roles/delete') !== false || // <-- جديد
+    $page === 'permissions/delete' ||         // <-- الشرط الجديد
+    $page === 'permissions/delete_group' ||  // <-- الشرط الجديد
+
+    in_array($page, ['logout'])
 );
 
 if ($is_handler_request) {
-    // إذا كان الطلب AJAX أو معالجة مباشرة
-    if (
-        strpos($page, 'handle_') !== false ||
-        strpos($page, '_ajax') !== false ||
-        strpos($page, 'add_link_ajax') !== false ||
-        strpos($page, 'delete_link_ajax') !== false
-    ) {
+    
+    if (strpos($page, 'handle_') !== false || strpos($page, 'add_link_ajax') !== false || strpos($page, 'delete_link_ajax') !== false) {
         header('Content-Type: application/json; charset=utf-8');
         $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
     }
@@ -808,29 +786,30 @@ if ($is_handler_request) {
         exit();
     }
 
-        if (isset($response)) {
+        } catch (PDOException $e) {
+        if(isset($response)) {
             $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
         } else {
             die('خطأ في قاعدة البيانات: ' . $e->getMessage());
         }
+   
     } catch (Exception $e) {
-        if (isset($response)) {
+        if(isset($response)) {
             $response['message'] = $e->getMessage();
         } else {
             die('خطأ: ' . $e->getMessage());
         }
     }
-
-    // طباعة استجابة JSON (إذا وجدت)
+    
+    // (مُصحَّح) لا تقم بطباعة الاستجابة إلا إذا كانت موجودة
     if (isset($response)) {
         echo json_encode($response);
     }
     exit();
 }
 
-// --------------------------------------------------------------------------
-// 6. صفحات العرض (Views)
-// --------------------------------------------------------------------------
+
+// --- عرض الصفحات ---
 $allowed_pages = [
     'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
     'login'             => ['path' => 'login/login_view.php', 'title' => 'تسجيل الدخول'],
@@ -861,26 +840,26 @@ $allowed_pages = [
     'documents'         => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
     'documents/add'     => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
     'documents/edit'    => ['path' => 'documents/edit_view.php', 'title' => 'تعديل وثيقة'],
-    'documents/get_custom_fields_schema_ajax' => ['path' => ''], // معالج فقط
-    'documents/get_entities_for_linking_ajax' => ['path' => ''],
-    'documents/get_linked_entities_ajax'      => ['path' => ''],
-    'documents/add_link_ajax'                 => ['path' => ''],
-    'documents/delete_link_ajax'              => ['path' => ''],
+    'documents/get_custom_fields_schema_ajax' => ['path' => ''], // لا يحتاج ملف، يعالج مباشرة
+    'documents/get_entities_for_linking_ajax' => ['path' => ''], // لا يحتاج ملف
+    'documents/get_linked_entities_ajax'      => ['path' => ''], // لا يحتاج ملف
+    'documents/add_link_ajax'                 => ['path' => ''], // لا يحتاج ملف
+    'documents/delete_link_ajax'              => ['path' => ''], // لا يحتاج ملف
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
-    'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'], // معالجة فقط
+    'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
     'roles/add'         => ['path' => 'roles/add_view.php', 'title' => 'إضافة دور'],
     'roles/edit'        => ['path' => 'roles/edit_view.php', 'title' => 'تعديل الصلاحيات'],
-    'roles/edit_role'   => ['path' => 'roles/edit_role_view.php', 'title' => 'تعديل الدور'],
+    'roles/edit_role'   => ['path' => 'roles/edit_role_view.php', 'title' => 'تعديل الدور'], // <-- أضف هذا
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
     'permissions/add_group'     => ['path' => 'permissions/add_group_view.php', 'title' => 'إضافة مجموعة'],
     'permissions/edit_group'    => ['path' => 'permissions/edit_group_view.php', 'title' => 'تعديل مجموعة'],
-    'permissions/delete_group'  => ['path' => ''], // معالجة فقط
+    'permissions/delete_group'  => ['path' => ''], // لا يوجد ملف عرض، فقط إجراء
     'permissions/add'           => ['path' => 'permissions/add_view.php', 'title' => 'إضافة صلاحية'],
     'permissions/edit'          => ['path' => 'permissions/edit_view.php', 'title' => 'تعديل صلاحية'],
-    'permissions/delete'        => ['path' => ''], // معالجة فقط
+    'permissions/delete'        => ['path' => ''], // لا يوجد ملف عرض، فقط إجراء
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
     'settings/lookups'              => ['path' => 'settings/lookups_view.php', 'title' => 'تهيئة المدخلات'],
     'settings/add_lookup_group'     => ['path' => 'settings/add_lookup_group_view.php', 'title' => 'إضافة مجموعة'],
@@ -889,28 +868,27 @@ $allowed_pages = [
     'settings/edit_lookup_option'   => ['path' => 'settings/edit_lookup_option_view.php', 'title' => 'تعديل خيار'],
 ];
 
-// --------------------------------------------------------------------------
-// 7. آلية عرض الصفحات (Views)
-// --------------------------------------------------------------------------
 $page_path_suffix = $allowed_pages[$page]['path'] ?? null;
 $page_title = $allowed_pages[$page]['title'] ?? 'الصفحة غير موجودة';
 
+// إذا كانت الصفحة عامة (مثل تسجيل الدخول)، اعرضها مباشرة
 if (in_array($page, $public_pages) && $page !== 'handle_login') {
-    // صفحات عامة (تسجيل الدخول مثلاً)
     $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
-    if ($page_path && file_exists($page_path)) {
+    if (file_exists($page_path)) {
         require $page_path;
     } else {
         echo "404 - Page not found.";
     }
-} elseif (isset($_GET['view_only'])) {
-    // عرض نافذة منبثقة فقط
+} 
+// إذا كانت نافذة منبثقة فقط
+elseif (isset($_GET['view_only'])) {
     $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
     if ($page_path && file_exists($page_path)) {
         require $page_path;
     }
-} else {
-    // صفحات لوحة التحكم الرئيسية
+}
+// إذا كانت صفحة محمية عادية
+else {
     ob_start();
     $page_path = __DIR__ . '/src/modules/' . $page_path_suffix;
     if ($page_path && file_exists($page_path)) {
