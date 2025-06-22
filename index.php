@@ -1,4 +1,3 @@
-
 <?php
 // =================================================================
 // INDEX.PHP - الإصدار النهائي والمصحح بالكامل
@@ -56,6 +55,11 @@ $is_handler_request = (
     strpos($page, '_ajax') !== false || 
     strpos($page, '/delete') !== false || 
     strpos($page, 'archive/') !== false || // <-- (مُصحَّح) هذا الشرط سيعالج طلبات الأرشيف
+    strpos($page, 'roles/handle_edit_permissions') !== false || // <-- جديد
+    strpos($page, 'roles/delete') !== false || // <-- جديد
+    strpos($page, 'permissions/') !== false || // <-- أضف هذا الشرط الجديد
+
+
     in_array($page, ['logout'])
 );
 
@@ -66,11 +70,9 @@ if ($is_handler_request) {
         $response = ['success' => false, 'message' => 'حدث خطأ غير معروف.'];
     }
 
-
-    
     try {
 
-                // --- (جديد) Login Handler ---
+        // --- (جديد) Login Handler ---
         if ($page === 'handle_login') {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
@@ -93,7 +95,6 @@ if ($is_handler_request) {
                 exit();
             }
         }
-
 
         // --- Branches AJAX Handler ---
         if ($page === 'branches/handle_add' || $page === 'branches/handle_edit') {
@@ -138,156 +139,156 @@ if ($is_handler_request) {
         }
 
         // --- Owners AJAX Handler ---
-elseif ($page === 'owners/handle_add' || $page === 'owners/handle_edit') {
-    $is_add = ($page === 'owners/handle_add');
-    $pdo->beginTransaction();
+        elseif ($page === 'owners/handle_add' || $page === 'owners/handle_edit') {
+            $is_add = ($page === 'owners/handle_add');
+            $pdo->beginTransaction();
 
-    $fields = ['owner_name', 'owner_type', 'owner_code', 'id_number', 'mobile', 'email', 'notes'];
-    $params = [];
-    foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
-    
-    if ($is_add) {
-        $sql = "INSERT INTO owners (owner_name, owner_type, owner_code, id_number, mobile, email, notes) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        $owner_id = $pdo->lastInsertId();
-        
-        // ربط الفروع
-        if (!empty($_POST['branches'])) {
-            $branch_sql = "INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)";
-            $branch_stmt = $pdo->prepare($branch_sql);
-            foreach ($_POST['branches'] as $branch_id) {
-                $branch_stmt->execute([$owner_id, $branch_id]);
-            }
-        }
-    } else {
-        $update_fields = "owner_name=?, owner_type=?, owner_code=?, id_number=?, mobile=?, email=?, notes=?, status=?";
-        $sql = "UPDATE owners SET {$update_fields} WHERE id = ?";
-        $params[] = $_POST['status'] ?? 'نشط';
-        $params[] = $_POST['id'];
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-    }
-    
-    $pdo->commit();
-    $response = ['success' => true, 'message' => 'تمت العملية بنجاح.'];
-}
-elseif ($page === 'owners/handle_update_branches') {
-    $owner_id = $_POST['owner_id'];
-    $branches = $_POST['branches'] ?? [];
-    
-    $pdo->beginTransaction();
-    // حذف الروابط القديمة
-    $delete_stmt = $pdo->prepare("DELETE FROM owner_branches WHERE owner_id = ?");
-    $delete_stmt->execute([$owner_id]);
-    
-    // إضافة الروابط الجديدة
-    if (!empty($branches)) {
-        $insert_stmt = $pdo->prepare("INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)");
-        foreach ($branches as $branch_id) {
-            $insert_stmt->execute([$owner_id, $branch_id]);
-        }
-    }
-    $pdo->commit();
-    $response = ['success' => true, 'message' => 'تم تحديث الفروع بنجاح.'];
-}
-
-        // --- Settings (Lookups) AJAX Handlers ---
-    elseif ($page === 'settings/handle_add_lookup_group_ajax') {
-        $pdo->beginTransaction();
-        try {
-            // إضافة سجل لاسم المجموعة نفسها
-            $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$_POST['group_key'], $_POST['group_key'], $_POST['option_value']]);
-            $pdo->commit();
-            $response = ['success' => true, 'message' => 'تمت إضافة المجموعة بنجاح.'];
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            $response['message'] = $e->getMessage();
-        }
-    }
-    elseif ($page === 'settings/handle_edit_lookup_group_ajax') {
-        $pdo->beginTransaction();
-        try {
-            // تحديث كل الخيارات التي تنتمي للمجموعة القديمة
-            $sql_update_children = "UPDATE lookup_options SET group_key = ? WHERE group_key = ?";
-            $stmt_update_children = $pdo->prepare($sql_update_children);
-            $stmt_update_children->execute([$_POST['new_group_key'], $_POST['original_group_key']]);
-
-            // تحديث سجل اسم المجموعة نفسه
-            $sql_update_parent = "UPDATE lookup_options SET option_key = ?, option_value = ? WHERE group_key = ? AND id = (SELECT id FROM (SELECT id FROM lookup_options WHERE group_key = ? AND option_key = ?) AS x)";
-            $stmt_update_parent = $pdo->prepare($sql_update_parent);
-            $stmt_update_parent->execute([$_POST['new_group_key'], $_POST['new_option_value'], $_POST['new_group_key'], $_POST['new_group_key'], $_POST['new_group_key']]);
-
-            $pdo->commit();
-            $response = ['success' => true, 'message' => 'تم تحديث المجموعة بنجاح.'];
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            $response['message'] = $e->getMessage();
-        }
-    }
-    elseif ($page === 'settings/handle_add_lookup_option_ajax') {
-        $option_key = $_POST['option_key'] ?: str_replace(' ', '_', trim(strtolower($_POST['option_value'])));
-        $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        if ($stmt->execute([$_POST['group_key'], $option_key, $_POST['option_value']])) {
-            $response = ['success' => true, 'message' => 'تم إضافة الخيار بنجاح.'];
-        }
-    }
-    elseif ($page === 'settings/handle_edit_lookup_option_ajax') {
-        $pdo->beginTransaction();
-        try {
-            // --- 1. تحديث البيانات الأساسية ---
-            $sql = "UPDATE lookup_options SET option_value = ?, option_key = ?, color = ?, bg_color = ? WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $_POST['option_value'], $_POST['option_key'],
-                $_POST['color'] ?? '#ffffff', $_POST['bg_color'] ?? '#6c757d', $_POST['id']
-            ]);
-
-            // --- 2. تحديث مخطط الحقول المخصصة إذا كان موجوداً ---
-            if (isset($_POST['custom_fields'])) {
-                $filtered_fields = array_filter($_POST['custom_fields'], function($field) {
-                    return !empty($field['label']) && !empty($field['name']);
-                });
+            $fields = ['owner_name', 'owner_type', 'owner_code', 'id_number', 'mobile', 'email', 'notes'];
+            $params = [];
+            foreach ($fields as $field) { $params[] = $_POST[$field] ?? null; }
+            
+            if ($is_add) {
+                $sql = "INSERT INTO owners (owner_name, owner_type, owner_code, id_number, mobile, email, notes) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $owner_id = $pdo->lastInsertId();
                 
-                $schema_json = json_encode(array_values($filtered_fields), JSON_UNESCAPED_UNICODE);
-                
-                $schema_sql = "UPDATE lookup_options SET custom_fields_schema = ? WHERE id = ?";
-                $schema_stmt = $pdo->prepare($schema_sql);
-                $schema_stmt->execute([$schema_json, $_POST['id']]);
+                // ربط الفروع
+                if (!empty($_POST['branches'])) {
+                    $branch_sql = "INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)";
+                    $branch_stmt = $pdo->prepare($branch_sql);
+                    foreach ($_POST['branches'] as $branch_id) {
+                        $branch_stmt->execute([$owner_id, $branch_id]);
+                    }
+                }
+            } else {
+                $update_fields = "owner_name=?, owner_type=?, owner_code=?, id_number=?, mobile=?, email=?, notes=?, status=?";
+                $sql = "UPDATE owners SET {$update_fields} WHERE id = ?";
+                $params[] = $_POST['status'] ?? 'نشط';
+                $params[] = $_POST['id'];
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
             }
             
             $pdo->commit();
-            $response = ['success' => true, 'message' => 'تم تحديث الخيار بنجاح.'];
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            $response['message'] = 'فشل في تحديث الخيار: ' . $e->getMessage();
+            $response = ['success' => true, 'message' => 'تمت العملية بنجاح.'];
         }
-    }
+        elseif ($page === 'owners/handle_update_branches') {
+            $owner_id = $_POST['owner_id'];
+            $branches = $_POST['branches'] ?? [];
+            
+            $pdo->beginTransaction();
+            // حذف الروابط القديمة
+            $delete_stmt = $pdo->prepare("DELETE FROM owner_branches WHERE owner_id = ?");
+            $delete_stmt->execute([$owner_id]);
+            
+            // إضافة الروابط الجديدة
+            if (!empty($branches)) {
+                $insert_stmt = $pdo->prepare("INSERT INTO owner_branches (owner_id, branch_id) VALUES (?, ?)");
+                foreach ($branches as $branch_id) {
+                    $insert_stmt->execute([$owner_id, $branch_id]);
+                }
+            }
+            $pdo->commit();
+            $response = ['success' => true, 'message' => 'تم تحديث الفروع بنجاح.'];
+        }
 
-    // --- (جديد) معالج حذف خيار واحد ---
-    elseif ($page === 'settings/delete_lookup_option') {
-        if (isset($_GET['id'])) {
-            $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$_GET['id']]);
+        // --- Settings (Lookups) AJAX Handlers ---
+        elseif ($page === 'settings/handle_add_lookup_group_ajax') {
+            $pdo->beginTransaction();
+            try {
+                // إضافة سجل لاسم المجموعة نفسها
+                $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$_POST['group_key'], $_POST['group_key'], $_POST['option_value']]);
+                $pdo->commit();
+                $response = ['success' => true, 'message' => 'تمت إضافة المجموعة بنجاح.'];
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response['message'] = $e->getMessage();
+            }
         }
-        header("Location: index.php?page=settings/lookups");
-        exit();
-    }
-    // --- (جديد) معالج حذف مجموعة كاملة ---
-    elseif ($page === 'settings/delete_lookup_group') {
-        if (isset($_GET['group'])) {
-            // حذف كل الخيارات التابعة للمجموعة + سجل المجموعة نفسه
-            $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE group_key = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$_GET['group']]);
+        elseif ($page === 'settings/handle_edit_lookup_group_ajax') {
+            $pdo->beginTransaction();
+            try {
+                // تحديث كل الخيارات التي تنتمي للمجموعة القديمة
+                $sql_update_children = "UPDATE lookup_options SET group_key = ? WHERE group_key = ?";
+                $stmt_update_children = $pdo->prepare($sql_update_children);
+                $stmt_update_children->execute([$_POST['new_group_key'], $_POST['original_group_key']]);
+
+                // تحديث سجل اسم المجموعة نفسه
+                $sql_update_parent = "UPDATE lookup_options SET option_key = ?, option_value = ? WHERE group_key = ? AND id = (SELECT id FROM (SELECT id FROM lookup_options WHERE group_key = ? AND option_key = ? LIMIT 1) as temp)";
+                $stmt_update_parent = $pdo->prepare($sql_update_parent);
+                $stmt_update_parent->execute([$_POST['new_group_key'], $_POST['new_option_value'], $_POST['new_group_key'], $_POST['new_group_key'], $_POST['new_group_key']]);
+
+                $pdo->commit();
+                $response = ['success' => true, 'message' => 'تم تحديث المجموعة بنجاح.'];
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response['message'] = $e->getMessage();
+            }
         }
-        header("Location: index.php?page=settings/lookups");
-        exit();
-    }
+        elseif ($page === 'settings/handle_add_lookup_option_ajax') {
+            $option_key = $_POST['option_key'] ?: str_replace(' ', '_', trim(strtolower($_POST['option_value'])));
+            $sql = "INSERT INTO lookup_options (group_key, option_key, option_value) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute([$_POST['group_key'], $option_key, $_POST['option_value']])) {
+                $response = ['success' => true, 'message' => 'تم إضافة الخيار بنجاح.'];
+            }
+        }
+        elseif ($page === 'settings/handle_edit_lookup_option_ajax') {
+            $pdo->beginTransaction();
+            try {
+                // --- 1. تحديث البيانات الأساسية ---
+                $sql = "UPDATE lookup_options SET option_value = ?, option_key = ?, color = ?, bg_color = ? WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    $_POST['option_value'], $_POST['option_key'],
+                    $_POST['color'] ?? '#ffffff', $_POST['bg_color'] ?? '#6c757d', $_POST['id']
+                ]);
+
+                // --- 2. تحديث مخطط الحقول المخصصة إذا كان موجوداً ---
+                if (isset($_POST['custom_fields'])) {
+                    $filtered_fields = array_filter($_POST['custom_fields'], function($field) {
+                        return !empty($field['label']) && !empty($field['name']);
+                    });
+                    
+                    $schema_json = json_encode(array_values($filtered_fields), JSON_UNESCAPED_UNICODE);
+                    
+                    $schema_sql = "UPDATE lookup_options SET custom_fields_schema = ? WHERE id = ?";
+                    $schema_stmt = $pdo->prepare($schema_sql);
+                    $schema_stmt->execute([$schema_json, $_POST['id']]);
+                }
+                
+                $pdo->commit();
+                $response = ['success' => true, 'message' => 'تم تحديث الخيار بنجاح.'];
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response['message'] = 'فشل في تحديث الخيار: ' . $e->getMessage();
+            }
+        }
+
+        // --- (جديد) معالج حذف خيار واحد ---
+        elseif ($page === 'settings/delete_lookup_option') {
+            if (isset($_GET['id'])) {
+                $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$_GET['id']]);
+            }
+            header("Location: index.php?page=settings/lookups");
+            exit();
+        }
+        // --- (جديد) معالج حذف مجموعة كاملة ---
+        elseif ($page === 'settings/delete_lookup_group') {
+            if (isset($_GET['group'])) {
+                // حذف كل الخيارات التابعة للمجموعة + سجل المجموعة نفسه
+                $sql = "UPDATE lookup_options SET deleted_at = NOW() WHERE group_key = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$_GET['group']]);
+            }
+            header("Location: index.php?page=settings/lookups");
+            exit();
+        }
 
         // --- معالج جلب مخطط الحقول المخصصة ---
         elseif ($page === 'documents/get_custom_fields_schema_ajax') {
@@ -302,416 +303,455 @@ elseif ($page === 'owners/handle_update_branches') {
             exit(); // مهم جداً
         }
 
-    
-// --- (جديد) معالج حفظ الوثيقة الجديدة ---
-elseif ($page === 'documents/handle_add') {
-    $pdo->beginTransaction();
-    try {
-        $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
-        
-        // 1. حفظ الوثيقة الأساسية
-        $sql_doc = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, notes, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt_doc = $pdo->prepare($sql_doc);
-        $stmt_doc->execute([
-            $_POST['document_type'], $_POST['document_name'], $_POST['document_number'],
-            $_POST['issue_date'] ?: null, $_POST['expiry_date'] ?: null,
-            $_POST['status'], $_POST['notes'], $details_json
-        ]);
-        $new_doc_id = $pdo->lastInsertId();
-
-        // 2. (جديد) حفظ الكيانات المرتبطة
-        if (isset($_POST['links']) && is_array($_POST['links'])) {
-            $sql_link = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
-            $stmt_link = $pdo->prepare($sql_link);
-            
-            foreach ($_POST['links'] as $link) {
-                if (!empty($link['entity_type']) && !empty($link['entity_id'])) {
-                    $stmt_link->execute([$new_doc_id, $link['entity_type'], $link['entity_id']]);
-                }
-            }
-        }
-        
-        $pdo->commit();
-        $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة وربطها بنجاح.'];
-
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        $response['message'] = $e->getMessage();
-    }
-}
-
-elseif ($page === 'documents/handle_edit') {
-    try {
-        $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
-        
-        // (مُصحَّح) تم تعديل الاستعلام وعدد المتغيرات ليتطابقا تمامًا
-        $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ?, notes = ? WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            $_POST['document_name'],
-            $_POST['document_number'],
-            $_POST['issue_date'] ?: null,
-            $_POST['expiry_date'] ?: null,
-            $details_json,
-            $_POST['status'],
-            $_POST['notes'],
-            $_POST['id']
-        ]);
-        $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
-    } catch (Exception $e) {
-        $response['message'] = $e->getMessage();
-    }
-}
-
-// --- (جديد) معالج حذف الوثيقة الجديدة ---
-
-    elseif ($page === 'documents/delete') {
-        if (isset($_GET['id'])) {
-            $sql = "UPDATE documents SET deleted_at = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$_GET['id']]);
-        }
-        header("Location: index.php?page=documents");
-        exit();
-    }
-
-    // --- (جديد) Document Linking AJAX Handlers ---
-        elseif ($page === 'documents/get_entities_for_linking_ajax') {
-        $type = $_GET['type'] ?? '';
-        $branch_id = $_GET['branch_id'] ?? null;
-        $data = [];
-        $params = [];
-        $sql = '';
-
-        $branch_condition = '';
-        if ($branch_id) {
-            $params[] = $branch_id;
-        }
-
-        switch ($type) {
-            case 'property': 
-                $sql = "SELECT id, property_name as text FROM properties WHERE deleted_at IS NULL ";
-                if ($branch_id) { $sql .= ' AND branch_id = ?'; }
-                $sql .= " ORDER BY text"; 
-                break;
-            case 'owner':
-                $sql = "SELECT DISTINCT o.id, o.owner_name as text FROM owners o ";
-                if ($branch_id) { $sql .= " JOIN owner_branches ob ON o.id = ob.owner_id WHERE o.deleted_at IS NULL AND ob.branch_id = ?"; }
-                else { $sql .= " WHERE o.deleted_at IS NULL"; }
-                $sql .= " ORDER BY text";
-                break;
-            case 'client':
-                $sql = "SELECT DISTINCT c.id, c.client_name as text FROM clients c ";
-                if ($branch_id) { $sql .= " JOIN client_branches cb ON c.id = cb.client_id WHERE c.deleted_at IS NULL AND cb.branch_id = ?"; }
-                else { $sql .= " WHERE c.deleted_at IS NULL"; }
-                $sql .= " ORDER BY text";
-                break;
-            case 'supplier':
-                $sql = "SELECT DISTINCT s.id, s.supplier_name as text FROM suppliers s ";
-                if ($branch_id) { $sql .= " JOIN supplier_branches sb ON s.id = sb.supplier_id WHERE s.deleted_at IS NULL AND sb.branch_id = ?"; }
-                else { $sql .= " WHERE s.deleted_at IS NULL"; }
-                $sql .= " ORDER BY text";
-                break;
-        }
-        
-        if ($sql) { 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($params);
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($data);
-        exit();
-    }
-    
-           elseif ($page === 'documents/get_linked_entities_ajax') {
-        header('Content-Type: text/html; charset=utf-8');
-        $doc_id = $_GET['doc_id'] ?? 0;
-        
-        // 1. جلب كل الروابط الأساسية
-        $sql = "SELECT id, entity_type, entity_id FROM entity_documents WHERE document_id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$doc_id]);
-        $links = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // 2. قاموس لترجمة نوع الكيان
-        $entity_type_names = ['property' => 'عقار', 'owner' => 'مالك', 'client' => 'عميل', 'supplier' => 'مورد', 'branch' => 'فرع'];
-        
-        // 3. بناء جدول HTML
-        echo '<table class="table table-sm table-hover table-striped mb-0">';
-        echo '<thead><tr><th>الفرع</th><th>نوع الكيان</th><th>اسم الكيان</th><th class="w-1"></th></tr></thead><tbody>';
-        
-        if (empty($links)) {
-            echo '<tr><td colspan="4" class="text-center text-muted p-3">لم يتم ربط أي كيانات.</td></tr>';
-        } else {
-            foreach ($links as $link) {
-                $entity_name = 'غير معروف (ID: ' . $link['entity_id'] . ')';
-                $branch_name = '<span class="text-muted">—</span>'; // قيمة افتراضية للفرع
-                $table_name = '';
-                $name_column = '';
+        // --- (جديد) معالج حفظ الوثيقة الجديدة ---
+        elseif ($page === 'documents/handle_add') {
+            $pdo->beginTransaction();
+            try {
+                $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
                 
-                // 4. تحديد الجدول والعمود لجلب الاسم
-                switch ($link['entity_type']) {
-                    case 'property': $table_name = 'properties'; $name_column = 'property_name'; break;
-                    case 'owner':    $table_name = 'owners';     $name_column = 'owner_name'; break;
-                    case 'client':   $table_name = 'clients';    $name_column = 'client_name'; break;
-                    case 'supplier': $table_name = 'suppliers';  $name_column = 'supplier_name'; break;
-                    case 'branch':   $table_name = 'branches';   $name_column = 'branch_name'; break;
-                }
+                // 1. حفظ الوثيقة الأساسية
+                $sql_doc = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, notes, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                $stmt_doc = $pdo->prepare($sql_doc);
+                $stmt_doc->execute([
+                    $_POST['document_type'], $_POST['document_name'], $_POST['document_number'],
+                    $_POST['issue_date'] ?: null, $_POST['expiry_date'] ?: null,
+                    $_POST['status'], $_POST['notes'], $details_json
+                ]);
+                $new_doc_id = $pdo->lastInsertId();
 
-                // 5. جلب اسم الكيان والفرع المرتبط به
-                if ($table_name) {
-                    // جلب اسم الكيان
-                    $name_stmt = $pdo->prepare("SELECT {$name_column} FROM {$table_name} WHERE id = ?");
-                    $name_stmt->execute([$link['entity_id']]);
-                    $entity_name = $name_stmt->fetchColumn() ?: $entity_name;
-
-                    // جلب اسم الفرع (يعمل للعقارات حاليًا، ويمكن توسيعه)
-                    if ($link['entity_type'] === 'property') {
-                        $branch_stmt = $pdo->prepare("SELECT b.branch_name FROM branches b JOIN properties p ON b.id = p.branch_id WHERE p.id = ?");
-                        $branch_stmt->execute([$link['entity_id']]);
-                        $branch_name = $branch_stmt->fetchColumn() ?: $branch_name;
+                // 2. (جديد) حفظ الكيانات المرتبطة
+                if (isset($_POST['links']) && is_array($_POST['links'])) {
+                    $sql_link = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
+                    $stmt_link = $pdo->prepare($sql_link);
+                    
+                    foreach ($_POST['links'] as $link) {
+                        if (!empty($link['entity_type']) && !empty($link['entity_id'])) {
+                            $stmt_link->execute([$new_doc_id, $link['entity_type'], $link['entity_id']]);
+                        }
                     }
                 }
                 
-                // 6. طباعة الصف في الجدول
-                echo '<tr>';
-                echo '<td>' . htmlspecialchars($branch_name) . '</td>';
-                echo '<td><span class="badge bg-secondary-lt">' . htmlspecialchars($entity_type_names[$link['entity_type']] ?? $link['entity_type']) . '</span></td>';
-                echo '<td>' . htmlspecialchars($entity_name) . '</td>';
-                echo '<td><a href="#" class="btn btn-sm btn-ghost-danger delete-link-btn" data-link-id="' . $link['id'] . '">حذف</a></td>';
-                echo '</tr>';
+                $pdo->commit();
+                $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة وربطها بنجاح.'];
+
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response['message'] = $e->getMessage();
             }
         }
-        echo '</tbody></table>';
-        exit();
-    }
-
-    elseif ($page === 'documents/add_link_ajax') {
-        $sql = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_POST['doc_id'], $_POST['entity_type'], $_POST['entity_id']]);
-        $response = ['success' => true];
-    }
-    elseif ($page === 'documents/delete_link_ajax') {
-        $sql = "DELETE FROM entity_documents WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$_POST['link_id']]);
-        $response = ['success' => true];
-    }
-
-    // --- Users AJAX Handlers ---
-elseif ($page === 'users/handle_add') {
-    $pdo->beginTransaction();
-    try {
-        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $is_active = isset($_POST['is_active']) ? 1 : 0;
-        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
-        $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
-$stmt->execute([
-    $_POST['full_name'], $_POST['username'], $_POST['email'], 
-    $_POST['mobile'], $hashed_password, $_POST['role_id'],
-    $is_active, 
-    $created_at
-]);
-        $user_id = $pdo->lastInsertId();
-
-        // حفظ الفروع المرتبطة
-        if (!empty($_POST['branches'])) {
-            $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
-            $branch_stmt = $pdo->prepare($branch_sql);
-            foreach ($_POST['branches'] as $branch_id) {
-                $branch_stmt->execute([$user_id, $branch_id]);
-            }
-        }
-        $pdo->commit();
-        $response = ['success' => true, 'message' => 'تم إضافة المستخدم بنجاح.'];
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        $response['message'] = $e->getMessage();
-    }
-}
-elseif ($page === 'users/handle_edit') {
-    $pdo->beginTransaction();
-    try {
-        $user_id = $_POST['id'];
-        $is_active = isset($_POST['is_active']) ? 1 : 0;
-        
-        // تحديث البيانات الأساسية
-        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
-        $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=?, created_at=? WHERE id=?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-    $_POST['full_name'], $_POST['username'], $_POST['email'], 
-    $_POST['mobile'], $_POST['role_id'], $is_active,
-    $created_at, 
-    $user_id
-]);
-        
-        // تحديث كلمة المرور فقط إذا لم تكن فارغة
-        if (!empty($_POST['password'])) {
-            $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            $pw_stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-            $pw_stmt->execute([$hashed_password, $user_id]);
-        }
-
-        // تحديث الفروع (حذف القديم ثم إضافة الجديد)
-        $delete_stmt = $pdo->prepare("DELETE FROM user_branches WHERE user_id = ?");
-        $delete_stmt->execute([$user_id]);
-        if (!empty($_POST['branches'])) {
-            $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
-            $branch_stmt = $pdo->prepare($branch_sql);
-            foreach ($_POST['branches'] as $branch_id) {
-                $branch_stmt->execute([$user_id, $branch_id]);
-            }
-        }
-
-        $pdo->commit();
-        $response = ['success' => true, 'message' => 'تم تحديث المستخدم بنجاح.'];
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        $response['message'] = $e->getMessage();
-    }
-}
-
-elseif ($page === 'users/delete') {
-    if (isset($_GET['id'])) {
-        // لا تقم بحذف المستخدم رقم 1 (المدير الخارق)
-        if ($_GET['id'] == 1) {
-            // يمكنك هنا إضافة رسالة خطأ إذا أردت
-        } else {
-            $sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$_GET['id']]);
-        }
-    }
-    header("Location: index.php?page=users");
-    exit();
-}
-
-    // --- (جديد) معالجات الأرشيف ---
-    elseif ($page === 'archive/restore') {
-        if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']); // تنظيف اسم الجدول للأمان
-            $id = (int)$_GET['id'];
-            $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$id]);
-        }
-        header("Location: index.php?page=archive");
-        exit();
-    }
-    elseif ($page === 'archive/force_delete') {
-        if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
-            $id = (int)$_GET['id'];
-            $sql = "DELETE FROM `{$table}` WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$id]);
-        }
-        header("Location: index.php?page=archive");
-        exit();
-    }
-
-        // --- (جديد) معالج الإجراءات الجماعية للأرشيف ---
-    elseif ($page === 'archive/batch_action') {
-        if (isset($_POST['table']) && isset($_POST['action']) && isset($_POST['ids'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['table']);
-            $action = $_POST['action'];
-            $ids = $_POST['ids'];
-
-            // التأكد من أن ids هي مصفوفة من الأرقام الصحيحة للأمان
-            $ids = array_map('intval', $ids);
-            $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            
-            $sql = '';
-            if ($action === 'restore') {
-                $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id IN ({$placeholders})";
-            } elseif ($action === 'force_delete') {
-                $sql = "DELETE FROM `{$table}` WHERE id IN ({$placeholders})";
-            }
-
-            if ($sql) {
+        elseif ($page === 'documents/handle_edit') {
+            try {
+                $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
+                
+                // (مُصحَّح) تم تعديل الاستعلام وعدد المتغيرات ليتطابقا تمامًا
+                $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ?, notes = ? WHERE id = ?";
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute($ids);
+                $stmt->execute([
+                    $_POST['document_name'],
+                    $_POST['document_number'],
+                    $_POST['issue_date'] ?: null,
+                    $_POST['expiry_date'] ?: null,
+                    $details_json,
+                    $_POST['status'],
+                    $_POST['notes'],
+                    $_POST['id']
+                ]);
+                $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
+            } catch (Exception $e) {
+                $response['message'] = $e->getMessage();
             }
         }
-        header("Location: index.php?page=archive");
-        exit();
-    }
 
-        // --- (جديد ومُصحَّح) معالجات الاستعادة والحذف الفردي ---
-    elseif ($page === 'archive/restore') {
-        if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
-            $id = (int)$_GET['id'];
-            $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$id]);
+        // --- (جديد) معالج حذف الوثيقة الجديدة ---
+        elseif ($page === 'documents/delete') {
+            if (isset($_GET['id'])) {
+                $sql = "UPDATE documents SET deleted_at = NOW() WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$_GET['id']]);
+            }
+            header("Location: index.php?page=documents");
+            exit();
         }
-        header("Location: index.php?page=archive");
-        exit(); // <-- الخروج بعد التنفيذ
-    }
-    elseif ($page === 'archive/force_delete') {
-        if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
-            $id = (int)$_GET['id'];
-            $sql = "DELETE FROM `{$table}` WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$id]);
-        }
-        header("Location: index.php?page=archive");
-        exit(); // <-- الخروج بعد التنفيذ
-    }
 
-// --- Roles & Permissions Handlers ---
-    // --- (جديد) معالجات الأدوار ---
-    elseif ($page === 'roles/handle_add') {
-        $sql = "INSERT INTO roles (role_name, description) VALUES (?, ?)";
-        $stmt = $pdo->prepare($sql);
-        if ($stmt->execute([$_POST['role_name'], $_POST['description']])) {
-            $response = ['success' => true, 'message' => 'تم إضافة الدور بنجاح.'];
-        } else {
-            $response = ['success' => false, 'message' => 'فشل إضافة الدور.'];
+        // --- (جديد) Document Linking AJAX Handlers ---
+        elseif ($page === 'documents/get_entities_for_linking_ajax') {
+            $type = $_GET['type'] ?? '';
+            $branch_id = $_GET['branch_id'] ?? null;
+            $data = [];
+            $params = [];
+            $sql = '';
+
+            $branch_condition = '';
+            if ($branch_id) {
+                $params[] = $branch_id;
+            }
+
+            switch ($type) {
+                case 'property': 
+                    $sql = "SELECT id, property_name as text FROM properties WHERE deleted_at IS NULL ";
+                    if ($branch_id) { $sql .= ' AND branch_id = ?'; }
+                    $sql .= " ORDER BY text"; 
+                    break;
+                case 'owner':
+                    $sql = "SELECT DISTINCT o.id, o.owner_name as text FROM owners o ";
+                    if ($branch_id) { $sql .= " JOIN owner_branches ob ON o.id = ob.owner_id WHERE o.deleted_at IS NULL AND ob.branch_id = ?"; }
+                    else { $sql .= " WHERE o.deleted_at IS NULL"; }
+                    $sql .= " ORDER BY text";
+                    break;
+                case 'client':
+                    $sql = "SELECT DISTINCT c.id, c.client_name as text FROM clients c ";
+                    if ($branch_id) { $sql .= " JOIN client_branches cb ON c.id = cb.client_id WHERE c.deleted_at IS NULL AND cb.branch_id = ?"; }
+                    else { $sql .= " WHERE c.deleted_at IS NULL"; }
+                    $sql .= " ORDER BY text";
+                    break;
+                case 'supplier':
+                    $sql = "SELECT DISTINCT s.id, s.supplier_name as text FROM suppliers s ";
+                    if ($branch_id) { $sql .= " JOIN supplier_branches sb ON s.id = sb.supplier_id WHERE s.deleted_at IS NULL AND sb.branch_id = ?"; }
+                    else { $sql .= " WHERE s.deleted_at IS NULL"; }
+                    $sql .= " ORDER BY text";
+                    break;
+            }
+            
+            if ($sql) { 
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode($data);
+            exit();
         }
-        echo json_encode($response);
-        exit();
-    }
-    elseif ($page === 'roles/handle_edit_permissions') {
-        $role_id = $_POST['role_id'];
-        $permissions = $_POST['permissions'] ?? [];
-        if ($role_id != 1) { // لا تسمح بتعديل المدير الخارق
+        elseif ($page === 'documents/get_linked_entities_ajax') {
+            header('Content-Type: text/html; charset=utf-8');
+            $doc_id = $_GET['doc_id'] ?? 0;
+            
+            // 1. جلب كل الروابط الأساسية
+            $sql = "SELECT id, entity_type, entity_id FROM entity_documents WHERE document_id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$doc_id]);
+            $links = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // 2. قاموس لترجمة نوع الكيان
+            $entity_type_names = ['property' => 'عقار', 'owner' => 'مالك', 'client' => 'عميل', 'supplier' => 'مورد', 'branch' => 'فرع'];
+            
+            // 3. بناء جدول HTML
+            echo '<table class="table table-sm table-hover table-striped mb-0">';
+            echo '<thead><tr><th>الفرع</th><th>نوع الكيان</th><th>اسم الكيان</th><th class="w-1"></th></tr></thead><tbody>';
+            
+            if (empty($links)) {
+                echo '<tr><td colspan="4" class="text-center text-muted p-3">لم يتم ربط أي كيانات.</td></tr>';
+            } else {
+                foreach ($links as $link) {
+                    $entity_name = 'غير معروف (ID: ' . $link['entity_id'] . ')';
+                    $branch_name = '<span class="text-muted">—</span>'; // قيمة افتراضية للفرع
+                    $table_name = '';
+                    $name_column = '';
+                    
+                    // 4. تحديد الجدول والعمود لجلب الاسم
+                    switch ($link['entity_type']) {
+                        case 'property': $table_name = 'properties'; $name_column = 'property_name'; break;
+                        case 'owner':    $table_name = 'owners';     $name_column = 'owner_name'; break;
+                        case 'client':   $table_name = 'clients';    $name_column = 'client_name'; break;
+                        case 'supplier': $table_name = 'suppliers';  $name_column = 'supplier_name'; break;
+                        case 'branch':   $table_name = 'branches';   $name_column = 'branch_name'; break;
+                    }
+
+                    // 5. جلب اسم الكيان والفرع المرتبط به
+                    if ($table_name) {
+                        // جلب اسم الكيان
+                        $name_stmt = $pdo->prepare("SELECT {$name_column} FROM {$table_name} WHERE id = ?");
+                        $name_stmt->execute([$link['entity_id']]);
+                        $entity_name = $name_stmt->fetchColumn() ?: $entity_name;
+
+                        // جلب اسم الفرع (يعمل للعقارات حاليًا، ويمكن توسيعه)
+                        if ($link['entity_type'] === 'property') {
+                            $branch_stmt = $pdo->prepare("SELECT b.branch_name FROM branches b JOIN properties p ON b.id = p.branch_id WHERE p.id = ?");
+                            $branch_stmt->execute([$link['entity_id']]);
+                            $branch_name = $branch_stmt->fetchColumn() ?: $branch_name;
+                        }
+                    }
+                    
+                    // 6. طباعة الصف في الجدول
+                    echo '<tr>';
+                    echo '<td>' . htmlspecialchars($branch_name) . '</td>';
+                    echo '<td><span class="badge bg-secondary-lt">' . htmlspecialchars($entity_type_names[$link['entity_type']] ?? $link['entity_type']) . '</span></td>';
+                    echo '<td>' . htmlspecialchars($entity_name) . '</td>';
+                    echo '<td><a href="#" class="btn btn-sm btn-ghost-danger delete-link-btn" data-link-id="' . $link['id'] . '">حذف</a></td>';
+                    echo '</tr>';
+                }
+            }
+            echo '</tbody></table>';
+            exit();
+        }
+        elseif ($page === 'documents/add_link_ajax') {
+            $sql = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_POST['doc_id'], $_POST['entity_type'], $_POST['entity_id']]);
+            $response = ['success' => true];
+        }
+        elseif ($page === 'documents/delete_link_ajax') {
+            $sql = "DELETE FROM entity_documents WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$_POST['link_id']]);
+            $response = ['success' => true];
+        }
+
+        // --- Users AJAX Handlers ---
+        elseif ($page === 'users/handle_add') {
             $pdo->beginTransaction();
             try {
-                $delete_stmt = $pdo->prepare("DELETE FROM role_permissions WHERE role_id = ?");
-                $delete_stmt->execute([$role_id]);
-                if (!empty($permissions)) {
-                    $insert_sql = "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)";
-                    $insert_stmt = $pdo->prepare($insert_sql);
-                    foreach ($permissions as $permission_id) {
-                        $insert_stmt->execute([$role_id, $permission_id]);
+                $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $is_active = isset($_POST['is_active']) ? 1 : 0;
+                $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
+                $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    $_POST['full_name'], $_POST['username'], $_POST['email'], 
+                    $_POST['mobile'], $hashed_password, $_POST['role_id'],
+                    $is_active, 
+                    $created_at
+                ]);
+                $user_id = $pdo->lastInsertId();
+
+                // حفظ الفروع المرتبطة
+                if (!empty($_POST['branches'])) {
+                    $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
+                    $branch_stmt = $pdo->prepare($branch_sql);
+                    foreach ($_POST['branches'] as $branch_id) {
+                        $branch_stmt->execute([$user_id, $branch_id]);
                     }
                 }
                 $pdo->commit();
+                $response = ['success' => true, 'message' => 'تم إضافة المستخدم بنجاح.'];
             } catch (Exception $e) {
                 $pdo->rollBack();
+                $response['message'] = $e->getMessage();
             }
         }
-        header("Location: index.php?page=roles/edit&id=" . $role_id);
-        exit();
-    }
-    elseif ($page === 'roles/delete') {
-        $role_id = $_GET['id'] ?? 0;
-        // لا تسمح بحذف أول دورين (المدير الخارق والمدير)
-        if ($role_id > 2) {
-            $sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$role_id]);
+        elseif ($page === 'users/handle_edit') {
+            $pdo->beginTransaction();
+            try {
+                $user_id = $_POST['id'];
+                $is_active = isset($_POST['is_active']) ? 1 : 0;
+                
+                // تحديث البيانات الأساسية
+                $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
+                $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=?, created_at=? WHERE id=?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    $_POST['full_name'], $_POST['username'], $_POST['email'], 
+                    $_POST['mobile'], $_POST['role_id'], $is_active,
+                    $created_at, 
+                    $user_id
+                ]);
+                
+                // تحديث كلمة المرور فقط إذا لم تكن فارغة
+                if (!empty($_POST['password'])) {
+                    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                    $pw_stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                    $pw_stmt->execute([$hashed_password, $user_id]);
+                }
+
+                // تحديث الفروع (حذف القديم ثم إضافة الجديد)
+                $delete_stmt = $pdo->prepare("DELETE FROM user_branches WHERE user_id = ?");
+                $delete_stmt->execute([$user_id]);
+                if (!empty($_POST['branches'])) {
+                    $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
+                    $branch_stmt = $pdo->prepare($branch_sql);
+                    foreach ($_POST['branches'] as $branch_id) {
+                        $branch_stmt->execute([$user_id, $branch_id]);
+                    }
+                }
+
+                $pdo->commit();
+                $response = ['success' => true, 'message' => 'تم تحديث المستخدم بنجاح.'];
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $response['message'] = $e->getMessage();
+            }
         }
-        header("Location: index.php?page=roles");
+
+        elseif ($page === 'users/delete') {
+            if (isset($_GET['id'])) {
+                // لا تقم بحذف المستخدم رقم 1 (المدير الخارق)
+                if ($_GET['id'] == 1) {
+                    // يمكنك هنا إضافة رسالة خطأ إذا أردت
+                } else {
+                    $sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$_GET['id']]);
+                }
+            }
+            header("Location: index.php?page=users");
+            exit();
+        }
+
+        // --- (جديد) معالجات الأرشيف ---
+        elseif ($page === 'archive/restore') {
+            if (isset($_GET['table']) && isset($_GET['id'])) {
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']); // تنظيف اسم الجدول للأمان
+                $id = (int)$_GET['id'];
+                $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$id]);
+            }
+            header("Location: index.php?page=archive");
+            exit();
+        }
+        elseif ($page === 'archive/force_delete') {
+            if (isset($_GET['table']) && isset($_GET['id'])) {
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+                $id = (int)$_GET['id'];
+                $sql = "DELETE FROM `{$table}` WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$id]);
+            }
+            header("Location: index.php?page=archive");
+            exit();
+        }
+        // --- (جديد) معالج الإجراءات الجماعية للأرشيف ---
+        elseif ($page === 'archive/batch_action') {
+            if (isset($_POST['table']) && isset($_POST['action']) && isset($_POST['ids'])) {
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['table']);
+                $action = $_POST['action'];
+                $ids = $_POST['ids'];
+
+                // التأكد من أن ids هي مصفوفة من الأرقام الصحيحة للأمان
+                $ids = array_map('intval', $ids);
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                
+                $sql = '';
+                if ($action === 'restore') {
+                    $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id IN ({$placeholders})";
+                } elseif ($action === 'force_delete') {
+                    $sql = "DELETE FROM `{$table}` WHERE id IN ({$placeholders})";
+                }
+
+                if ($sql) {
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute($ids);
+                }
+            }
+            header("Location: index.php?page=archive");
+            exit();
+        }
+        // --- (جديد ومُصحَّح) معالجات الاستعادة والحذف الفردي ---
+        elseif ($page === 'archive/restore') {
+            if (isset($_GET['table']) && isset($_GET['id'])) {
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+                $id = (int)$_GET['id'];
+                $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$id]);
+            }
+            header("Location: index.php?page=archive");
+            exit(); // <-- الخروج بعد التنفيذ
+        }
+        elseif ($page === 'archive/force_delete') {
+            if (isset($_GET['table']) && isset($_GET['id'])) {
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
+                $id = (int)$_GET['id'];
+                $sql = "DELETE FROM `{$table}` WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$id]);
+            }
+            header("Location: index.php?page=archive");
+            exit(); // <-- الخروج بعد التنفيذ
+        }
+        // --- Roles & Permissions Handlers ---
+        elseif ($page === 'roles/handle_add') {
+            $sql = "INSERT INTO roles (role_name, description) VALUES (?, ?)";
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute([$_POST['role_name'], $_POST['description']])) {
+                $response = ['success' => true, 'message' => 'تم إضافة الدور بنجاح.'];
+            } else {
+                $response = ['success' => false, 'message' => 'فشل إضافة الدور.'];
+            }
+            echo json_encode($response);
+            exit();
+        }
+        elseif ($page === 'roles/handle_edit_permissions') {
+            $role_id = $_POST['role_id'];
+            $permissions = $_POST['permissions'] ?? [];
+            if ($role_id != 1) { // لا تسمح بتعديل المدير الخارق
+                $pdo->beginTransaction();
+                try {
+                    $delete_stmt = $pdo->prepare("DELETE FROM role_permissions WHERE role_id = ?");
+                    $delete_stmt->execute([$role_id]);
+                    if (!empty($permissions)) {
+                        $insert_sql = "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)";
+                        $insert_stmt = $pdo->prepare($insert_sql);
+                        foreach ($permissions as $permission_id) {
+                            $insert_stmt->execute([$role_id, $permission_id]);
+                        }
+                    }
+                    $pdo->commit();
+                } catch (Exception $e) {
+                    $pdo->rollBack();
+                }
+            }
+            header("Location: index.php?page=roles/edit&id=" . $role_id);
+            exit();
+        }
+        elseif ($page === 'roles/delete') {
+            $role_id = $_GET['id'] ?? 0;
+            // لا تسمح بحذف أول دورين (المدير الخارق والمدير)
+            if ($role_id > 2) {
+                $sql = "UPDATE roles SET deleted_at = NOW() WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$role_id]);
+            }
+            header("Location: index.php?page=roles");
+            exit();
+        }
+
+        // (جديد) معالج تعديل بيانات الدور
+        elseif ($page === 'roles/handle_edit_role') {
+            $sql = "UPDATE roles SET role_name = ?, description = ? WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            if ($stmt->execute([$_POST['role_name'], $_POST['description'], $_POST['id']])) {
+                $response = ['success' => true, 'message' => 'تم تحديث الدور بنجاح.'];
+            }
+        }
+
+    // --- (جديد) Permissions Handlers ---
+    elseif ($page === 'permissions/handle_add_group') {
+        $stmt = $pdo->prepare("INSERT INTO permission_groups (group_name, description, display_order) VALUES (?, ?, ?)");
+        $stmt->execute([$_POST['group_name'], $_POST['description'], $_POST['display_order'] ?? 0]);
+        $response = ['success' => true, 'message' => 'تمت إضافة المجموعة.'];
+    }
+    elseif ($page === 'permissions/handle_edit_group') {
+        $stmt = $pdo->prepare("UPDATE permission_groups SET group_name = ?, description = ?, display_order = ? WHERE id = ?");
+        $stmt->execute([$_POST['group_name'], $_POST['description'], $_POST['display_order'] ?? 0, $_POST['id']]);
+        $response = ['success' => true, 'message' => 'تم تحديث المجموعة.'];
+    }
+    elseif ($page === 'permissions/delete_group') {
+        if (isset($_GET['id'])) {
+            $stmt = $pdo->prepare("UPDATE permission_groups SET deleted_at = NOW() WHERE id = ?");
+            $stmt->execute([(int)$_GET['id']]);
+        }
+        header("Location: index.php?page=permissions");
         exit();
     }
+    elseif ($page === 'permissions/handle_add') {
+        $stmt = $pdo->prepare("INSERT INTO permissions (group_id, permission_key, description) VALUES (?, ?, ?)");
+        $stmt->execute([$_POST['group_id'], $_POST['permission_key'], $_POST['description']]);
+        $response = ['success' => true, 'message' => 'تمت إضافة الصلاحية.'];
+    }
+    elseif ($page === 'permissions/handle_edit') {
+        $stmt = $pdo->prepare("UPDATE permissions SET permission_key = ?, description = ? WHERE id = ?");
+        $stmt->execute([$_POST['permission_key'], $_POST['description'], $_POST['id']]);
+        $response = ['success' => true, 'message' => 'تم تحديث الصلاحية.'];
+    }
+    elseif ($page === 'permissions/delete') {
+        if (isset($_GET['id'])) {
+            $stmt = $pdo->prepare("UPDATE permissions SET deleted_at = NOW() WHERE id = ?");
+            $stmt->execute([(int)$_GET['id']]);
+        }
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=permissions'));
+        exit();
+    }
+        
 
     } catch (PDOException $e) {
         $response['message'] = 'خطأ في قاعدة البيانات: ' . $e->getMessage();
@@ -726,7 +766,7 @@ elseif ($page === 'users/delete') {
 // --- عرض الصفحات ---
 $allowed_pages = [
     'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
-    'login'             => ['path' => 'login/login_view.php', 'title' => 'تسجيل الدخول'], // <<< أضف هذا السطر
+    'login'             => ['path' => 'login/login_view.php', 'title' => 'تسجيل الدخول'],
     'about'             => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
     // الإدارة الأساسية
     'owners'            => ['path' => 'owners/owners_view.php', 'title' => 'إدارة الملاك'],
@@ -762,17 +802,24 @@ $allowed_pages = [
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
-    'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'], // <<< أضف هذا السطر
+    'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'],
     'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
+    'roles/add'         => ['path' => 'roles/add_view.php', 'title' => 'إضافة دور'],
+    'roles/edit'        => ['path' => 'roles/edit_view.php', 'title' => 'تعديل الصلاحيات'],
+    'roles/edit_role'   => ['path' => 'roles/edit_role_view.php', 'title' => 'تعديل الدور'], // <-- أضف هذا
     'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
+    'permissions/add_group'     => ['path' => 'permissions/add_group_view.php', 'title' => 'إضافة مجموعة'],
+    'permissions/edit_group'    => ['path' => 'permissions/edit_group_view.php', 'title' => 'تعديل مجموعة'],
+    'permissions/delete_group'  => ['path' => ''], // لا يوجد ملف عرض، فقط إجراء
+    'permissions/add'           => ['path' => 'permissions/add_view.php', 'title' => 'إضافة صلاحية'],
+    'permissions/edit'          => ['path' => 'permissions/edit_view.php', 'title' => 'تعديل صلاحية'],
+    'permissions/delete'        => ['path' => ''], // لا يوجد ملف عرض، فقط إجراء
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
     'settings/lookups'              => ['path' => 'settings/lookups_view.php', 'title' => 'تهيئة المدخلات'],
     'settings/add_lookup_group'     => ['path' => 'settings/add_lookup_group_view.php', 'title' => 'إضافة مجموعة'],
     'settings/edit_lookup_group'    => ['path' => 'settings/edit_lookup_group_view.php', 'title' => 'تعديل مجموعة'],
     'settings/add_lookup_option'    => ['path' => 'settings/add_lookup_option_view.php', 'title' => 'إضافة خيار'],
     'settings/edit_lookup_option'   => ['path' => 'settings/edit_lookup_option_view.php', 'title' => 'تعديل خيار'],
-
-    
 ];
 
 $page_path_suffix = $allowed_pages[$page]['path'] ?? null;
