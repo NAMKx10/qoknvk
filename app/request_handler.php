@@ -173,25 +173,7 @@ switch ($page) {
         header("Location: index.php?page=archive");
         exit();
         break;
-
-    // --- معالجات خاصة ---
-    case 'roles/handle_edit_permissions':
-        $role_id = $_POST['role_id'];
-        if ($role_id != 1) {
-            $permissions = $_POST['permissions'] ?? [];
-            $pdo->beginTransaction();
-            $delete_stmt = $pdo->prepare("DELETE FROM role_permissions WHERE role_id = ?");
-            $delete_stmt->execute([$role_id]);
-            if (!empty($permissions)) {
-                $insert_sql = "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)";
-                $insert_stmt = $pdo->prepare($insert_sql);
-                foreach ($permissions as $permission_id) { $insert_stmt->execute([$role_id, $permission_id]); }
-            }
-            $pdo->commit();
-        }
-        header("Location: index.php?page=roles/edit&id=" . $role_id);
-        exit();
-        break;
+  
 }
 
 ?>
