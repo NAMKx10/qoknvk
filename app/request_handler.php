@@ -8,7 +8,7 @@ if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 global $page, $pdo;
 
 // --- القسم الأول: الموجّه الذكي لطلبات AJAX (سليم ولا يحتاج تعديل) ---
-$is_ajax_handler_request = strpos($page, 'handle_') !== false || strpos($page, '_ajax') !== false;
+$is_ajax_handler_request = ($page !== 'handle_login' && strpos($page, 'handle_') !== false) || strpos($page, '_ajax') !== false;
 
 if ($is_ajax_handler_request) {
     $response = ['success' => false, 'message' => "المعالج '$page' غير معرّف."];
@@ -38,7 +38,6 @@ if ($is_ajax_handler_request) {
 switch ($page) {
     // --- معالجات المصادقة ---
     case 'handle_login':
-        // (هذا هو كود معالج تسجيل الدخول بالكامل)
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND is_active = 1");
@@ -55,7 +54,8 @@ switch ($page) {
             header("Location: index.php?page=login");
             exit();
         }
-        break;
+        break; // للخروج من switch
+
 
     case 'logout':
         // (هذا هو كود معالج تسجيل الخروج بالكامل)
