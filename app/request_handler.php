@@ -80,14 +80,25 @@ switch ($page) {
         exit();
         break;
 
-    case 'documents/delete':
-        if (isset($_GET['id'])) {
-            $stmt = $pdo->prepare("UPDATE documents SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$_GET['id']]);
+    case 'contracts/delete': 
+        if (isset($_GET['id'])) { 
+            $stmt = $pdo->prepare("UPDATE contracts_rental SET deleted_at = NOW() WHERE id = ?"); 
+            $stmt->execute([$_GET['id']]); 
         }
-        header("Location: index.php?page=documents");
-        exit();
+        header("Location: index.php?page=contracts"); 
+        exit(); // <-- هنا يتم حل المشكلة: يخرج ولا يذهب إلى view_renderer.php
         break;
+
+
+    case 'documents/delete':
+    if (isset($_GET['id'])) {
+        $stmt = $pdo->prepare("UPDATE documents SET deleted_at = NOW() WHERE id = ?");
+        $stmt->execute([$_GET['id']]);
+    }
+    header("Location: index.php?page=documents");
+    exit();
+    break; // <-- هذا السطر هو الأهم لمنع الخطأ
+
 
     case 'roles/delete':
         if (isset($_GET['id']) && $_GET['id'] > 2) {

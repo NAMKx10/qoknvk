@@ -33,6 +33,7 @@ return [
     // العقود والمالية
     'contracts'         => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'],
     'contracts/view'    => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'contracts/delete'      => ['path' => '', 'title' => 'حذف عقد'], // <--- السطر الجديد
     'supply_contracts'  => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
     'supply_contracts/view' => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     // إدارة النظام
