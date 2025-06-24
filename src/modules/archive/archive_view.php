@@ -7,13 +7,14 @@ $tables_map = [
     'units'             => ['display' => 'الوحدات',            'name_col' => 'unit_name'],
     'clients'           => ['display' => 'العملاء',            'name_col' => 'client_name'],
     'suppliers'         => ['display' => 'الموردين',           'name_col' => 'supplier_name'],
-    'contracts_rental'  => ['display' => 'عقود الإيجار',      'name_col' => 'contract_number'],
-    'contracts_supply'  => ['display' => 'عقود التوريد',      'name_col' => 'contract_number'],
+    'contracts_rental'  => ['display' => 'عقود الإيجار',          'name_col' => 'contract_number'],
+    'contracts_supply'  => ['display' => 'عقود التوريد',        'name_col' => 'contract_number'],
+    'documents'         => ['display' => 'الوثائق',              'name_col' => 'document_name'], // <-- هذا هو السطر الجديد
     'users'             => ['display' => 'المستخدمون',         'name_col' => 'full_name'],
     'roles'             => ['display' => 'الأدوار',             'name_col' => 'role_name'],
     'lookup_options'    => ['display' => 'خيارات الإعدادات',   'name_col' => 'option_value'],
     'permission_groups' => ['display' => 'مجموعات الصلاحيات', 'name_col' => 'group_name'],
-'permissions'       => ['display' => 'الصلاحيات',           'name_col' => 'description'],
+    'permissions'       => ['display' => 'الصلاحيات',           'name_col' => 'description'],
 
 ];
 
