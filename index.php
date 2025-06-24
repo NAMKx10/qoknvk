@@ -1,7 +1,6 @@
 <?php
 // ==========================================================================
 // index.php (النسخة النهائية والمثالية)
-// هذا الملف الآن هو "مدير المشروع"، وظيفته فقط استدعاء الأجزاء الصحيحة.
 // ==========================================================================
 
 // 1. الإعدادات الأساسية
@@ -16,17 +15,35 @@ require_once __DIR__ . '/src/core/functions.php';
 // 3. تحديد الصفحة المطلوبة
 $page = $_GET['page'] ?? 'dashboard';
 
-// 4. استدعاء جدار الحماية (للتحقق من الجلسة والصلاحيات)
+// 4. جدار الحماية (التحقق من الجلسة والصلاحيات)
 require_once __DIR__ . '/app/security.php';
 
-// 5. استدعاء معالج الطلبات (الذي سيحتوي على كل الـ if/elseif)
-// هذا سيقوم بالتعامل مع كل طلبات AJAX وإعادة التوجيه.
-define('IS_HANDLER', true); // تعريف ثابت للأمان
-require_once __DIR__ . '/app/request_handler.php';
+// ==========================================================
+// 5. معالجة الطلبات أو عرض الواجهات (الهيكل الجديد والحاسم)
+// ==========================================================
 
-// 6. استدعاء خريطة الصفحات المسموح بها
-$allowed_pages = require __DIR__ . '/routes/web.php';
+// --- تعريف قائمة المعالجات التي لا تعرض واجهات ---
+$handler_pages = [
+    'handle_login', 'logout', 'contracts/delete', 'users/delete', 
+    'documents/delete', 'roles/delete', 'roles/handle_edit_permissions',
+    'permissions/delete', 'permissions/delete_group', 
+    'settings/delete_lookup_option', 'settings/delete_lookup_group',
+    'archive/restore', 'archive/force_delete', 'archive/batch_action'
+];
 
-// 7. استدعاء محرك عرض الصفحات (لعرض الواجهات)
-require_once __DIR__ . '/app/view_renderer.php';
+// هذا الشرط يتحقق إذا كان الرابط طلب AJAX
+$is_ajax_request = ($page !== 'handle_login' && strpos($page, 'handle_') !== false) || strpos($page, '_ajax') !== false;
+
+// --- الشرط الحاسم: هل هو طلب معالجة أم طلب عرض؟ ---
+if ($is_ajax_request || in_array($page, $handler_pages)) {
+    // نعم، هذا طلب معالجة، لذلك نستدعي المعالج وننتهي.
+    define('IS_HANDLER', true);
+    require_once __DIR__ . '/app/request_handler.php';
+    // لن يتم تنفيذ أي كود بعد هذا السطر لأن المعالج سيقوم بعمل exit()
+
+} else {
+    // لا، هذا طلب عرض واجهة، لذلك نستدعي محرك العرض.
+    $allowed_pages = require __DIR__ . '/routes/web.php';
+    require_once __DIR__ . '/app/view_renderer.php';
+}
 ?>
