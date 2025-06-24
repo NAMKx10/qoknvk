@@ -31,14 +31,20 @@ $expiring_contracts = $pdo->query("
     ORDER BY end_date ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// دفعات متأخرة (مثال توضيحي)
-$delayed_payments = $pdo->query("
-    SELECT id, contract_id, due_date, amount_due
-    FROM payment_schedules
-    WHERE deleted_at IS NULL AND due_date < '{$today}' AND paid_at IS NULL
-    ORDER BY due_date ASC
-    LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
+// دفعات متأخرة (بيانات حقيقية)
+$delayed_payments_query = "
+    SELECT ps.id, ps.contract_id, ps.due_date, ps.amount_due,
+           cr.contract_number
+    FROM payment_schedules ps
+    JOIN contracts_rental cr ON ps.contract_id = cr.id AND ps.contract_type = 'rental'
+    WHERE 
+        ps.status != 'مدفوع بالكامل' 
+        AND ps.due_date < '{$today}'
+        AND cr.deleted_at IS NULL
+    ORDER BY ps.due_date ASC
+    LIMIT 5
+";
+$delayed_payments = $pdo->query($delayed_payments_query)->fetchAll(PDO::FETCH_ASSOC);
 
 // 3. جلب بيانات الرسوم البيانية (عقود جديدة، نمو العملاء)
 $chart_data_stmt = $pdo->query("
