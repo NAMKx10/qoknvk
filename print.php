@@ -11,6 +11,10 @@ $template = $_GET['template'] ?? '';
 // مصفوفة القوالب المسموحة مع مساراتها
 $allowed_templates = [
     'property_profile_print' => __DIR__ . '/src/modules/reports/property_profile_print_view.php',
+    'branch_profile_print'   => __DIR__ . '/src/modules/reports/branch_profile_print_view.php',
+    'client_profile_print'   => __DIR__ . '/src/modules/reports/client_profile_print_view.php',
+    'supplier_profile_print'   => __DIR__ . '/src/modules/reports/supplier_profile_print_view.php',
+    'unit_profile_print'   => __DIR__ . '/src/modules/reports/unit_profile_print_view.php',
     // سنضيف بقية قوالب الطباعة هنا
 ];
 
