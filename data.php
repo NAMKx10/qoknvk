@@ -10,16 +10,17 @@
 
 /* `namktop_estate`.`branches` */
 $branches = array(
-  array('id' => '1','branch_name' => 'فرع شركة رقم 1','branch_code' => 'ف فرد1','branch_type' => 'منشأة','registration_number' => '40405155','tax_number' => '3000000000003','address' => 'العنوان الوطني يكتب هنا بكل سهل','phone' => '50005','email' => 'name@name.com','status' => 'نشط','notes' => 'الملاحظات  يكتب هنا بكل سهل','created_at' => '2025-06-14 14:30:03','deleted_at' => NULL),
-  array('id' => '2','branch_name' => 'فرع شركة رقم 2','branch_code' => 'فرع2','branch_type' => 'منشأة','registration_number' => '56664','tax_number' => '86351318','address' => 'lksnvnvnsnv','phone' => '5555366','email' => 'name@name.com','status' => 'نشط','notes' => 'lkdfnnvenvlrn','created_at' => '2025-06-14 14:41:20','deleted_at' => NULL),
-  array('id' => '3','branch_name' => 'فرع فرد رقم 1','branch_code' => 'فرع1','branch_type' => 'فرد','registration_number' => '55100001','tax_number' => '20000002','address' => 'العنوان هنا','phone' => '555005','email' => '','status' => 'نشط','notes' => 'المحلات','created_at' => '2025-06-14 15:08:12','deleted_at' => NULL),
-  array('id' => '4','branch_name' => 'شركة جدة','branch_code' => 'جدة شركة1','branch_type' => 'منشأة','registration_number' => '4033353','tax_number' => '5381331','address' => 'mvkermvl','phone' => '35131','email' => 'name@name.com','status' => 'نشط','notes' => 'fmdklvmd;lkb','created_at' => '2025-06-16 21:36:23','deleted_at' => NULL),
-  array('id' => '5','branch_name' => 'فرع مكة','branch_code' => 'مكة شركة','branch_type' => 'منشأة','registration_number' => 'ننتى','tax_number' => 'تتنىنت ','address' => 'نةصصمنر','phone' => 'نت تن ','email' => 'name@name.com','status' => 'نشط','notes' => 'نةمنكبيةرنيم','created_at' => '2025-06-16 21:37:17','deleted_at' => NULL),
-  array('id' => '6','branch_name' => 'فرع الطائف','branch_code' => 'الطائف 1','branch_type' => 'منشأة','registration_number' => '5165165','tax_number' => '616187','address' => 'نرنتىقمنتىقمنتلا','phone' => '11553','email' => 'name@name.com','status' => 'نشط','notes' => 'ننقلانقفلاتنقى','created_at' => '2025-06-16 21:55:44','deleted_at' => NULL),
-  array('id' => '7','branch_name' => 'فرعنا','branch_code' => '45فرعنا','branch_type' => 'فرد','registration_number' => '55110000','tax_number' => '11','address' => '5يىؤي','phone' => '65','email' => '','status' => 'نشط','notes' => 'تىيسنت','created_at' => '2025-06-16 22:01:48','deleted_at' => NULL),
-  array('id' => '8','branch_name' => 'فروع الفرع1','branch_code' => 'فروعفرعي','branch_type' => 'فرد','registration_number' => '25135','tax_number' => '1351','address' => ' ةتبيىرىنت','phone' => '51351','email' => '','status' => 'نشط','notes' => 'تىنتلانتلاتن','created_at' => '2025-06-16 22:15:18','deleted_at' => NULL),
-  array('id' => '9','branch_name' => 'اتلانات','branch_code' => 'تالانتلانتلات','branch_type' => 'منشأة','registration_number' => 'لاتالان','tax_number' => 'وىرلسالام','address' => 'بنتر ميسنتمنيس','phone' => '','email' => '','status' => 'نشط','notes' => 'ىؤاتبشسيسءاس','created_at' => '2025-06-16 22:22:51','deleted_at' => NULL),
-  array('id' => '10','branch_name' => 'فرع النهضة','branch_code' => 'النهضة10','branch_type' => 'فرد','registration_number' => '56468','tax_number' => '46843','address' => 'بينترمهيب','phone' => '56465','email' => '','status' => 'نشط','notes' => 'منسىيمرىىس','created_at' => '2025-06-16 23:57:27','deleted_at' => NULL)
+  array('id' => '1','branch_name' => 'فرع شركة رقم 1','branch_code' => 'ف فرد1','branch_type' => 'منشأة','registration_number' => '40405155','tax_number' => '3000000000003','address' => 'العنوان الوطني يكتب هنا بكل سهل','phone' => '50005','email' => 'name@name.com','status' => 'Cancelled','notes' => 'الملاحظات  يكتب هنا بكل سهل','created_at' => '2025-06-14 14:30:03','deleted_at' => NULL),
+  array('id' => '2','branch_name' => 'فرع شركة رقم 2','branch_code' => 'فرع2','branch_type' => 'منشأة','registration_number' => '56664','tax_number' => '86351318','address' => 'lksnvnvnsnv','phone' => '5555366','email' => 'name@name.com','status' => 'Cancelled','notes' => 'lkdfnnvenvlrn','created_at' => '2025-06-14 14:41:20','deleted_at' => NULL),
+  array('id' => '3','branch_name' => 'فرع فرد رقم 1','branch_code' => 'فرع1','branch_type' => 'فرد','registration_number' => '55100001','tax_number' => '20000002','address' => 'العنوان هنا','phone' => '555005','email' => '','status' => 'Active','notes' => 'المحلات','created_at' => '2025-06-14 15:08:12','deleted_at' => NULL),
+  array('id' => '4','branch_name' => 'شركة جدة','branch_code' => 'جدة شركة1','branch_type' => 'منشأة','registration_number' => '4033353','tax_number' => '5381331','address' => 'mvkermvl','phone' => '35131','email' => 'name@name.com','status' => 'Expired','notes' => 'fmdklvmd;lkb','created_at' => '2025-06-16 21:36:23','deleted_at' => NULL),
+  array('id' => '5','branch_name' => 'فرع مكة','branch_code' => 'مكة شركة','branch_type' => 'منشأة','registration_number' => 'ننتى','tax_number' => 'تتنىنت ','address' => 'نةصصمنر','phone' => 'نت تن ','email' => 'name@name.com','status' => 'Cancelled','notes' => 'نةمنكبيةرنيم','created_at' => '2025-06-16 21:37:17','deleted_at' => NULL),
+  array('id' => '6','branch_name' => 'فرع الطائف','branch_code' => 'الطائف 1','branch_type' => 'منشأة','registration_number' => '5165165','tax_number' => '616187','address' => 'نرنتىقمنتىقمنتلا','phone' => '11553','email' => 'name@name.com','status' => 'Active','notes' => 'ننقلانقفلاتنقى','created_at' => '2025-06-16 21:55:44','deleted_at' => NULL),
+  array('id' => '7','branch_name' => 'فرعنا','branch_code' => '45فرعنا','branch_type' => 'فرد','registration_number' => '55110000','tax_number' => '11','address' => '5يىؤي','phone' => '65','email' => '','status' => 'Active','notes' => 'تىيسنت','created_at' => '2025-06-16 22:01:48','deleted_at' => NULL),
+  array('id' => '8','branch_name' => 'فروع الفرع1','branch_code' => 'فروعفرعي','branch_type' => 'فرد','registration_number' => '25135','tax_number' => '1351','address' => ' ةتبيىرىنت','phone' => '51351','email' => '','status' => 'Active','notes' => 'تىنتلانتلاتن','created_at' => '2025-06-16 22:15:18','deleted_at' => NULL),
+  array('id' => '9','branch_name' => 'شركة زمردة الشاطي المحدودة','branch_code' => 'زمردة','branch_type' => 'منشأة','registration_number' => 'لاتالان','tax_number' => 'وىرلسالام','address' => 'بنتر ميسنتمنيس','phone' => '050','email' => '','status' => 'Active','notes' => 'ىؤاتبشسيسءاس','created_at' => '2025-06-16 22:22:51','deleted_at' => NULL),
+  array('id' => '10','branch_name' => 'شركة أبناء سالم حسن العماري','branch_code' => 'العماري','branch_type' => 'منشأة','registration_number' => '56468','tax_number' => '46843','address' => 'بينترمهيب','phone' => '56465','email' => '','status' => 'Active','notes' => 'منسىيمرىىس','created_at' => '2025-06-16 23:57:27','deleted_at' => NULL),
+  array('id' => '11','branch_name' => 'يحيى باجرش','branch_code' => 'باجرش','branch_type' => 'فرد','registration_number' => '200002','tax_number' => '0','address' => 'ششششششش','phone' => '050','email' => 'name2@name.com','status' => 'Active','notes' => 'سسسسسسس','created_at' => '2025-06-24 19:14:30','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`clients` */
@@ -32,7 +33,6 @@ $clients = array(
   array('id' => '7','client_code' => NULL,'client_name' => 'NAMKx10','client_type' => 'فرد','id_number' => '556','tax_number' => '','mobile' => '0501568138','email' => 'name@name.com','address' => '3972 Al Madaris, Al Baghdadiyah Al Gharbiyah, 7048-22231','representative_name' => '1453','status' => 'نشط','deleted_at' => NULL,'notes' => '','created_at' => '2025-06-08 11:24:19'),
   array('id' => '8','client_code' => NULL,'client_name' => 'بيسسسسسسسسل','client_type' => 'منشأة','id_number' => '444556','tax_number' => '','mobile' => '6658','email' => '','address' => 'سيؤسؤسيؤ','representative_name' => '55555','status' => 'نشط','deleted_at' => NULL,'notes' => '','created_at' => '2025-06-08 11:54:03'),
   array('id' => '10','client_code' => NULL,'client_name' => 'حذف 1','client_type' => 'فرد','id_number' => 'ىلىلاىل','tax_number' => NULL,'mobile' => 'يلا','email' => '','address' => 'بللابلاب','representative_name' => '','status' => 'نشط','deleted_at' => '2025-06-09 20:36:55','notes' => NULL,'created_at' => '2025-06-09 15:09:36'),
-  array('id' => '11','client_code' => NULL,'client_name' => 'حذف 2','client_type' => 'منشأة','id_number' => '515161','tax_number' => NULL,'mobile' => '51651651','email' => '','address' => '5135135ؤسرتى','representative_name' => '351351','status' => 'نشط','deleted_at' => '2025-06-09 21:38:59','notes' => NULL,'created_at' => '2025-06-09 15:09:50'),
   array('id' => '12','client_code' => NULL,'client_name' => 'عميل شركة خيرية','client_type' => 'منشأة','id_number' => '44444446','tax_number' => 'ukvkuvkuv','mobile' => '05','email' => '','address' => 'العنوان عنا','representative_name' => '1ش','status' => 'نشط','deleted_at' => NULL,'notes' => 'يلا','created_at' => '2025-06-11 17:40:01'),
   array('id' => '13','client_code' => NULL,'client_name' => 'عميل جديد 99','client_type' => 'منشأة','id_number' => '148272','tax_number' => '55555555','mobile' => '0500000','email' => 'name@name.com','address' => 'xvsvdfv','representative_name' => 'cxcvx','status' => 'نشط','deleted_at' => NULL,'notes' => 'ddddddddddddd','created_at' => '2025-06-11 18:16:26'),
   array('id' => '14','client_code' => NULL,'client_name' => 'عميل شركة خيرية','client_type' => 'فرد','id_number' => 'ddddddf','tax_number' => 'fffffffff','mobile' => '44245254','email' => '','address' => '3972 Al Madaris, Al Baghdadiyah Al Gharbiyah, 7048-22231','representative_name' => '','status' => 'نشط','deleted_at' => NULL,'notes' => 'ggggggggggggggg','created_at' => '2025-06-14 19:00:36'),
@@ -99,7 +99,7 @@ $contract_units = array(
 
 /* `namktop_estate`.`documents` */
 $documents = array(
-  array('id' => '1','document_type' => 'deed','document_name' => 'صك ارض الفلان','document_number' => '10001','status' => 'Active','issue_date' => '2025-02-01','expiry_date' => '2025-12-01','details' => NULL,'notes' => 'لىعلةل','created_at' => '2025-06-20 23:01:36','deleted_at' => '2025-06-23 21:59:27'),
+  array('id' => '1','document_type' => 'deed','document_name' => 'صك ارض الفلان','document_number' => '10001','status' => 'Active','issue_date' => '2025-02-01','expiry_date' => '2025-12-01','details' => NULL,'notes' => 'لىعلةل','created_at' => '2025-06-20 23:01:36','deleted_at' => '2025-06-24 16:14:13'),
   array('id' => '2','document_type' => 'deed','document_name' => 'اسم الصك1','document_number' => '846846','status' => 'Active','issue_date' => '2025-01-01','expiry_date' => '2025-12-31','details' => NULL,'notes' => 'يىاةنامهخت','created_at' => '2025-06-20 23:02:05','deleted_at' => NULL),
   array('id' => '3','document_type' => 'Commercial_register','document_name' => 'اسم السجل','document_number' => '4413424','status' => 'Active','issue_date' => '2025-01-01','expiry_date' => '2025-01-01','details' => NULL,'notes' => 'لىبىب','created_at' => '2025-06-21 09:07:20','deleted_at' => NULL),
   array('id' => '4','document_type' => 'Commercial_register','document_name' => 'سجل تجاري','document_number' => '5577','status' => 'Expired','issue_date' => '2024-01-01','expiry_date' => '2026-05-01','details' => NULL,'notes' => 'ملاحظان','created_at' => '2025-06-21 10:39:27','deleted_at' => NULL)
@@ -115,7 +115,8 @@ $entity_documents = array(
   array('id' => '10','document_id' => '1','entity_type' => 'property','entity_id' => '12','notes' => NULL),
   array('id' => '12','document_id' => '2','entity_type' => 'property','entity_id' => '11','notes' => NULL),
   array('id' => '14','document_id' => '3','entity_type' => 'owner','entity_id' => '1','notes' => NULL),
-  array('id' => '15','document_id' => '2','entity_type' => 'property','entity_id' => '12','notes' => NULL)
+  array('id' => '15','document_id' => '2','entity_type' => 'property','entity_id' => '12','notes' => NULL),
+  array('id' => '16','document_id' => '4','entity_type' => 'property','entity_id' => '11','notes' => NULL)
 );
 
 /* `namktop_estate`.`lookup_options` */
@@ -145,119 +146,121 @@ $lookup_options = array(
   array('id' => '26','group_key' => 'banks','option_key' => 'Aljazira','option_value' => 'الجزيرة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '27','group_key' => 'documents_type','option_key' => 'deed','option_value' => 'صك ملكية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => '2025-06-23 17:17:04'),
   array('id' => '28','group_key' => 'status','option_key' => 'status','option_value' => 'الحالات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '29','group_key' => 'status','option_key' => 'Active','option_value' => 'نشط','color' => '#ffffff','bg_color' => '#16c052','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '30','group_key' => 'status','option_key' => 'Cancelled','option_value' => 'ملغي','color' => '#ffffff','bg_color' => '#ff2424','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '31','group_key' => 'status','option_key' => 'Expired','option_value' => 'منتهي','color' => '#b6580c','bg_color' => '#fdca3f','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '29','group_key' => 'status','option_key' => 'Active','option_value' => 'نشط','color' => '#ffffff','bg_color' => '#5cb017','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '30','group_key' => 'status','option_key' => 'Cancelled','option_value' => 'ملغي','color' => '#ffffff','bg_color' => '#f3aaaa','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '31','group_key' => 'status','option_key' => 'Expired','option_value' => 'منتهي','color' => '#ffffff','bg_color' => '#fdca3f','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '32','group_key' => 'status','option_key' => 'Draft','option_value' => 'مسودة','color' => '#ffffff','bg_color' => '#878787','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '33','group_key' => 'status','option_key' => 'Rented','option_value' => 'مؤجر','color' => '#ffffff','bg_color' => '#cd51bc','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '34','group_key' => 'status','option_key' => 'Available','option_value' => 'متاح','color' => '#ffffff','bg_color' => '#0084ff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '33','group_key' => 'status','option_key' => 'Rented','option_value' => 'مؤجر','color' => '#ffffff','bg_color' => '#ee6ddd','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '34','group_key' => 'status','option_key' => 'Available','option_value' => 'متاح','color' => '#ffffff','bg_color' => '#48a6fe','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '35','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '36','group_key' => 'documents_type','option_key' => 'building_permit','option_value' => 'رخصة بناء','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '37','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
   array('id' => '38','group_key' => 'documents_type','option_key' => 'baladi_permit','option_value' => 'رخصة بلدي','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '39','group_key' => 'documents_type','option_key' => 'certificate','option_value' => 'شهادة','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL)
+  array('id' => '39','group_key' => 'documents_type','option_key' => 'certificate','option_value' => 'شهادة','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '40','group_key' => 'entity_type','option_key' => 'individual','option_value' => 'فرد','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '41','group_key' => 'entity_type','option_key' => 'institution','option_value' => 'منشأة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`owners` */
 $owners = array(
-  array('id' => '1','owner_code' => 'مالك ش1','owner_name' => 'مالك شركة1','owner_type' => 'منشأة','id_number' => '70007','mobile' => '0550','email' => '','address' => NULL,'notes' => 'ملاحظة','status' => 'نشط','created_at' => '2025-06-20 17:24:52','deleted_at' => NULL),
-  array('id' => '2','owner_code' => 'مالك ف1ف','owner_name' => 'مالك فرد1','owner_type' => 'فرد','id_number' => '10001','mobile' => '553','email' => '','address' => NULL,'notes' => 'ملاحيمب','status' => 'نشط','created_at' => '2025-06-20 17:25:25','deleted_at' => NULL)
+  array('id' => '1','owner_code' => 'مالك ش1','owner_name' => 'مالك شركة1','owner_type' => 'منشأة','id_number' => '70007','mobile' => '0550','email' => '','address' => NULL,'notes' => 'ملاحظة','status' => 'Active','created_at' => '2025-06-20 17:24:52','deleted_at' => NULL),
+  array('id' => '2','owner_code' => 'مالك ف1ف','owner_name' => 'مالك فرد1','owner_type' => 'فرد','id_number' => '10001','mobile' => '553','email' => '','address' => NULL,'notes' => 'ملاحيمب','status' => 'Expired','created_at' => '2025-06-20 17:25:25','deleted_at' => NULL),
+  array('id' => '3','owner_code' => 'مالك فرد105','owner_name' => 'مالك جديد 99','owner_type' => 'منشأة','id_number' => '10001','mobile' => '1515','email' => '','address' => NULL,'notes' => '55ششش','status' => 'Active','created_at' => '2025-06-25 19:29:06','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`owner_branches` */
 $owner_branches = array(
   array('owner_id' => '1','branch_id' => '1'),
-  array('owner_id' => '1','branch_id' => '5'),
   array('owner_id' => '1','branch_id' => '7'),
   array('owner_id' => '1','branch_id' => '8'),
-  array('owner_id' => '2','branch_id' => '5'),
   array('owner_id' => '2','branch_id' => '6'),
-  array('owner_id' => '2','branch_id' => '10')
+  array('owner_id' => '2','branch_id' => '10'),
+  array('owner_id' => '3','branch_id' => '9')
 );
 
 /* `namktop_estate`.`payment_schedules` */
 $payment_schedules = array(
-  array('id' => '1','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-01-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-01-05','notes' => NULL),
-  array('id' => '2','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-02-01','amount_due' => '1090.91','amount_paid' => '90.91','status' => 'مدفوع جزئي','payment_date' => '2025-01-10','notes' => NULL),
-  array('id' => '3','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-03-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '4','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-04-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '5','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-05-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '6','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-06-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '7','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-07-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '8','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-08-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '9','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-09-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '10','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-10-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '11','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-11-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '12','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-01-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-01-01','notes' => NULL),
-  array('id' => '13','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-02-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-02-05','notes' => NULL),
-  array('id' => '14','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-03-01','amount_due' => '1090.91','amount_paid' => '190.91','status' => 'مدفوع جزئي','payment_date' => '2025-03-05','notes' => NULL),
-  array('id' => '15','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-04-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '16','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-05-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '17','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-06-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '18','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-07-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '19','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-08-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '20','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-09-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '21','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-10-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '22','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-11-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '164','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-01-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '165','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-02-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '166','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-03-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '167','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-04-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '168','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-05-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '169','contract_type' => 'supply','contract_id' => '5','due_date' => '2025-01-01','amount_due' => '2500.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '170','contract_type' => 'supply','contract_id' => '5','due_date' => '2025-02-01','amount_due' => '2500.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '175','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '176','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '177','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '178','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '179','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '180','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '181','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '182','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '183','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '184','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '185','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '186','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-12-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '187','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '188','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '189','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '190','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '191','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '192','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '193','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '194','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '195','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '196','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '197','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '198','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-12-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '199','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '200','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '201','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '202','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '203','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '204','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '205','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '206','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '207','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '208','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '209','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '218','contract_type' => 'rental','contract_id' => '8','due_date' => '2025-01-01','amount_due' => '15000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '237','contract_type' => 'rental','contract_id' => '3','due_date' => '2025-03-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '238','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-02-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '239','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-05-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '240','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-08-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '241','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-11-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '242','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-01-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '243','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-04-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '244','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-07-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '245','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-10-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '247','contract_type' => 'rental','contract_id' => '9','due_date' => '2025-04-01','amount_due' => '12000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '248','contract_type' => 'rental','contract_id' => '10','due_date' => '2025-01-01','amount_due' => '6000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '249','contract_type' => 'rental','contract_id' => '10','due_date' => '2025-04-01','amount_due' => '6000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '250','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-01-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '251','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-04-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '252','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-07-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL),
-  array('id' => '253','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-10-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL)
+  array('id' => '1','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-01-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-01-05','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '2','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-02-01','amount_due' => '1090.91','amount_paid' => '90.91','status' => 'مدفوع جزئي','payment_date' => '2025-01-10','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '3','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-03-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '4','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-04-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '5','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-05-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '6','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-06-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '7','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-07-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '8','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-08-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '9','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-09-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '10','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-10-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '11','contract_type' => 'rental','contract_id' => '4','due_date' => '2025-11-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '12','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-01-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-01-01','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '13','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-02-01','amount_due' => '1090.91','amount_paid' => '1090.91','status' => 'مدفوع بالكامل','payment_date' => '2025-02-05','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '14','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-03-01','amount_due' => '1090.91','amount_paid' => '190.91','status' => 'مدفوع جزئي','payment_date' => '2025-03-05','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '15','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-04-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '16','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-05-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '17','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-06-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '18','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-07-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '19','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-08-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '20','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-09-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '21','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-10-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '22','contract_type' => 'supply','contract_id' => '4','due_date' => '2025-11-01','amount_due' => '1090.91','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '164','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-01-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '165','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-02-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '166','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-03-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '167','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-04-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '168','contract_type' => 'rental','contract_id' => '7','due_date' => '2025-05-01','amount_due' => '2400.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '169','contract_type' => 'supply','contract_id' => '5','due_date' => '2025-01-01','amount_due' => '2500.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '170','contract_type' => 'supply','contract_id' => '5','due_date' => '2025-02-01','amount_due' => '2500.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '175','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '176','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '177','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '178','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '179','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '180','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '181','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '182','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '183','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '184','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '185','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '186','contract_type' => 'rental','contract_id' => '5','due_date' => '2024-12-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '187','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '188','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '189','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '190','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '191','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '192','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '193','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '194','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '195','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '196','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '197','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '198','contract_type' => 'rental','contract_id' => '5','due_date' => '2025-12-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '199','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-01-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '200','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-02-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '201','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-03-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '202','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-04-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '203','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-05-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '204','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-06-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '205','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-07-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '206','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-08-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '207','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-09-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '208','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-10-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '209','contract_type' => 'rental','contract_id' => '5','due_date' => '2026-11-01','amount_due' => '342.86','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '218','contract_type' => 'rental','contract_id' => '8','due_date' => '2025-01-01','amount_due' => '15000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '237','contract_type' => 'rental','contract_id' => '3','due_date' => '2025-03-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '238','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-02-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '239','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-05-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '240','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-08-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '241','contract_type' => 'rental','contract_id' => '2','due_date' => '2025-11-01','amount_due' => '3000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '242','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-01-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '243','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-04-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '244','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-07-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '245','contract_type' => 'rental','contract_id' => '1','due_date' => '2025-10-01','amount_due' => '3750.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '247','contract_type' => 'rental','contract_id' => '9','due_date' => '2025-04-01','amount_due' => '12000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '248','contract_type' => 'rental','contract_id' => '10','due_date' => '2025-01-01','amount_due' => '6000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '249','contract_type' => 'rental','contract_id' => '10','due_date' => '2025-04-01','amount_due' => '6000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '250','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-01-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '251','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-04-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '252','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-07-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL),
+  array('id' => '253','contract_type' => 'rental','contract_id' => '6','due_date' => '2025-10-01','amount_due' => '5000.00','amount_paid' => '0.00','status' => 'مستحق','payment_date' => NULL,'notes' => NULL,'deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`permissions` */
@@ -356,7 +359,7 @@ $roles = array(
   array('id' => '3','role_name' => 'Data Entry','description' => 'مدخل بيانات بصلاحيات محدودة','deleted_at' => NULL),
   array('id' => '7','role_name' => 'دور تجربة','description' => 'للتجربة فقط','deleted_at' => NULL),
   array('id' => '8','role_name' => 'دورجديد','description' => 'هذا للتجربةذذ','deleted_at' => NULL),
-  array('id' => '9','role_name' => 'دور اخر','description' => 'هلا','deleted_at' => NULL)
+  array('id' => '9','role_name' => 'دور اخر1','description' => 'هلا','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`role_permissions` */
@@ -396,10 +399,17 @@ $role_permissions = array(
   array('role_id' => '3','permission_id' => '29'),
   array('role_id' => '3','permission_id' => '30'),
   array('role_id' => '3','permission_id' => '31'),
+  array('role_id' => '3','permission_id' => '36'),
+  array('role_id' => '3','permission_id' => '41'),
+  array('role_id' => '3','permission_id' => '46'),
+  array('role_id' => '3','permission_id' => '50'),
+  array('role_id' => '3','permission_id' => '57'),
+  array('role_id' => '3','permission_id' => '60'),
   array('role_id' => '7','permission_id' => '24'),
   array('role_id' => '7','permission_id' => '25'),
   array('role_id' => '8','permission_id' => '1'),
-  array('role_id' => '9','permission_id' => '2')
+  array('role_id' => '9','permission_id' => '2'),
+  array('role_id' => '9','permission_id' => '10')
 );
 
 /* `namktop_estate`.`settings` */
@@ -414,9 +424,7 @@ $suppliers = array(
   array('id' => '2','supplier_code' => NULL,'supplier_name' => 'مؤسسة المورد رقم 2','supplier_type' => 'منشأة','service_type' => 'نظافة عامة','registration_number' => '700000007','tax_number' => '30000000003','mobile' => '1333333333','email' => 'name@name.com','contact_person' => '255555550','address' => '3232','status' => 'نشط','deleted_at' => NULL,'notes' => 'ddddddddddddddd','created_at' => '2025-06-07 14:36:12'),
   array('id' => '4','supplier_code' => NULL,'supplier_name' => 'مورد تجريبي فرد','supplier_type' => 'فرد','service_type' => 'حراسات امنية','registration_number' => '700555007','tax_number' => '55555555','mobile' => '11111111','email' => '','contact_person' => '33333333','address' => 'صصصصص','status' => 'نشط','deleted_at' => NULL,'notes' => 'سسسسسسسسسسسسس','created_at' => '2025-06-07 15:15:11'),
   array('id' => '5','supplier_code' => NULL,'supplier_name' => 'المورد الكامل','supplier_type' => 'منشأة','service_type' => 'صيانة كل شي','registration_number' => '40000004','tax_number' => '300000000000000003','mobile' => '51616','email' => 'name@name.com','contact_person' => 'Naji Qasem','address' => 'بببببب','status' => 'نشط','deleted_at' => NULL,'notes' => 'Western Baghdadiya. Al Madars Street','created_at' => '2025-06-08 11:38:58'),
-  array('id' => '6','supplier_code' => NULL,'supplier_name' => 'سؤسؤسؤ','supplier_type' => 'منشأة','service_type' => 'سسسبلسس','registration_number' => 'س555س','tax_number' => 'سؤيؤ','mobile' => '5555555','email' => '','contact_person' => 'سرسبرس','address' => 'ثثثثثثثثثث','status' => 'نشط','deleted_at' => NULL,'notes' => '3972 Al Madaris, Al Baghdadiyah Al Gharbiyah, 7048-22231','created_at' => '2025-06-08 11:53:16'),
-  array('id' => '7','supplier_code' => NULL,'supplier_name' => 'ffhdhd','supplier_type' => 'منشأة','service_type' => '55555556','registration_number' => '444445','tax_number' => '56سيب','mobile' => 'vkuv','email' => '','contact_person' => 'vukuv','address' => 'kuvykuvuv','status' => 'نشط','deleted_at' => '2025-06-09 21:46:50','notes' => NULL,'created_at' => '2025-06-08 12:41:08'),
-  array('id' => '8','supplier_code' => NULL,'supplier_name' => 'مورد للحذف4458','supplier_type' => 'منشأة','service_type' => 'صيانة لا شي','registration_number' => '4555556','tax_number' => '46666666661','mobile' => '','email' => '','contact_person' => 'سشيبل','address' => 'مييييييييبننني','status' => 'نشط','deleted_at' => '2025-06-08 19:39:29','notes' => NULL,'created_at' => '2025-06-08 19:39:07')
+  array('id' => '6','supplier_code' => NULL,'supplier_name' => 'سؤسؤسؤ','supplier_type' => 'منشأة','service_type' => 'سسسبلسس','registration_number' => 'س555س','tax_number' => 'سؤيؤ','mobile' => '5555555','email' => '','contact_person' => 'سرسبرس','address' => 'ثثثثثثثثثث','status' => 'نشط','deleted_at' => NULL,'notes' => '3972 Al Madaris, Al Baghdadiyah Al Gharbiyah, 7048-22231','created_at' => '2025-06-08 11:53:16')
 );
 
 /* `namktop_estate`.`supplier_branches` */
