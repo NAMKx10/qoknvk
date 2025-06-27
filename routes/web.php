@@ -21,9 +21,14 @@ return [
     'branches'          => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
     'branches/add'      => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
     'branches/edit'     => ['path' => 'branches/edit_view.php', 'title' => 'تعديل فرع'],
-    'properties'        => ['path' => 'properties/properties_view.php', 'title' => 'إدارة العقارات'],
+    'properties' => ['path' => 'properties/properties_controller.php', 'title' => 'إدارة العقارات'],
     'properties/add'    => ['path' => 'properties/add_view.php', 'title' => 'إضافة عقار'],
     'properties/edit'   => ['path' => 'properties/edit_view.php', 'title' => 'تعديل عقار'],
+    'properties/batch_edit'        => ['path' => 'properties/properties_batch_edit_controller.php', 'title' => 'تعديل جماعي للعقارات'],
+    'properties/handle_batch_edit' => ['path' => ''],
+    'properties/batch_add'         => ['path' => 'properties/properties_batch_add_controller.php', 'title' => 'إدخال متعدد للعقارات'],
+    'properties/handle_batch_add'  => ['path' => ''], // معالج فقط
+
     'units'             => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'],
     'units/add'         => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
     'clients'           => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'],
