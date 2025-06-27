@@ -23,7 +23,7 @@ $is_admin_active = in_array($current_page, $admin_pages);
       <span class="nav-link-title">الرئيسية</span>
     </a>
   </li>
-  
+
   <!-- القائمة الأساسية -->
   <li class="nav-item dropdown <?= ($is_base_active) ? 'active' : '' ?>">
     <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" role="button" aria-expanded="<?= ($is_base_active) ? 'true' : 'false' ?>">

@@ -160,6 +160,90 @@ $(document).ready(function() {
     });
 
 });
+
+
+/**
+ * ✨ دالة مركزية جديدة ✨
+ * لتحديد وإلغاء تحديد كل مربعات الاختيار في أي جدول.
+ * @param {HTMLInputElement} source - مربع الاختيار الرئيسي في رأس الجدول.
+ */
+function toggleAllCheckboxes(source) {
+    document.querySelectorAll('input[name="row_id[]"]').forEach(checkbox => {
+        checkbox.checked = source.checked;
+    });
+}
+
+/**
+ * ✨ دالة مركزية جديدة ✨
+ * لإرسال نماذج الإجراءات الجماعية (Batch Actions).
+ * @param {string} action - اسم الإجراء المراد تنفيذه (مثال: 'soft_delete').
+ * @param {string} formId - معرف النموذج (الافتراضي هو 'batch-form').
+ */
+function submitBatchForm(action, formId = 'batch-form') {
+    const form = document.getElementById(formId);
+    if (!form) {
+        console.error(`Form with id "${formId}" not found.`);
+        return;
+    }
+
+    if (form.querySelectorAll('input[name="row_id[]"]:checked').length === 0) {
+        Swal.fire({ title: 'خطأ', text: 'يرجى تحديد سجل واحد على الأقل!', icon: 'error', confirmButtonText: 'حسنًا' });
+        return;
+    }
+
+    // ضع قيمة الإجراء المطلوب في الحقل المخفي داخل النموذج
+    const actionInput = form.querySelector('input[name="action"]');
+    if (actionInput) {
+        actionInput.value = action;
+    } else {
+        console.error(`Input with name "action" not found in form "${formId}".`);
+        return;
+    }
+
+    // يمكنك تخصيص رسائل التأكيد هنا مستقبلاً إذا أردت
+    Swal.fire({
+        title: 'هل أنت متأكد؟',
+        text: "سيتم تنفيذ هذا الإجراء على كل العناصر المحددة.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'نعم، قم بالتنفيذ!',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+
+/**
+ * ✨ دالة مركزية جديدة ✨
+ * تقوم بجمع كل المعرفات المحددة وتوجيه المستخدم لصفحة التعديل الجماعي.
+ */
+function redirectToBatchEdit() {
+    // 1. نبحث عن كل مربعات الاختيار التي تم تحديدها.
+    const selectedCheckboxes = document.querySelectorAll('input[name="row_id[]"]:checked');
+
+    // 2. إذا لم يحدد المستخدم أي شيء، نظهر رسالة خطأ.
+    if (selectedCheckboxes.length === 0) {
+        Swal.fire({ title: 'خطأ', text: 'يرجى تحديد سجل واحد على الأقل للتعديل!', icon: 'error', confirmButtonText: 'حسنًا' });
+        return;
+    }
+
+    // 3. نقوم بإنشاء مصفوفة تحتوي على قيم (id) مربعات الاختيار المحددة.
+    const ids = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+    // 4. نقوم ببناء رابط صفحة التعديل الجماعي ونضيف المعرفات مفصولة بفاصلة.
+    const url = `index.php?page=properties/batch_edit&ids=${ids.join(',')}`;
+
+    // 5. نوجه المستخدم إلى الرابط الجديد.
+    window.location.href = url;
+}
+
+
+// ... يمكنك إضافة أي دوال JavaScript مركزية أخرى هنا ...
+
 </script>
 
 <!--
