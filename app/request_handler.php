@@ -1,16 +1,17 @@
 <?php
 /**
- * app/request_handler.php (النسخة النهائية الكاملة والشاملة)
+ * app/request_handler.php (النسخة النهائية النظيفة بعد استخدام الدوال المركزية)
  */
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 
 global $page, $pdo;
 
-// --- القسم الأول: الموجّه الذكي لطلبات AJAX (سليم ولا يحتاج تعديل) ---
+// --- القسم الأول: الموجّه الذكي لطلبات AJAX (لم يتغير) ---
 $is_ajax_handler_request = ($page !== 'handle_login' && strpos($page, 'handle_') !== false) || strpos($page, '_ajax') !== false;
 
 if ($is_ajax_handler_request) {
+    // ... (هذا القسم يبقى كما هو دون تغيير) ...
     $response = ['success' => false, 'message' => "المعالج '$page' غير معرّف."];
     $handler_name = explode('/', $page)[0];
     $handler_path = __DIR__ . '/../handlers/' . $handler_name . '_handler.php';
@@ -34,10 +35,11 @@ if ($is_ajax_handler_request) {
 }
 
 
-// --- القسم الثاني: معالجات إعادة التوجيه المباشر (باستخدام Switch للتنظيم) ---
+// --- القسم الثاني: معالجات إعادة التوجيه (أصبحت الآن أنظف بكثير) ---
 switch ($page) {
-    // --- معالجات المصادقة ---
+    // --- معالجات المصادقة (لم تتغير) ---
     case 'handle_login':
+        // ... (هذا القسم يبقى كما هو دون تغيير) ...
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND is_active = 1");
@@ -54,11 +56,10 @@ switch ($page) {
             header("Location: index.php?page=login");
             exit();
         }
-        break; // للخروج من switch
-
+        break;
 
     case 'logout':
-        // (هذا هو كود معالج تسجيل الخروج بالكامل)
+        // ... (هذا القسم يبقى كما هو دون تغيير) ...
         session_start();
         $_SESSION = [];
         if (ini_get("session.use_cookies")) {
@@ -70,77 +71,70 @@ switch ($page) {
         exit();
         break;
 
-    // --- معالجات الحذف ---
+    // --- معالجات الحذف الناعم (أصبحت تستدعي دالة موحدة) ---
     case 'users/delete':
-        if (isset($_GET['id']) && $_GET['id'] != 1) {
-            $stmt = $pdo->prepare("UPDATE users SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$_GET['id']]);
+        if (isset($_GET['id']) && $_GET['id'] != 1) { // لا نسمح بحذف المدير الخارق
+            soft_delete($pdo, 'users', (int)$_GET['id']);
         }
-        header("Location: index.php?page=users");
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=users'));
         exit();
         break;
 
     case 'contracts/delete': 
         if (isset($_GET['id'])) { 
-            $stmt = $pdo->prepare("UPDATE contracts_rental SET deleted_at = NOW() WHERE id = ?"); 
-            $stmt->execute([$_GET['id']]); 
+            soft_delete($pdo, 'contracts_rental', (int)$_GET['id']);
         }
-        header("Location: index.php?page=contracts"); 
-        exit(); // <-- هنا يتم حل المشكلة: يخرج ولا يذهب إلى view_renderer.php
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=contracts'));
+        exit();
         break;
 
-
     case 'documents/delete':
-    if (isset($_GET['id'])) {
-        $stmt = $pdo->prepare("UPDATE documents SET deleted_at = NOW() WHERE id = ?");
-        $stmt->execute([$_GET['id']]);
-    }
-    header("Location: index.php?page=documents");
-    exit();
-    break; // <-- هذا السطر هو الأهم لمنع الخطأ
-
+        if (isset($_GET['id'])) {
+            soft_delete($pdo, 'documents', (int)$_GET['id']);
+        }
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=documents'));
+        exit();
+        break;
 
     case 'roles/delete':
-        if (isset($_GET['id']) && $_GET['id'] > 2) {
-            $stmt = $pdo->prepare("UPDATE roles SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$_GET['id']]);
+        if (isset($_GET['id']) && $_GET['id'] > 2) { // لا نسمح بحذف الأدوار الأساسية
+            soft_delete($pdo, 'roles', (int)$_GET['id']);
         }
-        header("Location: index.php?page=roles");
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=roles'));
         exit();
         break;
 
     case 'permissions/delete':
         if (isset($_GET['id'])) {
-            $stmt = $pdo->prepare("UPDATE permissions SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$_GET['id']]);
+            soft_delete($pdo, 'permissions', (int)$_GET['id']);
         }
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=permissions'));
         exit();
         break;
         
+    case 'settings/delete_lookup_option':
+        if (isset($_GET['id'])) {
+            soft_delete($pdo, 'lookup_options', (int)$_GET['id']);
+        }
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=settings/lookups'));
+        exit();
+        break;
+
+    // --- الحالات الخاصة التي تتطلب منطقًا مخصصًا (تبقى كما هي) ---
     case 'permissions/delete_group':
+        // هذه حالة خاصة لأنها تحذف من جدولين بناءً على group_id وليس id.
         if (isset($_GET['id'])) {
             $pdo->beginTransaction();
-            $stmt_perms = $pdo->prepare("UPDATE permissions SET deleted_at = NOW() WHERE group_id = ?");
-            $stmt_perms->execute([(int)$_GET['id']]);
-            $stmt_group = $pdo->prepare("UPDATE permission_groups SET deleted_at = NOW() WHERE id = ?");
-            $stmt_group->execute([(int)$_GET['id']]);
+            soft_delete($pdo, 'permissions', $pdo->query("SELECT id FROM permissions WHERE group_id = " . (int)$_GET['id'])->fetchAll(PDO::FETCH_COLUMN));
+            soft_delete($pdo, 'permission_groups', (int)$_GET['id']);
             $pdo->commit();
         }
         header("Location: index.php?page=permissions");
         exit();
         break;
 
-    case 'settings/delete_lookup_option':
-        if (isset($_GET['id'])) {
-            $stmt = $pdo->prepare("UPDATE lookup_options SET deleted_at = NOW() WHERE id = ?");
-            $stmt->execute([$_GET['id']]);
-        }
-        header("Location: index.php?page=settings/lookups");
-        exit();
-        break;
-
     case 'settings/delete_lookup_group':
+        // حالة خاصة أخرى لأنها تحذف بناءً على مفتاح نصي (group_key).
         if (isset($_GET['group'])) {
             $stmt = $pdo->prepare("UPDATE lookup_options SET deleted_at = NOW() WHERE group_key = ?");
             $stmt->execute([$_GET['group']]);
@@ -149,15 +143,15 @@ switch ($page) {
         exit();
         break;
 
-    // --- معالجات الأرشيف ---
+    // --- معالجات الأرشيف (الآن تستدعي الدوال المركزية) ---
     case 'archive/restore':
     case 'archive/force_delete':
         if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_GET['table']);
-            $id = (int)$_GET['id'];
-            $sql = ($page === 'archive/restore') ? "UPDATE `{$table}` SET deleted_at = NULL WHERE id = ?" : "DELETE FROM `{$table}` WHERE id = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$id]);
+            if ($page === 'archive/restore') {
+                restore_from_archive($pdo, $_GET['table'], (int)$_GET['id']);
+            } else {
+                force_delete($pdo, $_GET['table'], (int)$_GET['id']);
+            }
         }
         header("Location: index.php?page=archive");
         exit();
@@ -165,26 +159,17 @@ switch ($page) {
 
     case 'archive/batch_action':
         if (isset($_POST['table']) && isset($_POST['action']) && isset($_POST['ids'])) {
-            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $_POST['table']);
+            $table = $_POST['table'];
             $ids = array_map('intval', $_POST['ids']);
-            if (!empty($ids)) {
-                $placeholders = implode(',', array_fill(0, count($ids), '?'));
-                $sql = '';
-                if ($_POST['action'] === 'restore') {
-                    $sql = "UPDATE `{$table}` SET deleted_at = NULL WHERE id IN ({$placeholders})";
-                } elseif ($_POST['action'] === 'force_delete') {
-                    $sql = "DELETE FROM `{$table}` WHERE id IN ({$placeholders})";
-                }
-                if ($sql) {
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute($ids);
-                }
+            
+            if ($_POST['action'] === 'restore') {
+                restore_from_archive($pdo, $table, $ids);
+            } elseif ($_POST['action'] === 'force_delete') {
+                force_delete($pdo, $table, $ids);
             }
         }
         header("Location: index.php?page=archive");
         exit();
         break;
-  
 }
-
 ?>

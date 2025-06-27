@@ -1,6 +1,6 @@
 <?php
 // ==========================================================================
-// index.php (النسخة النهائية والمثالية)
+// index.php (النسخة المحدثة بعد إضافة ملف الدوال)
 // ==========================================================================
 
 // 1. الإعدادات الأساسية
@@ -11,6 +11,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 // 2. تضمين الملفات الأساسية
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/src/core/functions.php';
+require_once __DIR__ . '/src/core/db_functions.php'; // <--- ✨ هذا هو السطر الجديد ✨
 
 // 3. تحديد الصفحة المطلوبة
 $page = $_GET['page'] ?? 'dashboard';
@@ -24,9 +25,9 @@ require_once __DIR__ . '/app/security.php';
 
 // --- تعريف قائمة المعالجات التي لا تعرض واجهات ---
 $handler_pages = [
-    'handle_login', 'logout', 'contracts/delete', 'users/delete', 
+    'handle_login', 'logout', 'contracts/delete', 'users/delete',
     'documents/delete', 'roles/delete', 'roles/handle_edit_permissions',
-    'permissions/delete', 'permissions/delete_group', 
+    'permissions/delete', 'permissions/delete_group',
     'settings/delete_lookup_option', 'settings/delete_lookup_group',
     'archive/restore', 'archive/force_delete', 'archive/batch_action'
 ];
