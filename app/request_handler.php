@@ -71,6 +71,18 @@ switch ($page) {
         exit();
         break;
 
+
+     case 'properties/delete':
+        if (isset($_GET['id'])) {
+            // نستدعي دالتنا المركزية الأنيقة
+            soft_delete($pdo, 'properties', (int)$_GET['id']);
+        }
+        // نعيد المستخدم إلى صفحة العقارات التي كان فيها
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=properties'));
+        exit();
+        break;
+
+
     // --- معالجات الحذف الناعم (أصبحت تستدعي دالة موحدة) ---
     case 'users/delete':
         if (isset($_GET['id']) && $_GET['id'] != 1) { // لا نسمح بحذف المدير الخارق
@@ -171,5 +183,32 @@ switch ($page) {
         header("Location: index.php?page=archive");
         exit();
         break;
+
+        
+     case 'properties/batch_action':
+        $action = $_POST['action'] ?? null;
+        $ids = $_POST['row_id'] ?? [];
+
+        // نتأكد أن لدينا إجراء ومصفوفة معرفات غير فارغة
+        if ($action && !empty($ids)) {
+            // نضمن أن كل المعرفات هي أرقام صحيحة للأمان
+            $safe_ids = array_map('intval', $ids);
+            
+            // نتحقق من نوع الإجراء ونستدعي الدالة المركزية المناسبة
+            if ($action === 'soft_delete') {
+                soft_delete($pdo, 'properties', $safe_ids);
+            }
+            // مستقبلاً، يمكن إضافة إجراءات أخرى هنا مثل:
+            // elseif ($action === 'force_delete') {
+            //     force_delete($pdo, 'properties', $safe_ids);
+            // }
+        }
+        
+        // في النهاية، نعيد المستخدم إلى صفحة العقارات
+        header("Location: index.php?page=properties");
+        exit();
+        break;
+
+
 }
 ?>
