@@ -25,11 +25,24 @@ require_once __DIR__ . '/app/security.php';
 
 // --- تعريف قائمة المعالجات التي لا تعرض واجهات ---
 $handler_pages = [
-    'handle_login', 'logout', 'contracts/delete', 'users/delete',
-    'documents/delete', 'roles/delete', 'roles/handle_edit_permissions',
-    'permissions/delete', 'permissions/delete_group',
-    'settings/delete_lookup_option', 'settings/delete_lookup_group',
-    'archive/restore', 'archive/force_delete', 'archive/batch_action'
+    'handle_login',
+    'logout',
+    'properties/delete',
+    'properties/batch_action',
+    'properties/handle_batch_edit',
+    'properties/handle_batch_add',
+    'contracts/delete',
+    'users/delete',
+    'documents/delete',
+    'roles/delete',
+    'roles/handle_edit_permissions',
+    'permissions/delete',
+    'permissions/delete_group',
+    'settings/delete_lookup_option',
+    'settings/delete_lookup_group',
+    'archive/restore',
+    'archive/force_delete',
+    'archive/batch_action',
 ];
 
 // هذا الشرط يتحقق إذا كان الرابط طلب AJAX
