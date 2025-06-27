@@ -1,62 +1,93 @@
 <?php
 /**
  * handlers/properties_handler.php
- * 
- * معالجات AJAX الخاصة بإدارة العقارات (إضافة وتعديل)
+ * (النسخة الكاملة مع معالج الإضافة الفردية، التعديل الفردي، والإضافة الجماعية من Excel)
  */
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 
-/**
- * إضافة عقار جديد أو تعديله
- * [POST] property_name, branch_id, ... etc
- * النتيجة: success, message
- */
+// --- معالج الإضافة والتعديل الفردي (يبقى كما هو) ---
 if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
-    $is_add = ($page === 'properties/handle_add');
-
-    $fields = [
-        'branch_id', 'property_name', 'property_code', 'property_type', 
-        'ownership_type', 'owner_name', 'deed_number', 'property_value', 
-        'district', 'city', 'area', 'notes'
+    $data = [
+        'branch_id' => $_POST['branch_id'] ?? null, 'property_name' => $_POST['property_name'] ?? null, 'property_code' => $_POST['property_code'] ?? null,
+        'property_type' => $_POST['property_type'] ?? null, 'ownership_type' => $_POST['ownership_type'] ?? null, 'owner_name' => $_POST['owner_name'] ?? null,
+        'deed_number' => $_POST['deed_number'] ?? null, 'property_value' => empty($_POST['property_value']) ? null : $_POST['property_value'],
+        'district' => $_POST['district'] ?? null, 'city' => $_POST['city'] ?? null, 'area' => empty($_POST['area']) ? null : $_POST['area'],
+        'notes' => $_POST['notes'] ?? null, 'status' => $_POST['status'] ?? 'Active',
     ];
-    
-    $params = [];
-    foreach ($fields as $field) {
-        $params[] = $_POST[$field] ?? null;
-    }
-
-    if ($is_add) {
-        // إضافة حقل الحالة للبيانات الجديدة
-        $fields_with_status = array_merge($fields, ['status']);
-        $sql_fields = implode(', ', $fields_with_status);
-        $sql_placeholders = implode(', ', array_fill(0, count($fields_with_status), '?'));
-        
-        $params[] = $_POST['status'] ?? 'نشط'; // إضافة قيمة الحالة
-        
-        $sql = "INSERT INTO properties ($sql_fields) VALUES ($sql_placeholders)";
-        
+    $id = ($page === 'properties/handle_edit') ? ($_POST['id'] ?? null) : null;
+    $result = save_record($pdo, 'properties', $data, $id);
+    if ($result !== false) {
+        $message = $id ? 'تم تحديث العقار بنجاح.' : 'تمت إضافة العقار بنجاح.';
+        $response = ['success' => true, 'message' => $message];
     } else {
-        // في حالة التعديل، قم ببناء جملة الـ UPDATE
-        $update_fields_array = [];
-        foreach ($fields as $field) {
-            $update_fields_array[] = "$field = ?";
-        }
-        $update_fields_array[] = "status = ?"; // إضافة حقل الحالة
-        $update_string = implode(', ', $update_fields_array);
-
-        $sql = "UPDATE properties SET {$update_string} WHERE id = ?";
-
-        // إضافة قيمة الحالة والمعرف لمتغيرات التعديل
-        $params[] = $_POST['status'] ?? 'نشط';
-        $params[] = $_POST['id'];
+        $response = ['success' => false, 'message' => 'حدث خطأ أثناء حفظ البيانات في قاعدة البيانات.'];
     }
+}
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+// --- معالج الإضافة الجماعية من جدول Excel ---
+elseif ($page === 'properties/handle_batch_add') {
+    // لأن البيانات مرسلة كـ JSON من JavaScript، نقرأها بهذه الطريقة
+    $input = json_decode(file_get_contents('php://input'), true);
+    $properties_data = $input['property'] ?? [];
+    $saved_count = 0;
+    
+    if (!empty($properties_data)) {
+        $pdo->beginTransaction();
+        try {
+            foreach ($properties_data as $data) {
+                // نتجاهل الصفوف الفارغة ونحفظ فقط إذا كان اسم العقار والفرع موجودين
+                if (!empty(trim($data['property_name'])) && !empty($data['branch_id'])) {
+                    // نستخدم دالة الحفظ المركزية القوية
+                    save_record($pdo, 'properties', $data);
+                    $saved_count++;
+                }
+            }
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            // في حالة حدوث خطأ، نرجع استجابة JSON بالخطأ
+            $response = ['success' => false, 'message' => 'حدث خطأ في قاعدة البيانات أثناء الحفظ. ' . $e->getMessage()];
+            // ✨ الخروج المبكر مهم هنا لمنع أي مخرجات أخرى
+            header('Content-Type: application/json'); echo json_encode($response); exit();
+        }
+    }
+    
+    // في حالة النجاح، نرجع استجابة JSON بالنجاح
+    $response = ['success' => true, 'message' => "تم حفظ عدد {$saved_count} من السجلات بنجاح!"];
+}
 
-    $message = $is_add ? 'تمت إضافة العقار بنجاح.' : 'تم تحديث العقار بنجاح.';
-    $response = ['success' => true, 'message' => $message];
+elseif ($page === 'properties/handle_batch_edit') {
+    
+    // ✨ التغيير هنا: نقرأ البيانات كـ JSON بدلاً من POST العادي ✨
+    $input = json_decode(file_get_contents('php://input'), true);
+    $properties_data = $input['property'] ?? [];
+
+    $updated_count = 0;
+    if (!empty($properties_data)) {
+        $pdo->beginTransaction();
+        try {
+            // نمر على كل عقار تم إرساله (البيانات الآن لا تحتوي على ID في المفتاح)
+            foreach ($properties_data as $data) {
+                // نتأكد أن لدينا ID صالح قبل التحديث
+                if (!empty($data['id'])) {
+                    $id = (int)$data['id'];
+                    // نستخدم دالتنا المركزية والموثوقة للتحديث
+                    save_record($pdo, 'properties', $data, $id);
+                    $updated_count++;
+                }
+            }
+            $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $response = ['success' => false, 'message' => 'حدث خطأ في قاعدة البيانات.'];
+            // نرسل استجابة الخطأ ونخرج
+            header('Content-Type: application/json'); echo json_encode($response); exit();
+        }
+    }
+    
+    // نرسل استجابة النجاح
+    $response = ['success' => true, 'message' => "تم تحديث عدد {$updated_count} من السجلات بنجاح!"];
 }
 
 ?>
