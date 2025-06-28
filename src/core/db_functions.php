@@ -98,4 +98,80 @@ function force_delete($pdo, $table, $ids)
     return $stmt->rowCount();
 }
 
+
+/**
+ * ✨ الدالة المصححة ✨
+ * دالة مركزية لجلب الخيارات من جدول lookup_options لمجموعة معينة.
+ *
+ * @param PDO $pdo كائن الاتصال.
+ * @param string $group_key المفتاح البرمجي للمجموعة (مثل 'property_type', 'status').
+ * @param bool $use_key_as_value إذا كانت true، ستكون القيمة (value) في الخيار هي المفتاح (key).
+ * @return array مصفوفة جاهزة للاستخدام في القوائم المنسدلة.
+ */
+function get_lookup_options($pdo, $group_key, $use_key_as_value = false)
+{
+    // نستبعد السجل الخاص باسم المجموعة نفسها
+    $sql = "SELECT option_key, option_value FROM lookup_options WHERE group_key = ? AND option_key != ? AND deleted_at IS NULL ORDER BY display_order, id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$group_key, $group_key]);
+
+    if ($use_key_as_value) {
+        // ترجع [ 'Active' => 'نشط', 'Expired' => 'منتهي' ]
+        return $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+    } else {
+        // ✨ هذا هو السطر الذي تم تصحيحه ✨
+        // نطلب منه صراحةً جلب العمود الثاني (ذي الفهرس 1) وهو "option_value"
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 1);
+    }
+}
+
+/**
+ * ✨ الدالة الجديدة ✨
+ * دالة مركزية فائقة الذكاء لحفظ (إضافة أو تعديل) سجل في أي جدول.
+ *
+ * @param PDO $pdo كائن الاتصال.
+ * @param string $table اسم الجدول.
+ * @param array $data مصفوفة من البيانات على شكل ['column_name' => 'value'].
+ * @param int|null $id معرف السجل في حالة التعديل، أو null في حالة الإضافة.
+ * @return int|false معرف السجل المضاف/المعدل أو false عند الفشل.
+ */
+function save_record($pdo, $table, $data, $id = null)
+{
+    // تأمين اسم الجدول لمنع حقن SQL
+    $safe_table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+    
+    try {
+        if ($id) { // عملية تعديل (UPDATE)
+            $set_parts = [];
+            foreach (array_keys($data) as $key) {
+                // نستخدم backticks حول أسماء الأعمدة لتجنب أخطاء الكلمات المحجوزة
+                $set_parts[] = "`{$key}` = ?";
+            }
+            $set_clause = implode(', ', $set_parts);
+            
+            $sql = "UPDATE `{$safe_table}` SET {$set_clause} WHERE `id` = ?";
+            
+            $params = array_values($data);
+            $params[] = $id;
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            return $id;
+
+        } else { // عملية إضافة (INSERT)
+            $fields = '`' . implode('`, `', array_keys($data)) . '`';
+            $placeholders = implode(', ', array_fill(0, count($data), '?'));
+            $sql = "INSERT INTO `{$safe_table}` ({$fields}) VALUES ({$placeholders})";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(array_values($data));
+            return $pdo->lastInsertId();
+        }
+    } catch (PDOException $e) {
+        // في بيئة الإنتاج، من الأفضل تسجيل الخطأ بدلاً من طباعته
+        // error_log($e->getMessage());
+        return false;
+    }
+}
+
 ?>
