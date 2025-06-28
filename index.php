@@ -34,6 +34,7 @@ $handler_pages = [
     'contracts/delete',
     'users/delete',
     'documents/delete',
+    'documents/get_type_config_ajax',
     'roles/delete',
     'roles/handle_edit_permissions',
     'permissions/delete',
