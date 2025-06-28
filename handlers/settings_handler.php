@@ -58,32 +58,59 @@ elseif ($page === 'settings/handle_add_lookup_option_ajax') {
 }
 
 /**
- * تعديل خيار في مجموعة
- * [POST] id, option_value, option_key, color (اختياري), bg_color (اختياري), custom_fields (اختياري)
+* تعديل خيار في مجموعة (تم تحديثه)
+ * [POST] id, option_value, ... , custom_fields (اختياري), advanced_config (اختياري)
  * النتيجة: success, message
  */
+
 elseif ($page === 'settings/handle_edit_lookup_option_ajax') {
     $pdo->beginTransaction();
-    // تحديث البيانات الأساسية
+
+    // 1. تحديث البيانات الأساسية (يبقى كما هو)
     $sql = "UPDATE lookup_options SET option_value = ?, option_key = ?, color = ?, bg_color = ? WHERE id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         $_POST['option_value'], $_POST['option_key'],
         $_POST['color'] ?? '#ffffff', $_POST['bg_color'] ?? '#6c757d', $_POST['id']
     ]);
-    // تحديث مخطط الحقول المخصصة
-    if (isset($_POST['custom_fields'])) {
-        $filtered_fields = array_filter($_POST['custom_fields'], function($field) {
-            return !empty($field['label']) && !empty($field['name']);
-        });
-        $schema_json = json_encode(array_values($filtered_fields), JSON_UNESCAPED_UNICODE);
-        $schema_sql = "UPDATE lookup_options SET custom_fields_schema = ? WHERE id = ?";
-        $schema_stmt = $pdo->prepare($schema_sql);
-        $schema_stmt->execute([$schema_json, $_POST['id']]);
+    
+    // 2. تحديث مخطط الحقول المخصصة (يبقى كما هو)
+    // 2. ✨ تحديث مخطط الحقول المخصصة (تم إصلاحه) ✨
+// نقوم بتجهيز مصفوفة فارغة في البداية
+$filtered_fields = []; 
+if (isset($_POST['custom_fields'])) {
+    // إذا تم إرسال حقول، نقوم بفلترتها
+    $filtered_fields = array_filter($_POST['custom_fields'], function($field) {
+        return !empty($field['label']) && !empty($field['name']);
+    });
+}
+// نقوم دائمًا بحفظ النتيجة، سواء كانت تحتوي على حقول أو كانت فارغة
+$schema_json = json_encode(array_values($filtered_fields), JSON_UNESCAPED_UNICODE);
+$schema_sql = "UPDATE lookup_options SET custom_fields_schema = ? WHERE id = ?";
+$schema_stmt = $pdo->prepare($schema_sql);
+$schema_stmt->execute([$schema_json, $_POST['id']]);
+    
+    // 3. ✨ هنا الجزء الجديد: تحديث إعدادات الربط المتقدم ✨
+    if (isset($_POST['advanced_config'])) {
+        // نستقبل مصفوفة الإعدادات من النموذج
+        $advanced_config_data = $_POST['advanced_config'];
+        // نحولها إلى نص JSON لحفظها في قاعدة البيانات
+        $config_json = json_encode($advanced_config_data, JSON_UNESCAPED_UNICODE);
+        
+        $config_sql = "UPDATE lookup_options SET advanced_config = ? WHERE id = ?";
+        $config_stmt = $pdo->prepare($config_sql);
+        $config_stmt->execute([$config_json, $_POST['id']]);
+    } else {
+        // إذا لم يتم إرسال أي إعدادات، نحفظ قيمة فارغة (NULL)
+        $config_sql = "UPDATE lookup_options SET advanced_config = NULL WHERE id = ?";
+        $config_stmt = $pdo->prepare($config_sql);
+        $config_stmt->execute([$_POST['id']]);
     }
+    
     $pdo->commit();
     $response = ['success' => true, 'message' => 'تم تحديث الخيار بنجاح.'];
 }
+
 
 // ملاحظة: معالجات الحذف (delete) التي تعتمد على إعادة التوجيه header() تبقى في index.php أو في handler منفصل للعمليات غير الـAJAX.
 ?>
