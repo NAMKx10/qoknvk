@@ -50,6 +50,7 @@ return [
     'documents/get_linked_entities_ajax'      => ['path' => ''],
     'documents/add_link_ajax'                 => ['path' => ''],
     'documents/delete_link_ajax'              => ['path' => ''],
+    'documents/get_type_config_ajax' => ['path' => ''], // معالج فقط
     'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
