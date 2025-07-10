@@ -1,9 +1,11 @@
 <?php
-// src/modules/users/add_view.php (الإصدار المطور)
+// src/modules/users/add_view.php (النسخة المصححة)
+
+global $pdo; // ✨ هذا هو السطر الحاسم ✨
 
 // جلب قائمة الأدوار والفروع
-$roles_list = $pdo->query("SELECT id, role_name FROM roles ORDER BY role_name ASC")->fetchAll();
-$branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status = 'نشط' ORDER BY branch_name ASC")->fetchAll();
+$roles_list = $pdo->query("SELECT id, role_name FROM roles WHERE deleted_at IS NULL ORDER BY role_name ASC")->fetchAll();
+$branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status = 'Active' AND deleted_at IS NULL ORDER BY branch_name ASC")->fetchAll();
 ?>
 <div class="modal-header"><h5 class="modal-title">إضافة مستخدم جديد</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
 <form method="POST" action="index.php?page=users/handle_add" class="ajax-form">
@@ -16,18 +18,20 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status 
             <div class="col-sm-6"><label class="form-label">الجوال</label><input type="text" class="form-control" name="mobile"></div>
             <div class="col-sm-6"><label class="form-label required">كلمة المرور</label><input type="password" class="form-control" name="password" required></div>
             <div class="col-sm-6"><label class="form-label required">الدور</label><select class="form-select" name="role_id" required><?php foreach($roles_list as $role): ?><option value="<?= $role['id'] ?>"><?= htmlspecialchars($role['role_name']) ?></option><?php endforeach; ?></select></div>
-                        <!-- (جديد) حقل تاريخ الإنشاء -->
             <div class="col-sm-6">
                 <label class="form-label">تاريخ الإنشاء</label>
                 <input type="date" class="form-control" name="created_at" value="<?= date('Y-m-d') ?>">
             </div>
-
-            <!-- (جديد) حقل الحالة -->
-            <div class="col-sm-6 d-flex align-items-center">
-                <div class="form-check form-switch mt-3">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="add_is_active" checked>
-                    <label class="form-check-label" for="add_is_active">المستخدم نشط</label>
-                </div>
+            <?php
+            $statuses = $pdo->query("SELECT option_key, option_value FROM lookup_options WHERE group_key = 'status' AND deleted_at IS NULL ORDER BY display_order")->fetchAll(PDO::FETCH_KEY_PAIR);
+            ?>
+            <div class="col-sm-6">
+                <label class="form-label required">الحالة</label>
+                <select class="form-select" name="status" required>
+                    <?php foreach ($statuses as $key => $value): ?>
+                        <option value="<?= htmlspecialchars($key) ?>" <?= ($key === 'Active') ? 'selected' : '' ?>><?= htmlspecialchars($value) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="col-12">
                 <label class="form-label">الفروع المسموح بها</label>
@@ -38,7 +42,7 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status 
                     <?php endforeach; ?>
                 </select>
             </div>
-            </div>
+        </div>
     </div>
     <div class="modal-footer"><button type="button" class="btn" data-bs-dismiss="modal">إلغاء</button><button type="submit" class="btn btn-primary">حفظ المستخدم</button></div>
 </form>

@@ -1,34 +1,33 @@
 <?php
 /**
  * handlers/users_handler.php
- *
- * معالجات إدارة المستخدمين (إضافة وتعديل) - خاص بالطلبات AJAX
- * يُستخدم مع موجّه مركزي في index.php
- * يعدّل فقط متغير $response حسب نتيجة المعالجة.
+ * (النسخة النهائية المؤمنة والمحدثة مع حقل الحالة)
  */
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 
-/**
- * إضافة مستخدم جديد
- * [POST] full_name, username, email, mobile, password, role_id, is_active, created_at, branches[]
- * النتيجة: success, message
- */
+// معالج إضافة مستخدم
 if ($page === 'users/handle_add') {
+    if (!has_permission('add_user')) {
+        $response = ['success' => false, 'message' => 'ليس لديك الصلاحية لإضافة مستخدمين.'];
+        return;
+    }
+
     $pdo->beginTransaction();
     $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $is_active = isset($_POST['is_active']) ? 1 : 0;
     $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
-    $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    // ✨ التعديل هنا: استخدام `status` بدلاً من `is_active` ✨
+    $sql = "INSERT INTO users (full_name, username, email, mobile, password, role_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         $_POST['full_name'], $_POST['username'], $_POST['email'],
         $_POST['mobile'], $hashed_password, $_POST['role_id'],
-        $is_active,
+        $_POST['status'], // ✨ الحقل الجديد
         $created_at
     ]);
+    
     $user_id = $pdo->lastInsertId();
-    // حفظ الفروع المرتبطة
     if (!empty($_POST['branches'])) {
         $branch_sql = "INSERT INTO user_branches (user_id, branch_id) VALUES (?, ?)";
         $branch_stmt = $pdo->prepare($branch_sql);
@@ -40,32 +39,33 @@ if ($page === 'users/handle_add') {
     $response = ['success' => true, 'message' => 'تم إضافة المستخدم بنجاح.'];
 }
 
-/**
- * تعديل بيانات مستخدم
- * [POST] id, full_name, username, email, mobile, password (اختياري), role_id, is_active, created_at, branches[]
- * النتيجة: success, message
- */
+// معالج تعديل مستخدم
 elseif ($page === 'users/handle_edit') {
+    if (!has_permission('edit_user')) {
+        $response = ['success' => false, 'message' => 'ليس لديك الصلاحية لتعديل المستخدمين.'];
+        return;
+    }
+    
     $pdo->beginTransaction();
     $user_id = $_POST['id'];
-    $is_active = isset($_POST['is_active']) ? 1 : 0;
-    // تحديث البيانات الأساسية
     $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
-    $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, is_active=?, created_at=? WHERE id=?";
+    
+    // ✨ التعديل هنا: استخدام `status` بدلاً من `is_active` ✨
+    $sql = "UPDATE users SET full_name=?, username=?, email=?, mobile=?, role_id=?, status=?, created_at=? WHERE id=?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         $_POST['full_name'], $_POST['username'], $_POST['email'],
-        $_POST['mobile'], $_POST['role_id'], $is_active,
+        $_POST['mobile'], $_POST['role_id'], $_POST['status'], // ✨ الحقل الجديد
         $created_at,
         $user_id
     ]);
-    // تحديث كلمة المرور فقط إذا لم تكن فارغة
+    
     if (!empty($_POST['password'])) {
         $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $pw_stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
         $pw_stmt->execute([$hashed_password, $user_id]);
     }
-    // تحديث الفروع (حذف القديم ثم إضافة الجديد)
+    
     $delete_stmt = $pdo->prepare("DELETE FROM user_branches WHERE user_id = ?");
     $delete_stmt->execute([$user_id]);
     if (!empty($_POST['branches'])) {
@@ -78,6 +78,4 @@ elseif ($page === 'users/handle_edit') {
     $pdo->commit();
     $response = ['success' => true, 'message' => 'تم تحديث المستخدم بنجاح.'];
 }
-
-// ملاحظة: معالجات الحذف وغيرها التي تعتمد على إعادة التوجيه تبقى في ملف آخر أو في index.php.
 ?>

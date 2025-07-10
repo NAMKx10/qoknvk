@@ -1,5 +1,7 @@
 <?php
-// src/modules/users/edit_view.php (الإصدار المصحح والنهائي)
+// src/modules/users/edit_view.php (النسخة المصححة)
+
+global $pdo; // ✨ هذا هو السطر الحاسم ✨
 
 if (!isset($_GET['id'])) { die("ID is required."); }
 $user_id = $_GET['id'];
@@ -11,7 +13,7 @@ if (!$user) { die("User not found."); }
 // جلب قائمة الأدوار
 $roles_list = $pdo->query("SELECT id, role_name FROM roles WHERE deleted_at IS NULL ORDER BY role_name ASC")->fetchAll();
 // جلب قائمة كل الفروع النشطة
-$branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status = 'نشط' AND deleted_at IS NULL ORDER BY branch_name ASC")->fetchAll();
+$branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE status = 'Active' AND deleted_at IS NULL ORDER BY branch_name ASC")->fetchAll();
 // جلب الفروع المرتبطة حاليًا بهذا المستخدم
 $current_branches_stmt = $pdo->prepare("SELECT branch_id FROM user_branches WHERE user_id = ?");
 $current_branches_stmt->execute([$user_id]);
@@ -32,18 +34,20 @@ $current_branch_ids = $current_branches_stmt->fetchAll(PDO::FETCH_COLUMN);
             <div class="col-sm-6"><label class="form-label">الجوال</label><input type="text" class="form-control" name="mobile" value="<?= htmlspecialchars($user['mobile']) ?>"></div>
             <div class="col-sm-6"><label class="form-label">كلمة المرور الجديدة</label><input type="password" class="form-control" name="password" placeholder="اتركه فارغاً لعدم التغيير"></div>
             <div class="col-sm-6"><label class="form-label required">الدور</label><select class="form-select" name="role_id" required><?php foreach($roles_list as $role): ?><option value="<?= $role['id'] ?>" <?= ($user['role_id'] == $role['id']) ? 'selected' : '' ?>><?= htmlspecialchars($role['role_name']) ?></option><?php endforeach; ?></select></div>
-                        <!-- (جديد) حقل تاريخ الإنشاء -->
             <div class="col-sm-6">
                 <label class="form-label">تاريخ الإنشاء</label>
                 <input type="date" class="form-control" name="created_at" value="<?= date('Y-m-d', strtotime($user['created_at'])) ?>">
             </div>
-
-            <!-- (مُحسَّن) حقل الحالة -->
-            <div class="col-sm-6 d-flex align-items-center">
-                 <div class="form-check form-switch mt-3">
-                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="edit_is_active" <?= ($user['is_active']) ? 'checked' : '' ?>>
-                    <label class="form-check-label" for="edit_is_active">المستخدم نشط</label>
-                </div>
+            <?php
+            $statuses = $pdo->query("SELECT option_key, option_value FROM lookup_options WHERE group_key = 'status' AND deleted_at IS NULL ORDER BY display_order")->fetchAll(PDO::FETCH_KEY_PAIR);
+            ?>
+            <div class="col-sm-6">
+                <label class="form-label required">الحالة</label>
+                <select class="form-select" name="status" required>
+                    <?php foreach ($statuses as $key => $value): ?>
+                        <option value="<?= htmlspecialchars($key) ?>" <?= ($user['status'] === $key) ? 'selected' : '' ?>><?= htmlspecialchars($value) ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="col-12">
                 <label class="form-label">الفروع المسموح بها</label>
@@ -56,7 +60,7 @@ $current_branch_ids = $current_branches_stmt->fetchAll(PDO::FETCH_COLUMN);
                     <?php endforeach; ?>
                 </select>
             </div>
-    </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-bs-dismiss="modal">إلغاء</button>

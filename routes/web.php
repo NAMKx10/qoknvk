@@ -51,7 +51,7 @@ return [
     'documents/add_link_ajax'                 => ['path' => ''],
     'documents/delete_link_ajax'              => ['path' => ''],
     'documents/get_type_config_ajax' => ['path' => ''], // معالج فقط
-    'users'             => ['path' => 'users/users_view.php', 'title' => 'إدارة المستخدمين'],
+    'users' => ['path' => 'users/users_controller.php', 'title' => 'إدارة المستخدمين'],
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
     'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'], // معالجة فقط

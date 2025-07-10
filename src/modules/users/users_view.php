@@ -1,74 +1,5 @@
 <?php
-// src/modules/users/users_view.php (الإصدار الاحترافي - نسخة طبق الأصل من العقارات)
-
-// --- 1. الإعدادات والفلترة ---
-$limit = $_GET['limit'] ?? 10;
-$current_page = $_GET['p'] ?? 1;
-$offset = ($current_page - 1) * $limit;
-
-$filter_q = $_GET['q'] ?? null;
-$filter_role_id = $_GET['role_id'] ?? null;
-$filter_branch_id = $_GET['branch_id'] ?? null;
-
-// --- 2. بناء الاستعلام ---
-$joins = "
-    LEFT JOIN roles r ON u.role_id = r.id
-    LEFT JOIN user_branches ub ON u.id = ub.user_id
-    LEFT JOIN branches b ON ub.branch_id = b.id
-";
-$where_conditions = ["u.deleted_at IS NULL"];
-$params = [];
-
-if (!empty($filter_q)) {
-    $where_conditions[] = "(u.full_name LIKE :q OR u.username LIKE :q OR u.email LIKE :q)";
-    $params[':q'] = '%' . $filter_q . '%';
-}
-if (!empty($filter_role_id)) {
-    $where_conditions[] = "u.role_id = :role_id";
-    $params[':role_id'] = $filter_role_id;
-}
-if (!empty($filter_branch_id)) {
-    // هذا الشرط يبحث عن المستخدمين المرتبطين بالفرع المحدد
-    $where_conditions[] = "u.id IN (SELECT user_id FROM user_branches WHERE branch_id = :branch_id)";
-    $params[':branch_id'] = $filter_branch_id;
-}
-
-$sql_where = " WHERE " . implode(" AND ", $where_conditions);
-
-// --- 3. جلب الإحصائيات ---
-$stats_sql = "SELECT (SELECT COUNT(*) FROM users WHERE deleted_at IS NULL) as total, (SELECT COUNT(*) FROM users WHERE deleted_at IS NULL AND is_active = 1) as active";
-$stats = $pdo->query($stats_sql)->fetch(PDO::FETCH_ASSOC);
-$stats['inactive'] = $stats['total'] - $stats['active'];
-
-// --- 4. جلب البيانات الرئيسية ---
-$count_query = "SELECT COUNT(DISTINCT u.id) FROM users u {$joins} {$sql_where}";
-$count_stmt = $pdo->prepare($count_query);
-$count_stmt->execute($params);
-$total_records = $count_stmt->fetchColumn();
-$total_pages = ceil($total_records / $limit);
-
-if ($total_records > 0) {
-    $data_query = "
-        SELECT DISTINCT u.id, u.full_name, u.username, u.email, u.is_active, r.role_name, 
-               (SELECT GROUP_CONCAT(b_inner.branch_code SEPARATOR ', ') 
-                FROM user_branches ub_inner 
-                JOIN branches b_inner ON ub_inner.branch_id = b_inner.id 
-                WHERE ub_inner.user_id = u.id) as branch_codes
-        FROM users u {$joins} {$sql_where}
-        GROUP BY u.id
-        ORDER BY u.id ASC 
-        LIMIT {$limit} OFFSET {$offset}
-    ";
-    $data_stmt = $pdo->prepare($data_query);
-    $data_stmt->execute($params);
-    $users = $data_stmt->fetchAll();
-} else {
-    $users = [];
-}
-
-// --- 5. جلب بيانات الفلاتر ---
-$roles_list = $pdo->query("SELECT id, role_name FROM roles WHERE deleted_at IS NULL ORDER BY role_name")->fetchAll();
-$branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE deleted_at IS NULL ORDER BY branch_name")->fetchAll();
+// src/modules/users/users_view.php (الواجهة النظيفة والمصححة بالكامل)
 ?>
 
 <!-- =============================================== -->
@@ -81,9 +12,9 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE deleted
             <div class="col"><h2 class="page-title">إدارة المستخدمين (<?= $total_records ?>)</h2></div>
             <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
-                    <button onclick="window.print();" class="btn btn-outline-secondary"><i class="ti ti-printer me-2"></i>طباعة</button>
-                    <a href="#" class="btn"><i class="ti ti-upload me-2"></i>إجراءات متعددة</a>
+                    <?php if (has_permission('add_user')): ?>
                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=users/add&view_only=true"><i class="ti ti-plus me-2"></i>إضافة مستخدم</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -92,7 +23,7 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE deleted
 
 <div class="page-body">
     <div class="container-xl">
-        <!-- بطاقات الإحصائيات -->
+        <!-- ✨ بطاقات الإحصائيات بالتصميم الصحيح ✨ -->
         <div class="row row-cards mb-4">
             <div class="col-md-4">
                 <div class="card bg-primary text-primary-fg">
@@ -122,9 +53,10 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE deleted
                 </div>
             </div>
         </div>
+        
         <!-- بطاقة الفلترة المنفصلة -->
         <div class="card mb-4">
-            <div class="card-body">
+             <div class="card-body">
                 <form action="index.php" method="GET">
                     <input type="hidden" name="page" value="users">
                     <div class="row g-3">
@@ -158,23 +90,27 @@ $branches_list = $pdo->query("SELECT id, branch_name FROM branches WHERE deleted
                                 <?php if (empty($user['branch_codes'])): ?>
                                     <span class="badge bg-green-lt">كل الفروع</span>
                                 <?php else: ?>
-                                    <span class="text-muted" data-bs-toggle="tooltip" title="<?= htmlspecialchars($user['branch_codes']) ?>"><?= htmlspecialchars(substr($user['branch_codes'], 0, 30)) ?>...</span>
+                                    <span class="text-muted" data-bs-toggle="tooltip" title="<?= htmlspecialchars($user['branch_codes']) ?>"><?= htmlspecialchars(substr($user['branch_codes'], 0, 30)) ?><?= strlen($user['branch_codes']) > 30 ? '...' : '' ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td>
-                                <span class="badge bg-<?= $user['is_active'] ? 'success' : 'danger' ?> me-1"></span> <?= $user['is_active'] ? 'نشط' : 'معطل' ?>
+                                                        <td>
+                                <?php
+                                $status_info = $statuses_lookup[$user['status']] ?? ['bg_color' => '#6c757d', 'color' => '#ffffff', 'option_value' => 'غير معروف'];
+                                ?>
+                                <span class="badge" style="background-color: <?= $status_info['bg_color'] ?>; color: <?= $status_info['color'] ?>">
+                                    <?= htmlspecialchars($status_info['option_value']) ?>
+                                </span>
                             </td>
                             <td class="text-end">
-    <div class="btn-list flex-nowrap">
-        <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=users/edit&id=<?= $user['id'] ?>&view_only=true">
-            تعديل
-        </a>
-        <!-- (جديد) زر الحذف -->
-        <a href="index.php?page=users/delete&id=<?= $user['id'] ?>" class="btn btn-outline-danger btn-icon confirm-delete" title="حذف المستخدم">
-            <i class="ti ti-user-off"></i>
-        </a>
-    </div>
-</td>
+                                <div class="btn-list flex-nowrap">
+                                    <?php if (has_permission('edit_user')): ?>
+                                    <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#main-modal" data-bs-url="index.php?page=users/edit&id=<?= $user['id'] ?>&view_only=true">تعديل</a>
+                                    <?php endif; ?>
+                                    <?php if (has_permission('delete_user') && $user['id'] != 1): ?>
+                                    <a href="index.php?page=users/delete&id=<?= $user['id'] ?>" class="btn btn-outline-danger btn-icon confirm-delete" title="حذف المستخدم"><i class="ti ti-user-off"></i></a>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
                         </tr>
                         <?php endforeach; endif; ?>
                     </tbody>

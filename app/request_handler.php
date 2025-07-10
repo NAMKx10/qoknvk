@@ -84,7 +84,15 @@ switch ($page) {
 
 
     // --- معالجات الحذف الناعم (أصبحت تستدعي دالة موحدة) ---
-    case 'users/delete':
+        case 'users/delete':
+        // ✨ الحارس الثالث: تأمين عملية الحذف ✨
+        if (!has_permission('delete_user')) {
+            // إذا حاول الوصول للرابط مباشرة، أعده للصفحة الرئيسية مع رسالة خطأ
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
+
         if (isset($_GET['id']) && $_GET['id'] != 1) { // لا نسمح بحذف المدير الخارق
             soft_delete($pdo, 'users', (int)$_GET['id']);
         }
