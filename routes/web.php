@@ -10,7 +10,7 @@
 
 return [
 
-    'dashboard'         => ['path' => 'dashboard/dashboard_view.php', 'title' => 'لوحة التحكم'],
+    'dashboard' => ['path' => 'dashboard/dashboard_controller.php', 'title' => 'لوحة التحكم'],
     'login'             => ['path' => 'login/login_view.php', 'title' => 'تسجيل الدخول'],
     'about'             => ['path' => 'about/about_view.php', 'title' => 'حول النظام'],
     // الإدارة الأساسية
