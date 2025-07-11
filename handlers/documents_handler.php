@@ -1,72 +1,106 @@
 <?php
-/**
- * handlers/documents_handler.php
- * 
- * جميع معالجات AJAX الخاصة بإدارة الوثائق، بما في ذلك الربط والحفظ والتعديل.
- */
+
+// handlers/documents_handler.php (النسخة النهائية الصحيحة بالكامل)
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 
-// --- معالج إضافة وثيقة (يتبع النمط القياسي) ---
+// --- معالج إضافة وثيقة (تم تطويره) ---
 if ($page === 'documents/handle_add') {
     $pdo->beginTransaction();
-    
-    $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
-    
-    $sql_doc = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, notes, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt_doc = $pdo->prepare($sql_doc);
-    $stmt_doc->execute([
-        $_POST['document_type'], $_POST['document_name'], $_POST['document_number'],
-        $_POST['issue_date'] ?: null, $_POST['expiry_date'] ?: null,
-        $_POST['status'], $_POST['notes'], $details_json
-    ]);
-    $new_doc_id = $pdo->lastInsertId();
+    try {
+        // 1. حفظ بيانات الوثيقة الأساسية
+        $details_json = isset($_POST['details']) ? json_encode($_POST['details']) : null;
+        $sql_doc = "INSERT INTO documents (document_type, document_name, document_number, issue_date, expiry_date, status, notes, details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt_doc = $pdo->prepare($sql_doc);
+        $stmt_doc->execute([
+            $_POST['document_type'], $_POST['document_name'], $_POST['document_number'],
+            empty($_POST['issue_date']) ? null : $_POST['issue_date'],
+            empty($_POST['expiry_date']) ? null : $_POST['expiry_date'],
+            $_POST['status'], $_POST['notes'], $details_json
+        ]);
+        $doc_id = $pdo->lastInsertId();
 
-    if (isset($_POST['links']) && is_array($_POST['links'])) {
-        $sql_link = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
-        $stmt_link = $pdo->prepare($sql_link);
-        
-        foreach ($_POST['links'] as $link) {
-            if (!empty($link['entity_type']) && !empty($link['entity_id'])) {
-                $stmt_link->execute([$new_doc_id, $link['entity_type'], $link['entity_id']]);
+        // 2. معالجة الربط المتقدم
+        $property_id = $_POST['linked_property_id'] ?? null;
+        $owner_ids = $_POST['linked_owner_ids'] ?? [];
+
+        // 2a. ربط العقار بالوثيقة
+        if ($property_id) {
+            $stmt_link = $pdo->prepare("INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, 'property', ?)");
+            $stmt_link->execute([$doc_id, $property_id]);
+        }
+
+        // 2b. ربط الملاك بالوثيقة وبالعقار
+        if (!empty($owner_ids) && $property_id) {
+            $stmt_link_owner = $pdo->prepare("INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, 'owner', ?)");
+            $stmt_prop_owner = $pdo->prepare("INSERT INTO property_owners (property_id, owner_id) VALUES (?, ?)");
+            foreach ($owner_ids as $owner_id) {
+                $stmt_link_owner->execute([$doc_id, $owner_id]);
+                $stmt_prop_owner->execute([$property_id, $owner_id]);
             }
         }
+        
+        $pdo->commit();
+        $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة وربطها بنجاح.'];
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $response = ['success' => false, 'message' => 'حدث خطأ: ' . $e->getMessage()];
     }
-    
-    $pdo->commit();
-    $response = ['success' => true, 'message' => 'تمت إضافة الوثيقة وربطها بنجاح.'];
 }
 
-// --- معالج تعديل وثيقة (يتبع النمط القياسي) ---
+// --- معالج تعديل وثيقة (تم تطويره بالكامل) ---
+// --- معالج تعديل وثيقة (النسخة النهائية المصححة) ---
 elseif ($page === 'documents/handle_edit') {
-    $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
-                
-    $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, details = ?, status = ?, notes = ? WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        $_POST['document_name'], $_POST['document_number'],
-        $_POST['issue_date'] ?: null, $_POST['expiry_date'] ?: null,
-        $details_json, $_POST['status'], $_POST['notes'],
-        $_POST['id']
-    ]);
-    
-    $response = ['success' => true, 'message' => 'تم تحديث الوثيقة بنجاح.'];
-}
+    $pdo->beginTransaction();
+    try {
+        $doc_id = $_POST['id'];
 
-// --- معالج إضافة رابط (يتبع النمط القياسي) ---
-elseif ($page === 'documents/add_link_ajax') {
-    $sql = "INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$_POST['doc_id'], $_POST['entity_type'], $_POST['entity_id']]);
-    $response = ['success' => true];
-}
+        // 1. تحديث بيانات الوثيقة الأساسية
+        $details_json = isset($_POST['details']) ? json_encode($_POST['details'], JSON_UNESCAPED_UNICODE) : null;
+        $sql = "UPDATE documents SET document_name = ?, document_number = ?, issue_date = ?, expiry_date = ?, status = ?, notes = ?, details = ? WHERE id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $_POST['document_name'], $_POST['document_number'],
+            empty($_POST['issue_date']) ? null : $_POST['issue_date'],
+            empty($_POST['expiry_date']) ? null : $_POST['expiry_date'],
+            $_POST['status'], $_POST['notes'],
+            $details_json, $doc_id
+        ]);
 
-// --- معالج حذف رابط (يتبع النمط القياسي) ---
-elseif ($page === 'documents/delete_link_ajax') {
-    $sql = "DELETE FROM entity_documents WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$_POST['link_id']]);
-    $response = ['success' => true];
+        // 2. معالجة الربط المتقدم
+        $property_id = !empty($_POST['linked_property_id']) ? $_POST['linked_property_id'] : null;
+        $owner_ids = $_POST['linked_owner_ids'] ?? [];
+
+        // 3. حذف الروابط القديمة لضمان عدم وجود تكرار
+        $pdo->prepare("DELETE FROM entity_documents WHERE document_id = ?")->execute([$doc_id]);
+        if($property_id) {
+             // فقط نحذف ملاك العقار المحدد لنعيد بناءهم
+             $pdo->prepare("DELETE FROM property_owners WHERE property_id = ?")->execute([$property_id]);
+        }
+
+        // 4. إضافة الروابط الجديدة بناء على النموذج
+        if ($property_id) {
+            $stmt_link = $pdo->prepare("INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, 'property', ?)");
+            $stmt_link->execute([$doc_id, $property_id]);
+        }
+        if (!empty($owner_ids) && $property_id) {
+            $stmt_link_owner = $pdo->prepare("INSERT INTO entity_documents (document_id, entity_type, entity_id) VALUES (?, 'owner', ?)");
+            $stmt_prop_owner = $pdo->prepare("INSERT INTO property_owners (property_id, owner_id) VALUES (?, ?)");
+            foreach ($owner_ids as $owner_id) {
+                if (!empty($owner_id)) {
+                    $stmt_link_owner->execute([$doc_id, $owner_id]);
+                    $stmt_prop_owner->execute([$property_id, $owner_id]);
+                }
+            }
+        }
+        
+        $pdo->commit();
+        $response = ['success' => true, 'message' => 'تم تحديث الوثيقة والروابط بنجاح.'];
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $response = ['success' => false, 'message' => 'حدث خطأ: ' . $e->getMessage()];
+    }
 }
 
 
@@ -155,6 +189,43 @@ elseif ($page === 'documents/get_linked_entities_ajax') {
     }
 
     echo '</tbody></table>';
+    exit();
+}
+
+
+// --- المعالج الجديد لجلب إعدادات نوع الوثيقة ---
+elseif ($page === 'documents/get_type_config_ajax') {
+
+    $document_type_key = $_GET['document_type_key'] ?? '';
+    
+    // إعداد استجابة افتراضية
+    $config_response = [
+        'success' => false,
+        'config' => null,
+        'custom_fields' => []
+    ];
+
+    if (!empty($document_type_key)) {
+        // نبحث عن الخيار المطابق في جدول الإعدادات
+        $stmt = $pdo->prepare("
+            SELECT custom_fields_schema, advanced_config 
+            FROM lookup_options 
+            WHERE group_key = 'documents_type' AND option_key = ?
+        ");
+        $stmt->execute([$document_type_key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            $config_response['success'] = true;
+            // نقوم بفك ترميز بيانات JSON المخزنة في قاعدة البيانات
+            $config_response['config'] = json_decode($result['advanced_config'] ?? '[]', true);
+            $config_response['custom_fields'] = json_decode($result['custom_fields_schema'] ?? '[]', true);
+        }
+    }
+    
+    // نرجع استجابة JSON مباشرة ونوقف التنفيذ
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($config_response);
     exit();
 }
 
