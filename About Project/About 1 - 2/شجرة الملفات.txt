@@ -1,0 +1,105 @@
+/project_root/
+│
+├── 📁 config/
+│   └── 📄 database.php
+│
+├── 📁 public/
+│   ├── 📁 css/
+│   │   └── 📄 style.css
+│   ├── 📁 js/
+│   │   └── (فارغ حاليًا - سيحتوي على ملفات JS المخصصة مستقبلاً)
+│   ├── 📁 vendors/
+│   │   └── (فارغ حاليًا - سيحتوي على مكتبات مثل SweetAlert2 مستقبلاً)
+│   ├── 📄 .htaccess
+│   ├── 📄 index.php       (العقل المدبر)
+│   └── 📄 print.php       (بوابة الطباعة الموحدة)
+│
+├── 📁 src/
+│   ├── 📁 core/
+│   │   └── 📄 functions.php
+│   │
+│   └── 📁 modules/
+│       ├── 📁 about/
+│       │   └── 📄 about_view.php
+│       ├── 📁 archive/
+│       │   └── 📄 archive_view.php
+│       ├── 📁 branches/      (جديد)
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 branches_view.php
+│       │   └── 📄 edit_view.php
+│       ├── 📁 clients/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 branches_modal_view.php (جديد)
+│       │   ├── 📄 clients_view.php
+│       │   └── 📄 edit_view.php
+│       ├── 📁 contracts/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 contracts_view.php
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 view_view.php
+│       ├── 📁 dashboard/
+│       │   └── 📄 dashboard_view.php
+│       ├── 📁 documents/
+│       │   └── 📄 documents_view.php (قيد الإنشاء)
+│       ├── 📁 financial/
+│       │   ├── 📄 add_payment_view.php
+│       │   ├── 📄 add_receipt_view.php
+│       │   └── 📄 financial_view.php (قيد الإنشاء)
+│       ├── 📁 login/
+│       │   └── 📄 login_view.php
+│       ├── 📁 permissions/
+│       │   ├── 📄 add_group_view.php
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 edit_group_view.php
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 permissions_view.php (بالتصميم المطور)
+│       ├── 📁 properties/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 properties_view.php
+│       ├── 📁 reports/
+│       │   ├── 📄 client_profile_print_view.php
+│       │   ├── 📄 client_statement_modal_view.php
+│       │   ├── 📄 client_statement_view.php
+│       │   ├── 📄 late_rentals_view.php
+│       │   ├── 📄 late_supplies_view.php
+│       │   ├── 📄 property_profile_print_view.php (إعادة تسمية)
+│       │   ├── 📄 reports_view.php
+│       │   ├── 📄 supplier_profile_print_view.php (جديد)
+│       │   ├── 📄 supplier_statement_modal_view.php (جديد)
+│       │   ├── 📄 supplier_statement_view.php
+│       │   └── 📄 unit_profile_print_view.php (إعادة تسمية)
+│       ├── 📁 roles/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 roles_view.php
+│       ├── 📁 settings/
+│       │   ├── 📄 add_lookup_group_view.php
+│       │   ├── 📄 add_lookup_option_view.php
+│       │   ├── 📄 edit_lookup_group_view.php
+│       │   ├── 📄 edit_lookup_option_view.php
+│       │   └── 📄 lookups_view.php
+│       ├── 📁 suppliers/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 branches_modal_view.php (جديد)
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 suppliers_view.php
+│       ├── 📁 supply_contracts/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 edit_view.php
+│       │   ├── 📄 supply_contracts_view.php
+│       │   └── 📄 view_view.php
+│       ├── 📁 units/
+│       │   ├── 📄 add_view.php
+│       │   ├── 📄 edit_view.php
+│       │   └── 📄 units_view.php
+│       └── 📁 users/
+│           ├── 📄 add_view.php
+│           ├── 📄 edit_view.php
+│           └── 📄 users_view.php
+│
+└── 📁 templates/
+    └── 📁 partials/
+        ├── 📄 footer.php
+        ├── 📄 header.php
+        └── 📄 sidebar.php
