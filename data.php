@@ -18,9 +18,9 @@ $branches = array(
   array('id' => '6','branch_name' => 'فرع الطائف','branch_code' => 'الطائف 1','branch_type' => 'منشأة','registration_number' => '5165165','tax_number' => '616187','address' => 'نرنتىقمنتىقمنتلا','phone' => '11553','email' => 'name@name.com','status' => 'Active','notes' => 'ننقلانقفلاتنقى','created_at' => '2025-06-16 21:55:44','deleted_at' => NULL),
   array('id' => '7','branch_name' => 'فرعنا','branch_code' => '45فرعنا','branch_type' => 'فرد','registration_number' => '55110000','tax_number' => '11','address' => '5يىؤي','phone' => '65','email' => '','status' => 'Active','notes' => 'تىيسنت','created_at' => '2025-06-16 22:01:48','deleted_at' => NULL),
   array('id' => '8','branch_name' => 'فروع الفرع1','branch_code' => 'فروعفرعي','branch_type' => 'فرد','registration_number' => '25135','tax_number' => '1351','address' => ' ةتبيىرىنت','phone' => '51351','email' => '','status' => 'Active','notes' => 'تىنتلانتلاتن','created_at' => '2025-06-16 22:15:18','deleted_at' => NULL),
-  array('id' => '9','branch_name' => 'شركة زمردة الشاطي المحدودة','branch_code' => 'زمردة','branch_type' => 'منشأة','registration_number' => 'لاتالان','tax_number' => 'وىرلسالام','address' => 'بنتر ميسنتمنيس','phone' => '050','email' => '','status' => 'Active','notes' => 'ىؤاتبشسيسءاس','created_at' => '2025-06-16 22:22:51','deleted_at' => NULL),
-  array('id' => '10','branch_name' => 'شركة أبناء سالم حسن العماري','branch_code' => 'العماري','branch_type' => 'منشأة','registration_number' => '56468','tax_number' => '46843','address' => 'بينترمهيب','phone' => '56465','email' => '','status' => 'Active','notes' => 'منسىيمرىىس','created_at' => '2025-06-16 23:57:27','deleted_at' => NULL),
-  array('id' => '11','branch_name' => 'يحيى باجرش','branch_code' => 'باجرش','branch_type' => 'فرد','registration_number' => '200002','tax_number' => '0','address' => 'ششششششش','phone' => '050','email' => 'name2@name.com','status' => 'Active','notes' => 'سسسسسسس','created_at' => '2025-06-24 19:14:30','deleted_at' => NULL)
+  array('id' => '9','branch_name' => 'شركة زمردة الشاطي المحدودة','branch_code' => 'فرع زمردة','branch_type' => 'منشأة','registration_number' => 'لاتالان','tax_number' => 'وىرلسالام','address' => 'بنتر ميسنتمنيس','phone' => '050','email' => '','status' => 'Active','notes' => 'ىؤاتبشسيسءاس','created_at' => '2025-06-16 22:22:51','deleted_at' => NULL),
+  array('id' => '10','branch_name' => 'شركة ابناء سالم حسن العماري','branch_code' => 'فرع العماري','branch_type' => 'منشأة','registration_number' => '56468','tax_number' => '46843','address' => 'بينترمهيب','phone' => '56465','email' => '','status' => 'Active','notes' => 'منسىيمرىىس','created_at' => '2025-06-16 23:57:27','deleted_at' => NULL),
+  array('id' => '11','branch_name' => 'يحيى باجرش','branch_code' => 'باجرش1','branch_type' => 'فرد','registration_number' => '200002','tax_number' => '0','address' => 'ششششششش','phone' => '050','email' => 'name2@name.com','status' => 'Active','notes' => 'سسسسسسس','created_at' => '2025-06-24 19:14:30','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`clients` */
@@ -99,73 +99,74 @@ $contract_units = array(
 
 /* `namktop_estate`.`documents` */
 $documents = array(
-  array('id' => '1','document_type' => 'deed','document_name' => 'صك ارض الفلان','document_number' => '10001','status' => 'Active','issue_date' => '2025-02-01','expiry_date' => '2025-12-01','details' => NULL,'notes' => 'لىعلةل','created_at' => '2025-06-20 23:01:36','deleted_at' => '2025-06-24 16:14:13'),
-  array('id' => '2','document_type' => 'deed','document_name' => 'اسم الصك1','document_number' => '846846','status' => 'Active','issue_date' => '2025-01-01','expiry_date' => '2025-12-31','details' => NULL,'notes' => 'يىاةنامهخت','created_at' => '2025-06-20 23:02:05','deleted_at' => NULL),
-  array('id' => '3','document_type' => 'Commercial_register','document_name' => 'اسم السجل','document_number' => '4413424','status' => 'Active','issue_date' => '2025-01-01','expiry_date' => '2025-01-01','details' => NULL,'notes' => 'لىبىب','created_at' => '2025-06-21 09:07:20','deleted_at' => NULL),
-  array('id' => '4','document_type' => 'Commercial_register','document_name' => 'سجل تجاري','document_number' => '5577','status' => 'Expired','issue_date' => '2024-01-01','expiry_date' => '2026-05-01','details' => NULL,'notes' => 'ملاحظان','created_at' => '2025-06-21 10:39:27','deleted_at' => NULL)
+  array('id' => '7','document_type' => 'deed','document_name' => 'صك تحلية11','document_number' => '5455','status' => 'Active','issue_date' => '2024-01-01','expiry_date' => NULL,'details' => NULL,'notes' => 'سيبسبس','created_at' => '2025-06-29 00:31:07','deleted_at' => NULL),
+  array('id' => '8','document_type' => 'deed','document_name' => 'صك الشرق','document_number' => '242432','status' => 'Active','issue_date' => NULL,'expiry_date' => NULL,'details' => NULL,'notes' => 'لاةىل','created_at' => '2025-06-29 00:50:02','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`entity_documents` */
 $entity_documents = array(
-  array('id' => '4','document_id' => '2','entity_type' => 'property','entity_id' => '1','notes' => NULL),
-  array('id' => '5','document_id' => '4','entity_type' => 'property','entity_id' => '6','notes' => NULL),
-  array('id' => '6','document_id' => '3','entity_type' => 'property','entity_id' => '4','notes' => NULL),
-  array('id' => '7','document_id' => '1','entity_type' => 'property','entity_id' => '2','notes' => NULL),
-  array('id' => '8','document_id' => '3','entity_type' => 'property','entity_id' => '11','notes' => NULL),
-  array('id' => '10','document_id' => '1','entity_type' => 'property','entity_id' => '12','notes' => NULL),
-  array('id' => '12','document_id' => '2','entity_type' => 'property','entity_id' => '11','notes' => NULL),
-  array('id' => '14','document_id' => '3','entity_type' => 'owner','entity_id' => '1','notes' => NULL),
-  array('id' => '15','document_id' => '2','entity_type' => 'property','entity_id' => '12','notes' => NULL),
-  array('id' => '16','document_id' => '4','entity_type' => 'property','entity_id' => '11','notes' => NULL)
+  array('id' => '40','document_id' => '7','entity_type' => 'property','entity_id' => '14','notes' => NULL),
+  array('id' => '41','document_id' => '7','entity_type' => 'owner','entity_id' => '4','notes' => NULL),
+  array('id' => '42','document_id' => '7','entity_type' => 'owner','entity_id' => '5','notes' => NULL),
+  array('id' => '43','document_id' => '8','entity_type' => 'property','entity_id' => '13','notes' => NULL),
+  array('id' => '44','document_id' => '8','entity_type' => 'owner','entity_id' => '4','notes' => NULL)
 );
 
 /* `namktop_estate`.`lookup_options` */
 $lookup_options = array(
-  array('id' => '1','group_key' => 'property_type','option_key' => 'commercial-center','option_value' => 'مركز تجاري','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '2','group_key' => 'property_type','option_key' => 'residential-building','option_value' => 'عمارة سكنية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '3','group_key' => 'property_type','option_key' => 'warehouse','option_value' => 'مستودع','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '4','group_key' => 'unit_type','option_key' => 'office','option_value' => 'مكتب','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '5','group_key' => 'unit_type','option_key' => 'shop','option_value' => 'معرض','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '6','group_key' => 'unit_type','option_key' => 'apartment','option_value' => 'شقة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '8','group_key' => 'property_type','option_key' => 'storage','option_value' => 'مخزن','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '9','group_key' => 'banks','option_key' => 'banks','option_value' => 'البنوك','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '10','group_key' => 'banks','option_key' => 'Rajihi','option_value' => 'الراجحي','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '11','group_key' => 'banks','option_key' => 'Alahli','option_value' => 'الاهلي','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '12','group_key' => 'property_type','option_key' => 'property_type','option_value' => 'أنواع العقارات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '13','group_key' => 'unit_type','option_key' => 'unit_type','option_value' => 'أنواع الوحدات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '14','group_key' => 'banks','option_key' => 'albilad','option_value' => 'البلاد','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '15','group_key' => 'documents_type','option_key' => 'documents_type','option_value' => 'أنواع الوثائق','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '16','group_key' => 'documents_type','option_key' => 'Commercial_register','option_value' => 'سجل تجاري','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '19','group_key' => 'documents_type','option_key' => 'deed','option_value' => 'صك ملكية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '20','group_key' => 'documents_type','option_key' => 'national_id','option_value' => 'هوية وطنية','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '21','group_key' => 'documents_type','option_key' => 'resident_id','option_value' => 'هوية مقيم','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '22','group_key' => 'unit_type','option_key' => 'advertisement','option_value' => 'اعلان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '23','group_key' => 'unit_type','option_key' => 'park','option_value' => 'موقف','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '24','group_key' => 'unit_type','option_key' => 'depot','option_value' => 'مخزن','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '25','group_key' => 'property_type','option_key' => 'mall','option_value' => 'مول','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '26','group_key' => 'banks','option_key' => 'Aljazira','option_value' => 'الجزيرة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '27','group_key' => 'documents_type','option_key' => 'deed','option_value' => 'صك ملكية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => '2025-06-23 17:17:04'),
-  array('id' => '28','group_key' => 'status','option_key' => 'status','option_value' => 'الحالات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '29','group_key' => 'status','option_key' => 'Active','option_value' => 'نشط','color' => '#ffffff','bg_color' => '#5cb017','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '30','group_key' => 'status','option_key' => 'Cancelled','option_value' => 'ملغي','color' => '#ffffff','bg_color' => '#f3aaaa','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '31','group_key' => 'status','option_key' => 'Expired','option_value' => 'منتهي','color' => '#ffffff','bg_color' => '#fdca3f','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '32','group_key' => 'status','option_key' => 'Draft','option_value' => 'مسودة','color' => '#ffffff','bg_color' => '#878787','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '33','group_key' => 'status','option_key' => 'Rented','option_value' => 'مؤجر','color' => '#ffffff','bg_color' => '#ee6ddd','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '34','group_key' => 'status','option_key' => 'Available','option_value' => 'متاح','color' => '#ffffff','bg_color' => '#48a6fe','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '35','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '36','group_key' => 'documents_type','option_key' => 'building_permit','option_value' => 'رخصة بناء','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '37','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '38','group_key' => 'documents_type','option_key' => 'baladi_permit','option_value' => 'رخصة بلدي','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '39','group_key' => 'documents_type','option_key' => 'certificate','option_value' => 'شهادة','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '40','group_key' => 'entity_type','option_key' => 'individual','option_value' => 'فرد','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
-  array('id' => '41','group_key' => 'entity_type','option_key' => 'institution','option_value' => 'منشأة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL)
+  array('id' => '1','group_key' => 'property_type','option_key' => 'commercial-center','option_value' => 'مركز تجاري','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '2','group_key' => 'property_type','option_key' => 'residential-building','option_value' => 'عمارة سكنية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '3','group_key' => 'property_type','option_key' => 'warehouse','option_value' => 'مستودع','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '4','group_key' => 'unit_type','option_key' => 'office','option_value' => 'مكتب','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '5','group_key' => 'unit_type','option_key' => 'shop','option_value' => 'معرض','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '6','group_key' => 'unit_type','option_key' => 'apartment','option_value' => 'شقة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '8','group_key' => 'property_type','option_key' => 'storage','option_value' => 'مخزن','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '9','group_key' => 'banks','option_key' => 'banks','option_value' => 'البنوك','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '10','group_key' => 'banks','option_key' => 'Rajihi','option_value' => 'الراجحي','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '11','group_key' => 'banks','option_key' => 'Alahli','option_value' => 'الاهلي','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '12','group_key' => 'property_type','option_key' => 'property_type','option_value' => 'أنواع العقارات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '13','group_key' => 'unit_type','option_key' => 'unit_type','option_value' => 'أنواع الوحدات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '14','group_key' => 'banks','option_key' => 'albilad','option_value' => 'البلاد','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '15','group_key' => 'documents_type','option_key' => 'documents_type','option_value' => 'أنواع المستندات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '16','group_key' => 'documents_type','option_key' => 'Commercial_register','option_value' => 'سجل تجاري','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '19','group_key' => 'documents_type','option_key' => 'deed','option_value' => 'صك ملكية','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => '[]','advanced_config' => '{"link_one_property":"1","link_many_owners":"1","link_one_client":"1","show_percentage":"1"}','is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '20','group_key' => 'documents_type','option_key' => 'national_id','option_value' => 'هوية وطنية','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '21','group_key' => 'documents_type','option_key' => 'resident_id','option_value' => 'هوية مقيم','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '22','group_key' => 'unit_type','option_key' => 'advertisement','option_value' => 'اعلان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '23','group_key' => 'unit_type','option_key' => 'park','option_value' => 'موقف','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '24','group_key' => 'unit_type','option_key' => 'depot','option_value' => 'مخزن','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '25','group_key' => 'property_type','option_key' => 'mall','option_value' => 'مول','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '26','group_key' => 'banks','option_key' => 'Aljazira','option_value' => 'الجزيرة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '27','group_key' => 'documents_type','option_key' => 'deed','option_value' => 'صك ملكية','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => '2025-06-23 17:17:04'),
+  array('id' => '28','group_key' => 'status','option_key' => 'status','option_value' => 'الحالات','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '29','group_key' => 'status','option_key' => 'Active','option_value' => 'نشط','color' => '#ffffff','bg_color' => '#5cb017','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '30','group_key' => 'status','option_key' => 'Cancelled','option_value' => 'ملغي','color' => '#ffffff','bg_color' => '#f3aaaa','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '31','group_key' => 'status','option_key' => 'Expired','option_value' => 'منتهي','color' => '#ffffff','bg_color' => '#fdca3f','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '32','group_key' => 'status','option_key' => 'Draft','option_value' => 'مسودة','color' => '#ffffff','bg_color' => '#878787','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '33','group_key' => 'status','option_key' => 'Rented','option_value' => 'مؤجر','color' => '#ffffff','bg_color' => '#ee6ddd','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '34','group_key' => 'status','option_key' => 'Available','option_value' => 'متاح','color' => '#ffffff','bg_color' => '#48a6fe','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '35','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '36','group_key' => 'documents_type','option_key' => 'building_permit','option_value' => 'رخصة بناء','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '37','group_key' => 'entity_type','option_key' => 'entity_type','option_value' => 'نوع الكيان','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '38','group_key' => 'documents_type','option_key' => 'baladi_permit','option_value' => 'رخصة بلدي','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '39','group_key' => 'documents_type','option_key' => 'certificate','option_value' => 'شهادة','color' => '#000000','bg_color' => '#ffffff','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '40','group_key' => 'entity_type','option_key' => 'individual','option_value' => 'فرد','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '41','group_key' => 'entity_type','option_key' => 'institution','option_value' => 'منشأة','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '42','group_key' => 'ownership_type','option_key' => 'ownership_type','option_value' => 'نوع التملك','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '43','group_key' => 'ownership_type','option_key' => 'investment','option_value' => 'استثمار','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '44','group_key' => 'ownership_type','option_key' => 'Assets','option_value' => 'ملك','color' => '#000000','bg_color' => '#FFFFFF','display_order' => '0','custom_fields_schema' => NULL,'advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL),
+  array('id' => '45','group_key' => 'status','option_key' => 'inactive','option_value' => 'معطل','color' => '#ff0000','bg_color' => '#ffb8b8','display_order' => '0','custom_fields_schema' => '[]','advanced_config' => NULL,'is_editable' => '1','is_deletable' => '1','notes' => NULL,'deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`owners` */
 $owners = array(
   array('id' => '1','owner_code' => 'مالك ش1','owner_name' => 'مالك شركة1','owner_type' => 'منشأة','id_number' => '70007','mobile' => '0550','email' => '','address' => NULL,'notes' => 'ملاحظة','status' => 'Active','created_at' => '2025-06-20 17:24:52','deleted_at' => NULL),
   array('id' => '2','owner_code' => 'مالك ف1ف','owner_name' => 'مالك فرد1','owner_type' => 'فرد','id_number' => '10001','mobile' => '553','email' => '','address' => NULL,'notes' => 'ملاحيمب','status' => 'Expired','created_at' => '2025-06-20 17:25:25','deleted_at' => NULL),
-  array('id' => '3','owner_code' => 'مالك فرد105','owner_name' => 'مالك جديد 99','owner_type' => 'منشأة','id_number' => '10001','mobile' => '1515','email' => '','address' => NULL,'notes' => '55ششش','status' => 'Active','created_at' => '2025-06-25 19:29:06','deleted_at' => NULL)
+  array('id' => '3','owner_code' => 'مالك فرد105','owner_name' => 'مالك جديد 99','owner_type' => 'منشأة','id_number' => '10001','mobile' => '1515','email' => '','address' => NULL,'notes' => '55ششش','status' => 'Active','created_at' => '2025-06-25 19:29:06','deleted_at' => NULL),
+  array('id' => '4','owner_code' => 'العماري العقار','owner_name' => 'شركة ابناء سالم حسن العماري','owner_type' => 'منشأة','id_number' => '7007','mobile' => '','email' => '','address' => NULL,'notes' => 'لبتىاق
+
+','status' => 'Active','created_at' => '2025-06-27 18:24:48','deleted_at' => NULL),
+  array('id' => '5','owner_code' => 'زمردة','owner_name' => 'شركة زمردة الشاطي المحدودة','owner_type' => 'منشأة','id_number' => '7001','mobile' => '','email' => '','address' => NULL,'notes' => '24','status' => 'Active','created_at' => '2025-06-27 20:04:28','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`owner_branches` */
@@ -175,7 +176,9 @@ $owner_branches = array(
   array('owner_id' => '1','branch_id' => '8'),
   array('owner_id' => '2','branch_id' => '6'),
   array('owner_id' => '2','branch_id' => '10'),
-  array('owner_id' => '3','branch_id' => '9')
+  array('owner_id' => '3','branch_id' => '9'),
+  array('owner_id' => '4','branch_id' => '10'),
+  array('owner_id' => '5','branch_id' => '9')
 );
 
 /* `namktop_estate`.`payment_schedules` */
@@ -341,15 +344,29 @@ $permission_groups = array(
 
 /* `namktop_estate`.`properties` */
 $properties = array(
-  array('id' => '1','branch_id' => '2','property_name' => 'مركز الشاطي','property_code' => '20','property_type' => 'مستودع','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'مالك العقار 2','deed_number' => '100002','deed_date' => NULL,'property_value' => '3000000.00','city' => 'جدة','district' => 'النهضة','address' => 'العنوان الوطني','area' => '2002.00','floors_count' => '10','notes' => 'ملاحظات العقار','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-07 11:41:16'),
-  array('id' => '2','branch_id' => '1','property_name' => 'مركز جدة سكوير','property_code' => '1253','property_type' => 'مول','property_description' => NULL,'ownership_type' => 'استثمار','owner_name' => 'مالك العقار 1','deed_number' => '100001','deed_date' => NULL,'property_value' => '700000.00','city' => 'جدة','district' => 'النسيم','address' => 'العنوان الوطني','area' => '2001.00','floors_count' => '10','notes' => 'ملاحظات هنا','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-07 11:41:58'),
-  array('id' => '4','branch_id' => '3','property_name' => 'عقار رقم 3','property_code' => '30','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'مالك رقم 3','deed_number' => '30003','deed_date' => NULL,'property_value' => '100000.00','city' => 'المدينة','district' => 'الحي هنا','address' => 'العنوان هنا','area' => '301.00','floors_count' => '5','notes' => 'المحلاظ هان','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-07 12:07:39'),
-  array('id' => '5','branch_id' => '2','property_name' => 'مركز النسيم سكوير','property_code' => '11115111','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'مالك العقار 10','deed_number' => '444444471','deed_date' => NULL,'property_value' => '2000000.00','city' => 'مدينتي','district' => 'الحي','address' => 'العنوان الوطني','area' => '4205.00','floors_count' => '5','notes' => 'ملاحظات','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-08 09:15:21'),
-  array('id' => '6','branch_id' => '1','property_name' => 'ايليت التحلية','property_code' => '444','property_type' => 'مخزن','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'مالك جديد 99','deed_number' => '9909','deed_date' => NULL,'property_value' => '1000000.00','city' => 'الخرطوم','district' => 'السبيل','address' => 'العنوان الوطني','area' => '500.00','floors_count' => '12','notes' => 'هلا فيكم','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-08 09:42:16'),
-  array('id' => '9','branch_id' => NULL,'property_name' => 'jnknkj','property_code' => 'knjnkjjn','property_type' => 'مخزن','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'lmlkm','deed_number' => 'lklkk','deed_date' => NULL,'property_value' => NULL,'city' => ';kmlk','district' => 'lnjn','address' => 'mlkm','area' => '55.00','floors_count' => '5','notes' => 'lknln','status' => 'نشط','deleted_at' => '2025-06-08 18:35:50','created_at' => '2025-06-08 18:28:51'),
-  array('id' => '10','branch_id' => NULL,'property_name' => 'عقار للحذفذ','property_code' => '55353','property_type' => 'مستودع','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'مالك عقار وهمي','deed_number' => '5556','deed_date' => NULL,'property_value' => NULL,'city' => 'جدة','district' => 'الحي الكبير','address' => '55555555555','area' => '555.00','floors_count' => '5','notes' => '55555555','status' => 'مؤرشف','deleted_at' => '2025-06-09 21:46:30','created_at' => '2025-06-08 19:06:04'),
-  array('id' => '11','branch_id' => '4','property_name' => 'عقار كبير 1','property_code' => '55','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'ملك5','deed_number' => '54','deed_date' => NULL,'property_value' => '125.00','city' => 'المدين','district' => 'الحي','address' => NULL,'area' => '10.00','floors_count' => NULL,'notes' => 'ملا','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-18 18:20:57'),
-  array('id' => '12','branch_id' => '6','property_name' => 'عقار هنك','property_code' => '45مم','property_type' => 'عمارة سكنية','property_description' => NULL,'ownership_type' => 'ملك','owner_name' => 'ملك52','deed_number' => '558','deed_date' => NULL,'property_value' => '15.00','city' => 'مدينو','district' => 'حي','address' => NULL,'area' => '125.00','floors_count' => NULL,'notes' => 'مب','status' => 'نشط','deleted_at' => NULL,'created_at' => '2025-06-18 18:22:57')
+  array('id' => '1','branch_id' => '2','property_name' => 'مركز الشاطي','property_code' => '20','property_type' => 'مستودع','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '3000000.00','city' => 'جدة','district' => 'النهضة','address' => 'العنوان الوطني','area' => '2002.00','floors_count' => '10','notes' => 'ملاحظات العقار','status' => 'نشط','deleted_at' => '2025-06-27 20:45:48','created_at' => '2025-06-07 11:41:16'),
+  array('id' => '2','branch_id' => '1','property_name' => 'مركز جدة سكوير','property_code' => '1253','property_type' => 'مول','property_description' => NULL,'ownership_type' => 'استثمار','deed_date' => NULL,'property_value' => '700000.00','city' => 'جدة','district' => 'النسيم','address' => 'العنوان الوطني','area' => '2001.00','floors_count' => '10','notes' => 'ملاحظات هنا','status' => 'نشط','deleted_at' => '2025-06-27 20:45:48','created_at' => '2025-06-07 11:41:58'),
+  array('id' => '4','branch_id' => '3','property_name' => 'عقار رقم 3','property_code' => '30','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '100000.00','city' => 'المدينة','district' => 'الحي هنا','address' => 'العنوان هنا','area' => '301.00','floors_count' => '5','notes' => 'المحلاظ هان','status' => 'Cancelled','deleted_at' => '2025-06-27 20:45:13','created_at' => '2025-06-07 12:07:39'),
+  array('id' => '5','branch_id' => '0','property_name' => 'مركز النسيم سكوير','property_code' => '11115111','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '2000000.00','city' => 'مدينتي','district' => 'الحي','address' => 'العنوان الوطني','area' => '4205.00','floors_count' => '5','notes' => 'ملاحظات','status' => 'Expired','deleted_at' => '2025-06-27 20:45:48','created_at' => '2025-06-08 09:15:21'),
+  array('id' => '6','branch_id' => '10','property_name' => 'ايليت التحلية','property_code' => '444','property_type' => 'مخزن','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '1000.00','city' => 'الخرطوم','district' => 'السبيل','address' => 'العنوان الوطني','area' => '500.00','floors_count' => '12','notes' => 'هلا فيكم','status' => 'Active','deleted_at' => '2025-06-27 23:06:11','created_at' => '2025-06-08 09:42:16'),
+  array('id' => '9','branch_id' => NULL,'property_name' => 'jnknkj','property_code' => 'knjnkjjn','property_type' => 'مخزن','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => NULL,'city' => ';kmlk','district' => 'lnjn','address' => 'mlkm','area' => '55.00','floors_count' => '5','notes' => 'lknln','status' => 'نشط','deleted_at' => '2025-06-08 18:35:50','created_at' => '2025-06-08 18:28:51'),
+  array('id' => '10','branch_id' => NULL,'property_name' => 'عقار للحذفذ','property_code' => '55353','property_type' => 'مستودع','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => NULL,'city' => 'جدة','district' => 'الحي الكبير','address' => '55555555555','area' => '555.00','floors_count' => '5','notes' => '55555555','status' => 'مؤرشف','deleted_at' => '2025-06-09 21:46:30','created_at' => '2025-06-08 19:06:04'),
+  array('id' => '11','branch_id' => '9','property_name' => 'عقار كبير 1','property_code' => '55','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '125.00','city' => 'المدين','district' => 'الحي','address' => NULL,'area' => '10.00','floors_count' => NULL,'notes' => 'ملا','status' => 'Active','deleted_at' => '2025-06-27 23:06:11','created_at' => '2025-06-18 18:20:57'),
+  array('id' => '12','branch_id' => '6','property_name' => 'عقار هنك','property_code' => '45مم','property_type' => 'عمارة سكنية','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '15.00','city' => 'مدينو','district' => 'حي','address' => NULL,'area' => '125.00','floors_count' => NULL,'notes' => 'مب','status' => 'Active','deleted_at' => '2025-06-27 23:06:11','created_at' => '2025-06-18 18:22:57'),
+  array('id' => '13','branch_id' => '9','property_name' => 'مركز ايليت الشرق','property_code' => 'الشرق','property_type' => 'عمارة سكنية','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '1001.00','city' => 'القصيم','district' => 'الشرفية','address' => NULL,'area' => '1001.00','floors_count' => NULL,'notes' => 'هلا قي','status' => 'Active','deleted_at' => NULL,'created_at' => '2025-06-27 18:12:02'),
+  array('id' => '14','branch_id' => '10','property_name' => 'مركز ايليت التحلية','property_code' => 'التحلية','property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '1001.00','city' => 'جدة','district' => 'الاندلس','address' => NULL,'area' => '2002.00','floors_count' => NULL,'notes' => 'لبىلابيل','status' => 'Active','deleted_at' => NULL,'created_at' => '2025-06-27 18:21:44'),
+  array('id' => '15','branch_id' => '10','property_name' => 'عقار متعدد 1','property_code' => NULL,'property_type' => 'مركز تجاري','property_description' => NULL,'ownership_type' => 'استثمار','deed_date' => NULL,'property_value' => '1000.00','city' => NULL,'district' => NULL,'address' => NULL,'area' => NULL,'floors_count' => NULL,'notes' => NULL,'status' => 'Active','deleted_at' => '2025-06-27 23:10:09','created_at' => '2025-06-27 23:09:43'),
+  array('id' => '16','branch_id' => '9','property_name' => 'عقار متعدد 2','property_code' => NULL,'property_type' => 'عمارة سكنية','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '2000.00','city' => NULL,'district' => NULL,'address' => NULL,'area' => NULL,'floors_count' => NULL,'notes' => NULL,'status' => 'Active','deleted_at' => '2025-06-27 23:10:09','created_at' => '2025-06-27 23:09:43'),
+  array('id' => '17','branch_id' => '0','property_name' => 'متعدد 11','property_code' => '<br /><b>Deprecated</b>:  htmlspecialchars(): Pass','property_type' => 'مستودع','property_description' => NULL,'ownership_type' => 'ملك','deed_date' => NULL,'property_value' => '10005.00','city' => 'ابها','district' => 'حي1','address' => NULL,'area' => '1000.00','floors_count' => NULL,'notes' => 'لباب','status' => 'Active','deleted_at' => '2025-06-28 00:42:13','created_at' => '2025-06-28 00:41:36'),
+  array('id' => '18','branch_id' => '0','property_name' => 'متعدد 22','property_code' => '<br /><b>Deprecated</b>:  htmlspecialchars(): Pass','property_type' => 'عمارة سكنية','property_description' => NULL,'ownership_type' => 'استثمار','deed_date' => NULL,'property_value' => '10005.00','city' => 'الرياض','district' => 'حي2','address' => NULL,'area' => '10002.00','floors_count' => NULL,'notes' => '4','status' => 'Active','deleted_at' => '2025-06-28 00:42:13','created_at' => '2025-06-28 00:41:36')
+);
+
+/* `namktop_estate`.`property_owners` */
+$property_owners = array(
+  array('id' => '4','property_id' => '13','owner_id' => '5','ownership_percentage' => NULL),
+  array('id' => '8','property_id' => '14','owner_id' => '4','ownership_percentage' => NULL),
+  array('id' => '9','property_id' => '14','owner_id' => '5','ownership_percentage' => NULL),
+  array('id' => '10','property_id' => '13','owner_id' => '4','ownership_percentage' => NULL)
 );
 
 /* `namktop_estate`.`roles` */
@@ -377,28 +394,67 @@ $role_permissions = array(
   array('role_id' => '1','permission_id' => '11'),
   array('role_id' => '1','permission_id' => '12'),
   array('role_id' => '1','permission_id' => '13'),
+  array('role_id' => '2','permission_id' => '1'),
+  array('role_id' => '2','permission_id' => '2'),
+  array('role_id' => '2','permission_id' => '3'),
+  array('role_id' => '2','permission_id' => '4'),
+  array('role_id' => '2','permission_id' => '5'),
+  array('role_id' => '2','permission_id' => '6'),
+  array('role_id' => '2','permission_id' => '7'),
+  array('role_id' => '2','permission_id' => '8'),
+  array('role_id' => '2','permission_id' => '9'),
+  array('role_id' => '2','permission_id' => '10'),
+  array('role_id' => '2','permission_id' => '11'),
+  array('role_id' => '2','permission_id' => '12'),
+  array('role_id' => '2','permission_id' => '13'),
+  array('role_id' => '2','permission_id' => '14'),
+  array('role_id' => '2','permission_id' => '24'),
+  array('role_id' => '2','permission_id' => '25'),
+  array('role_id' => '2','permission_id' => '26'),
+  array('role_id' => '2','permission_id' => '27'),
+  array('role_id' => '2','permission_id' => '28'),
+  array('role_id' => '2','permission_id' => '29'),
+  array('role_id' => '2','permission_id' => '30'),
+  array('role_id' => '2','permission_id' => '31'),
+  array('role_id' => '2','permission_id' => '33'),
+  array('role_id' => '2','permission_id' => '36'),
+  array('role_id' => '2','permission_id' => '37'),
+  array('role_id' => '2','permission_id' => '38'),
+  array('role_id' => '2','permission_id' => '39'),
+  array('role_id' => '2','permission_id' => '40'),
+  array('role_id' => '2','permission_id' => '41'),
+  array('role_id' => '2','permission_id' => '42'),
+  array('role_id' => '2','permission_id' => '43'),
+  array('role_id' => '2','permission_id' => '44'),
+  array('role_id' => '2','permission_id' => '45'),
+  array('role_id' => '2','permission_id' => '46'),
+  array('role_id' => '2','permission_id' => '47'),
+  array('role_id' => '2','permission_id' => '48'),
+  array('role_id' => '2','permission_id' => '49'),
+  array('role_id' => '2','permission_id' => '50'),
+  array('role_id' => '2','permission_id' => '51'),
+  array('role_id' => '2','permission_id' => '52'),
+  array('role_id' => '2','permission_id' => '53'),
+  array('role_id' => '2','permission_id' => '54'),
+  array('role_id' => '2','permission_id' => '55'),
+  array('role_id' => '2','permission_id' => '56'),
+  array('role_id' => '2','permission_id' => '57'),
+  array('role_id' => '2','permission_id' => '58'),
+  array('role_id' => '2','permission_id' => '59'),
+  array('role_id' => '2','permission_id' => '60'),
+  array('role_id' => '2','permission_id' => '61'),
+  array('role_id' => '2','permission_id' => '62'),
+  array('role_id' => '2','permission_id' => '63'),
+  array('role_id' => '2','permission_id' => '64'),
+  array('role_id' => '2','permission_id' => '65'),
+  array('role_id' => '2','permission_id' => '66'),
   array('role_id' => '3','permission_id' => '1'),
   array('role_id' => '3','permission_id' => '2'),
-  array('role_id' => '3','permission_id' => '3'),
-  array('role_id' => '3','permission_id' => '4'),
-  array('role_id' => '3','permission_id' => '5'),
   array('role_id' => '3','permission_id' => '6'),
-  array('role_id' => '3','permission_id' => '7'),
-  array('role_id' => '3','permission_id' => '8'),
-  array('role_id' => '3','permission_id' => '9'),
   array('role_id' => '3','permission_id' => '10'),
-  array('role_id' => '3','permission_id' => '11'),
-  array('role_id' => '3','permission_id' => '12'),
-  array('role_id' => '3','permission_id' => '13'),
   array('role_id' => '3','permission_id' => '14'),
   array('role_id' => '3','permission_id' => '24'),
-  array('role_id' => '3','permission_id' => '25'),
-  array('role_id' => '3','permission_id' => '26'),
-  array('role_id' => '3','permission_id' => '27'),
   array('role_id' => '3','permission_id' => '28'),
-  array('role_id' => '3','permission_id' => '29'),
-  array('role_id' => '3','permission_id' => '30'),
-  array('role_id' => '3','permission_id' => '31'),
   array('role_id' => '3','permission_id' => '36'),
   array('role_id' => '3','permission_id' => '41'),
   array('role_id' => '3','permission_id' => '46'),
@@ -470,12 +526,14 @@ $units = array(
 
 /* `namktop_estate`.`users` */
 $users = array(
-  array('id' => '1','full_name' => 'المدير العام','username' => 'admin','password' => '$2y$10$TZhJPIc3Y0JKL/K3e/mZQe68Qm4ApmCnVln6.ACOiq52ZR28Zl6KG','email' => 'admin@example.com','mobile' => '050','role' => 'admin','role_id' => '1','is_active' => '1','created_at' => '2025-06-07 10:00:04','deleted_at' => NULL),
-  array('id' => '2','full_name' => 'مدخل بيانات','username' => 'Data','password' => '$2y$10$7UQKRp1sTPFz5SFXWnydae5naFVS5gOzhWkH4LtBQ3OAARnZ7jCzW','email' => 'kinggoolley@gmail.com','mobile' => '56','role' => 'viewer','role_id' => '3','is_active' => '1','created_at' => '2025-06-09 18:52:59','deleted_at' => NULL),
-  array('id' => '4','full_name' => 'طباعة التقارير','username' => 'Print','password' => '$2y$10$I2o8rmG5UBOIkb8nej.5iuoO5N7gvEywxBGubAVCv6IY/I6/kJIQC','email' => 'name@name.com','mobile' => '547','role' => 'viewer','role_id' => '2','is_active' => '1','created_at' => '2025-06-09 00:00:00','deleted_at' => NULL),
-  array('id' => '11','full_name' => '11','username' => '1','password' => '$2y$10$tWT1kBcGhs3B8mpwvGubYODt1tHVTvoEnkllFBZP0fKRsuHBmxan6','email' => 'majidx14@hotmail.com','mobile' => '452457777','role' => 'viewer','role_id' => '3','is_active' => '1','created_at' => '2025-06-21 00:00:00','deleted_at' => NULL)
+  array('id' => '1','full_name' => 'المدير العام','username' => 'admin','password' => '$2y$10$TZhJPIc3Y0JKL/K3e/mZQe68Qm4ApmCnVln6.ACOiq52ZR28Zl6KG','email' => 'admin@example.com','mobile' => '050','role' => 'admin','role_id' => '1','status' => 'Active','created_at' => '2025-06-07 10:00:04','deleted_at' => NULL),
+  array('id' => '2','full_name' => 'مدخل بيانات','username' => 'Data','password' => '$2y$10$7UQKRp1sTPFz5SFXWnydae5naFVS5gOzhWkH4LtBQ3OAARnZ7jCzW','email' => 'kinggoolley@gmail.com','mobile' => '56','role' => 'viewer','role_id' => '3','status' => 'Active','created_at' => '2025-06-09 18:52:59','deleted_at' => NULL),
+  array('id' => '4','full_name' => 'طباعة التقارير','username' => 'Print','password' => '$2y$10$I2o8rmG5UBOIkb8nej.5iuoO5N7gvEywxBGubAVCv6IY/I6/kJIQC','email' => 'name@name.com','mobile' => '547','role' => 'viewer','role_id' => '2','status' => 'inactive','created_at' => '2025-06-09 00:00:00','deleted_at' => NULL),
+  array('id' => '11','full_name' => '11','username' => '1','password' => '$2y$10$tWT1kBcGhs3B8mpwvGubYODt1tHVTvoEnkllFBZP0fKRsuHBmxan6','email' => 'majidx14@hotmail.com','mobile' => '452457777','role' => 'viewer','role_id' => '3','status' => 'inactive','created_at' => '2025-06-21 00:00:00','deleted_at' => NULL)
 );
 
 /* `namktop_estate`.`user_branches` */
 $user_branches = array(
+  array('user_id' => '11','branch_id' => '9'),
+  array('user_id' => '11','branch_id' => '10')
 );
