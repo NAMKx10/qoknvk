@@ -175,4 +175,42 @@ function build_branches_query_condition($main_table_alias, &$params_ref) {
     return " AND 1=0 ";
 }
 
+
+/**
+ * دالة مركزية لتنسيق وعرض العملات بشكل ديناميكي.
+ *
+ * @param float $amount المبلغ المراد تنسيقه.
+ * @param string|null $currency_code رمز العملة (مثل 'SAR'). إذا ترك فارغًا، سيتم استخدام العملة الافتراضية.
+ * @return string النص المنسق بالكامل (مثال: "SAR 1,250.00").
+ */
+function formatCurrency($amount, $currency_code = null) {
+    global $pdo;
+    static $currencies = []; // للتخزين المؤقت وتجنب تكرار الاستعلام
+
+    // إذا لم نحدد عملة، ابحث عن العملة الافتراضية
+    if ($currency_code === null) {
+        $currency_code = 'SAR'; // قيمة افتراضية مؤقتة، يمكن جلبها من الإعدادات لاحقًا
+    }
+
+    // جلب بيانات العملة من قاعدة البيانات (أو من الذاكرة المؤقتة)
+    if (!isset($currencies[$currency_code])) {
+        $stmt = $pdo->prepare("SELECT * FROM currencies WHERE currency_code = ? LIMIT 1");
+        $stmt->execute([$currency_code]);
+        $currency_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$currency_data) return (float)$amount; // إذا لم يتم العثور على العملة
+        $currencies[$currency_code] = $currency_data;
+    }
+
+    $config = $currencies[$currency_code];
+
+    $formatted_amount = number_format((float)$amount, (int)$config['decimal_places']);
+    $symbol = $config['symbol_html'];
+
+    if ($config['symbol_position'] === 'before') {
+        return $symbol . ' ' . $formatted_amount;
+    } else {
+        return $formatted_amount . ' ' . $symbol;
+    }
+}
+
 ?>
