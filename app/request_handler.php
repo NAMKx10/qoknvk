@@ -117,6 +117,13 @@ switch ($page) {
         break;
 
     case 'roles/delete':
+        // ✨ الحارس الرابع: تأمين عملية الحذف ✨
+        if (!has_permission('delete_role')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
+
         if (isset($_GET['id']) && $_GET['id'] > 2) { // لا نسمح بحذف الأدوار الأساسية
             soft_delete($pdo, 'roles', (int)$_GET['id']);
         }
@@ -125,6 +132,12 @@ switch ($page) {
         break;
 
     case 'permissions/delete':
+        if (!has_permission('delete_permission')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
+
         if (isset($_GET['id'])) {
             soft_delete($pdo, 'permissions', (int)$_GET['id']);
         }
@@ -140,9 +153,13 @@ switch ($page) {
         exit();
         break;
 
-    // --- الحالات الخاصة التي تتطلب منطقًا مخصصًا (تبقى كما هي) ---
     case 'permissions/delete_group':
-        // هذه حالة خاصة لأنها تحذف من جدولين بناءً على group_id وليس id.
+        if (!has_permission('delete_permission_group')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
+
         if (isset($_GET['id'])) {
             $pdo->beginTransaction();
             soft_delete($pdo, 'permissions', $pdo->query("SELECT id FROM permissions WHERE group_id = " . (int)$_GET['id'])->fetchAll(PDO::FETCH_COLUMN));
