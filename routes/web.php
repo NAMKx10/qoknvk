@@ -55,11 +55,11 @@ return [
     'users/add'         => ['path' => 'users/add_view.php', 'title' => 'إضافة مستخدم'],
     'users/edit'        => ['path' => 'users/edit_view.php', 'title' => 'تعديل مستخدم'],
     'users/delete'      => ['path' => '', 'title' => 'حذف مستخدم'], // معالجة فقط
-    'roles'             => ['path' => 'roles/roles_view.php', 'title' => 'إدارة الأدوار'],
+    'roles' => ['path' => 'roles/roles_controller.php', 'title' => 'إدارة الأدوار'],
     'roles/add'         => ['path' => 'roles/add_view.php', 'title' => 'إضافة دور'],
     'roles/edit'        => ['path' => 'roles/edit_view.php', 'title' => 'تعديل الصلاحيات'],
     'roles/edit_role'   => ['path' => 'roles/edit_role_view.php', 'title' => 'تعديل الدور'],
-    'permissions'       => ['path' => 'permissions/permissions_view.php', 'title' => 'إدارة الصلاحيات'],
+    'permissions' => ['path' => 'permissions/permissions_controller.php', 'title' => 'إدارة الصلاحيات'],
     'permissions/add_group'     => ['path' => 'permissions/add_group_view.php', 'title' => 'إضافة مجموعة'],
     'permissions/edit_group'    => ['path' => 'permissions/edit_group_view.php', 'title' => 'تعديل مجموعة'],
     'permissions/delete_group'  => ['path' => ''], // معالجة فقط
@@ -67,7 +67,7 @@ return [
     'permissions/edit'          => ['path' => 'permissions/edit_view.php', 'title' => 'تعديل صلاحية'],
     'permissions/delete'        => ['path' => ''], // معالجة فقط
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
-    'settings/lookups'              => ['path' => 'settings/lookups_view.php', 'title' => 'تهيئة المدخلات'],
+    'settings/lookups' => ['path' => 'settings/lookups_controller.php', 'title' => 'تهيئة المدخلات'],
     'settings/add_lookup_group'     => ['path' => 'settings/add_lookup_group_view.php', 'title' => 'إضافة مجموعة'],
     'settings/edit_lookup_group'    => ['path' => 'settings/edit_lookup_group_view.php', 'title' => 'تعديل مجموعة'],
     'settings/add_lookup_option'    => ['path' => 'settings/add_lookup_option_view.php', 'title' => 'إضافة خيار'],
