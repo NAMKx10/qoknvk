@@ -71,6 +71,13 @@ switch ($page) {
         exit();
         break;
 
+    case 'branches/delete':
+        if (isset($_GET['id'])) {
+            soft_delete($pdo, 'branches', (int)$_GET['id']);
+        }
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=branches'));
+        exit();
+        break;
 
      case 'properties/delete':
         if (isset($_GET['id'])) {
