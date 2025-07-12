@@ -1,24 +1,28 @@
 <?php
-// src/modules/settings/edit_lookup_option_view.php (الإصدار الجديد مع مصمم النماذج)
 
-// --- 1. جلب البيانات الأساسية ---
+// src/modules/settings/edit_lookup_option_view.php (النسخة الكاملة مع الإعدادات المتقدمة)
+
+// --- 1. جلب البيانات الأساسية (يبقى كما هو) ---
 if (!isset($_GET['id'])) { die("ID is required."); }
 $stmt = $pdo->prepare("SELECT * FROM lookup_options WHERE id = ?");
 $stmt->execute([$_GET['id']]);
-$option = $stmt->fetch();
+$option = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$option) { die("Option not found."); }
 
-// --- 2. فك ترميز مخطط الحقول المخصصة ---
+// --- 2. فك ترميز المخططات (القديم والجديد) ---
 $custom_fields = json_decode($option['custom_fields_schema'] ?? '[]', true);
+$advanced_config = json_decode($option['advanced_config'] ?? '[]', true); // ✨ نقرأ الإعدادات الجديدة من قاعدة البيانات
+
 ?>
 
 <!-- =============================================== -->
 <!-- HTML: نموذج التعديل المتقدم                     -->
 <!-- =============================================== -->
 
+
 <div class="modal-header">
     <h5 class="modal-title">تعديل الخيار: <?= htmlspecialchars($option['option_value']) ?></h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
 <form method="POST" action="index.php?page=settings/handle_edit_lookup_option_ajax" class="ajax-form">
@@ -51,7 +55,7 @@ $custom_fields = json_decode($option['custom_fields_schema'] ?? '[]', true);
 
         <?php
         // --- القسم الثاني: يظهر فقط لأنواع الوثائق ---
-        if ($option['group_key'] === 'document_type'):
+        if ($option['group_key'] === 'documents_type'):
         ?>
             <fieldset class="form-fieldset mt-4">
                 <legend>إدارة الحقول المخصصة</legend>
@@ -70,6 +74,42 @@ $custom_fields = json_decode($option['custom_fields_schema'] ?? '[]', true);
                 <button type="button" class="btn btn-outline-primary mt-2" id="add-custom-field-btn">
                     <i class="ti ti-plus me-2"></i>إضافة حقل مخصص
                 </button>
+            </fieldset>
+
+<!-- ✨ القسم الثالث: هنا الجزء الجديد بالكامل ✨ -->
+            <fieldset class="form-fieldset mt-4">
+                <legend>إعدادات الربط المتقدم</legend>
+                <div class="mb-3">
+                    <label class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="advanced_config[has_expiration_date]" value="1" <?= isset($advanced_config['has_expiration_date']) && $advanced_config['has_expiration_date'] ? 'checked' : '' ?>>
+                        <span class="form-check-label">هذه الوثيقة لها تاريخ انتهاء</span>
+                    </label>
+                    <div class="form-text">عند تفعيلها، سيظهر حقل "تاريخ الانتهاء" في شاشة الوثائق.</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                         <label class="form-label">خيارات ربط الكيانات</label>
+                         <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="advanced_config[link_one_property]" value="1" <?= isset($advanced_config['link_one_property']) && $advanced_config['link_one_property'] ? 'checked' : '' ?>>
+                            <span class="form-check-label">السماح بربط عقار واحد</span>
+                        </label>
+                        <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="advanced_config[link_many_owners]" value="1" <?= isset($advanced_config['link_many_owners']) && $advanced_config['link_many_owners'] ? 'checked' : '' ?>>
+                            <span class="form-check-label">السماح بربط عدة ملاك</span>
+                        </label>
+                         <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="advanced_config[link_one_client]" value="1" <?= isset($advanced_config['link_one_client']) && $advanced_config['link_one_client'] ? 'checked' : '' ?>>
+                            <span class="form-check-label">السماح بربط عميل واحد</span>
+                        </label>
+                    </div>
+                     <div class="col-md-6">
+                        <label class="form-label">خيارات إضافية</label>
+                        <label class="form-check">
+                            <input class="form-check-input" type="checkbox" name="advanced_config[show_percentage]" value="1" <?= isset($advanced_config['show_percentage']) && $advanced_config['show_percentage'] ? 'checked' : '' ?>>
+                            <span class="form-check-label">تفعيل حقل نسبة الملكية</span>
+                        </label>
+                     </div>
+                </div>
             </fieldset>
 
             <!-- قالب لإضافة حقل جديد عبر JavaScript (مخفي) -->
