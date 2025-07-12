@@ -13,6 +13,7 @@ define('ROOT_PATH', __DIR__);
 require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/src/core/functions.php';
 require_once ROOT_PATH . '/src/core/db_functions.php'; 
+require_once ROOT_PATH . '/src/libraries/Database.php';
 
 // 3. تحديد الصفحة المطلوبة
 $page = $_GET['page'] ?? 'dashboard';
