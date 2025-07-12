@@ -44,7 +44,22 @@ $stats['total_units'] = $units_stmt->fetchColumn();
 $total_records = $stats['total_properties'] ?? 0;
 $total_pages = ceil($total_records / $limit);
 
-$data_sql = "SELECT p.*, b.branch_code, (SELECT COUNT(*) FROM units u WHERE u.property_id = p.id AND u.deleted_at IS NULL) as units_count FROM properties p LEFT JOIN branches b ON p.branch_id = b.id {$sql_where} ORDER BY p.id DESC LIMIT {$limit} OFFSET {$offset}";
+$data_sql = "
+    SELECT 
+        p.*, 
+        b.branch_code, 
+        (SELECT COUNT(u.id) FROM units u WHERE u.property_id = p.id AND u.deleted_at IS NULL) as units_count,
+        (SELECT COUNT(po.id) FROM property_owners po WHERE po.property_id = p.id) as owners_count,
+        (SELECT COUNT(ed.id) FROM entity_documents ed WHERE ed.entity_id = p.id AND ed.entity_type = 'property') as documents_count
+    FROM 
+        properties p 
+    LEFT JOIN 
+        branches b ON p.branch_id = b.id 
+    {$sql_where} 
+    ORDER BY p.id DESC 
+    LIMIT {$limit} OFFSET {$offset}
+";
+
 $data_stmt = $pdo->prepare($data_sql);
 $data_stmt->execute($params);
 $properties = $data_stmt->fetchAll();

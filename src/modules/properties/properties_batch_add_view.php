@@ -52,7 +52,7 @@
         const hot = new Handsontable(container, {
             data: Array.from({ length: <?= $num_rows ?> }, () => ({})), // إنشاء صفوف فارغة
             language: 'ar-SA',
-            colHeaders: ['اسم العقار *', 'الفرع *', 'نوع العقار', 'التملك', 'الحالة', 'المالك', 'رقم الصك', 'المدينة', 'الحي', 'المساحة', 'القيمة', 'الملاحظات'],
+            colHeaders: ['اسم العقار *', 'الفرع *', 'نوع العقار', 'التملك', 'الحالة', 'المدينة', 'الحي', 'المساحة', 'القيمة', 'الملاحظات'],
             columns: [
                 { data: 'property_name' },
                 {
@@ -66,8 +66,6 @@
                 { data: 'property_type', type: 'dropdown', source: propertyTypesData },
                 { data: 'ownership_type', type: 'dropdown', source: ownershipTypesData },
                 { data: 'status', type: 'dropdown', source: Object.values(statusesData) }, // حفظ المفتاح الإنجليزي
-                { data: 'owner_name' },
-                { data: 'deed_number' },
                 { data: 'city' },
                 { data: 'district' },
                 { data: 'area', type: 'numeric' },

@@ -64,7 +64,15 @@
             <thead>
                 <tr>
                     <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" onchange="toggleAllCheckboxes(this)"></th>
-                    <th>م</th><th>صورة</th><th>العقار</th><th>المالك / الصك</th><th>قيمة العقار</th><th>الوحدات</th><th>الحالة</th><th>ملاحظات</th><th>الإجراءات</th>
+                    <th>م</th>
+                    <th>صورة</th>
+                    <th>العقار</th>
+                    <th>المالك والوثائق</th>
+                    <th>قيمة العقار</th>
+                    <th>الوحدات</th>
+                    <th>الحالة</th>
+                    <th>ملاحظات</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,12 +92,13 @@
                             <?= htmlspecialchars($property['city'] ?? '') ?>
                         </div>
                     </td>
-
                     <td>
-                        <div><?= htmlspecialchars($property['owner_name'] ?? '—') ?></div>
-                        <div class="text-muted" style="font-size: 0.9em;">صك: <?= htmlspecialchars($property['deed_number'] ?? '—') ?></div>
+                        <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="badge bg-blue-lt"><i class="ti ti-users me-1"></i> <?= $property['owners_count'] ?></a>
+                        <a href="#" class="badge bg-green-lt"><i class="ti ti-file-text me-1"></i> <?= $property['documents_count'] ?></a>
+                        </div>
                     </td>
-                    <td><?= number_format($property['property_value'] ?? 0, 2) ?></td>
+                    <td> <?= number_format($property['property_value'] ?? 0, 2) ?> </td>
 
                     <td class="text-center"><?= $property['units_count'] ?></td>
                     <td>

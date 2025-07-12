@@ -59,9 +59,11 @@
         const hot = new Handsontable(container, {
             data: propertiesForGrid, // ✨ نستخدم البيانات المترجمة هنا ✨
             language: 'ar-SA',
-            colHeaders: ['اسم العقار', 'كود العقار', 'الفرع', 'نوع العقار', 'التملك', 'الحالة', 'المالك', 'رقم الصك', 'المدينة', 'الحي', 'المساحة', 'القيمة', 'الملاحظات'],
+            colHeaders:
+            ['اسم العقار', 'كود العقار', 'الفرع', 'نوع العقار', 'التملك', 'الحالة', 'المدينة', 'الحي', 'المساحة', 'القيمة', 'الملاحظات'],
             columns: [
-                 { data: 'property_name' }, { data: 'property_code' },
+                 { data: 'property_name' },
+                 { data: 'property_code' },
                 {
                     data: 'branch_id', type: 'autocomplete',
                     source: function (query, process) {
@@ -73,8 +75,11 @@
                 { data: 'property_type', type: 'dropdown', source: propertyTypesData },
                 { data: 'ownership_type', type: 'dropdown', source: ownershipTypesData },
                 { data: 'status', type: 'dropdown', source: Object.values(statusesData) }, // قائمة الخيارات تظل باللغة العربية
-                { data: 'owner_name' }, { data: 'deed_number' }, { data: 'city' }, { data: 'district' },
-                { data: 'area', type: 'numeric' }, { data: 'property_value', type: 'numeric' }, { data: 'notes' }
+                { data: 'city' },
+                { data: 'district' },
+                { data: 'area', type: 'numeric' },
+                { data: 'property_value', type: 'numeric' },
+                { data: 'notes' }
             ],
             minSpareRows: 0, height: 'auto', stretchH: 'all', licenseKey: 'non-commercial-and-evaluation',
 
