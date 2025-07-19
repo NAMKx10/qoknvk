@@ -54,7 +54,7 @@ $(document).ready(function() {
                 // إعادة تفعيل Select2 للمحتوى الجديد
                 initializeSelect2(modal.find('.select2-init'));
             }).fail(function() {
-                modalContent.html('<div class="modal-body"><div class="alert alert-danger">فشل تحميل المحتوى.</div></div>');
+                modalContent.html('<div class="modal-body"><div class="alert alert-danger">فشل تحميل المحتوى.</div><pre>' + jqXHR.responseText + '</pre></div>');
             });
         }
     });
