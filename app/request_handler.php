@@ -42,7 +42,7 @@ switch ($page) {
         // ... (هذا القسم يبقى كما هو دون تغيير) ...
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND is_active = 1");
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND status = 'Active'");
         $stmt->execute([$username]);
         $user = $stmt->fetch();
         if ($user && password_verify($password, $user['password'])) {
@@ -79,12 +79,30 @@ switch ($page) {
         exit();
         break;
 
-     case 'properties/delete':
+        
+    case 'units/delete':
+        if (!has_permission('delete_unit')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
         if (isset($_GET['id'])) {
-            // نستدعي دالتنا المركزية الأنيقة
+            soft_delete($pdo, 'units', (int)$_GET['id']);
+        }
+        header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=units'));
+        exit();
+        break;
+
+
+        case 'properties/delete':
+        if (!has_permission('delete_property')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard");
+            exit();
+        }
+        if (isset($_GET['id'])) {
             soft_delete($pdo, 'properties', (int)$_GET['id']);
         }
-        // نعيد المستخدم إلى صفحة العقارات التي كان فيها
         header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php?page=properties'));
         exit();
         break;
@@ -221,22 +239,19 @@ switch ($page) {
         $action = $_POST['action'] ?? null;
         $ids = $_POST['row_id'] ?? [];
 
-        // نتأكد أن لدينا إجراء ومصفوفة معرفات غير فارغة
+        if ($action === 'soft_delete' && !has_permission('batch_delete_properties')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=properties");
+            exit();
+        }
+
         if ($action && !empty($ids)) {
-            // نضمن أن كل المعرفات هي أرقام صحيحة للأمان
             $safe_ids = array_map('intval', $ids);
-            
-            // نتحقق من نوع الإجراء ونستدعي الدالة المركزية المناسبة
             if ($action === 'soft_delete') {
                 soft_delete($pdo, 'properties', $safe_ids);
             }
-            // مستقبلاً، يمكن إضافة إجراءات أخرى هنا مثل:
-            // elseif ($action === 'force_delete') {
-            //     force_delete($pdo, 'properties', $safe_ids);
-            // }
         }
         
-        // في النهاية، نعيد المستخدم إلى صفحة العقارات
         header("Location: index.php?page=properties");
         exit();
         break;
