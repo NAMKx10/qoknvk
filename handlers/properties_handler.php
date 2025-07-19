@@ -1,16 +1,24 @@
 <?php
-
 /**
  * handlers/properties_handler.php
- * (النسخة الجديدة المبسطة للإصدار 3.0)
+ * (النسخة النهائية المؤمنة بالكامل)
  */
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
 
-// --- معالج الإضافة والتعديل الفردي (تم تبسيطه) ---
+// --- معالج الإضافة والتعديل الفردي ---
 if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
     
-    // 1. نقوم بتجميع الحقول الموجودة فقط في النموذج المبسط
+    $is_add = ($page === 'properties/handle_add');
+    $permission_needed = $is_add ? 'add_property' : 'edit_property';
+
+    // ✨ الحارس الأمني رقم 1: التحقق من صلاحية الإضافة أو التعديل ✨
+    if (!has_permission($permission_needed)) {
+        $message = $is_add ? 'ليس لديك الصلاحية لإضافة عقارات.' : 'ليس لديك الصلاحية لتعديل العقارات.';
+        $response = ['success' => false, 'message' => $message];
+        return; // الخروج من الملف إذا لم تكن هناك صلاحية
+    }
+    
     $data = [
         'branch_id'      => $_POST['branch_id'] ?? null,
         'property_name'  => $_POST['property_name'] ?? null,
@@ -25,7 +33,7 @@ if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
         'status'         => $_POST['status'] ?? 'Active',
     ];
 
-    $id = ($page === 'properties/handle_edit') ? ($_POST['id'] ?? null) : null;
+    $id = !$is_add ? ($_POST['id'] ?? null) : null;
     
     $result = save_record($pdo, 'properties', $data, $id);
     
@@ -39,7 +47,12 @@ if ($page === 'properties/handle_add' || $page === 'properties/handle_edit') {
 
 // --- معالج الإضافة الجماعية من جدول Excel ---
 elseif ($page === 'properties/handle_batch_add') {
-    // لأن البيانات مرسلة كـ JSON من JavaScript، نقرأها بهذه الطريقة
+    // ✨ الحارس الأمني رقم 2: التحقق من صلاحية الإضافة الجماعية ✨
+    if (!has_permission('batch_add_properties')) {
+        $response = ['success' => false, 'message' => 'ليس لديك الصلاحية لتنفيذ هذا الإجراء.'];
+        return;
+    }
+    
     $input = json_decode(file_get_contents('php://input'), true);
     $properties_data = $input['property'] ?? [];
     $saved_count = 0;
@@ -48,9 +61,7 @@ elseif ($page === 'properties/handle_batch_add') {
         $pdo->beginTransaction();
         try {
             foreach ($properties_data as $data) {
-                // نتجاهل الصفوف الفارغة ونحفظ فقط إذا كان اسم العقار والفرع موجودين
-                if (!empty(trim($data['property_name'])) && !empty($data['branch_id'])) {
-                    // نستخدم دالة الحفظ المركزية القوية
+                if (!empty(trim($data['property_name'] ?? '')) && !empty($data['branch_id'])) {
                     save_record($pdo, 'properties', $data);
                     $saved_count++;
                 }
@@ -58,20 +69,22 @@ elseif ($page === 'properties/handle_batch_add') {
             $pdo->commit();
         } catch (Exception $e) {
             $pdo->rollBack();
-            // في حالة حدوث خطأ، نرجع استجابة JSON بالخطأ
-            $response = ['success' => false, 'message' => 'حدث خطأ في قاعدة البيانات أثناء الحفظ. ' . $e->getMessage()];
-            // ✨ الخروج المبكر مهم هنا لمنع أي مخرجات أخرى
-            header('Content-Type: application/json'); echo json_encode($response); exit();
+            $response = ['success' => false, 'message' => 'حدث خطأ في قاعدة البيانات. ' . $e->getMessage()];
+            return;
         }
     }
     
-    // في حالة النجاح، نرجع استجابة JSON بالنجاح
     $response = ['success' => true, 'message' => "تم حفظ عدد {$saved_count} من السجلات بنجاح!"];
 }
 
+// --- معالج التعديل الجماعي من جدول Excel ---
 elseif ($page === 'properties/handle_batch_edit') {
-    
-    // ✨ التغيير هنا: نقرأ البيانات كـ JSON بدلاً من POST العادي ✨
+    // ✨ الحارس الأمني رقم 3: التحقق من صلاحية التعديل الجماعي ✨
+    if (!has_permission('batch_edit_properties')) {
+        $response = ['success' => false, 'message' => 'ليس لديك الصلاحية لتنفيذ هذا الإجراء.'];
+        return;
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
     $properties_data = $input['property'] ?? [];
 
@@ -79,12 +92,11 @@ elseif ($page === 'properties/handle_batch_edit') {
     if (!empty($properties_data)) {
         $pdo->beginTransaction();
         try {
-            // نمر على كل عقار تم إرساله (البيانات الآن لا تحتوي على ID في المفتاح)
             foreach ($properties_data as $data) {
-                // نتأكد أن لدينا ID صالح قبل التحديث
                 if (!empty($data['id'])) {
                     $id = (int)$data['id'];
-                    // نستخدم دالتنا المركزية والموثوقة للتحديث
+                    // ملاحظة: نزيل حقل 'id' من البيانات قبل تمريرها لدالة الحفظ
+                    unset($data['id']);
                     save_record($pdo, 'properties', $data, $id);
                     $updated_count++;
                 }
@@ -93,16 +105,10 @@ elseif ($page === 'properties/handle_batch_edit') {
         } catch (Exception $e) {
             $pdo->rollBack();
             $response = ['success' => false, 'message' => 'حدث خطأ في قاعدة البيانات.'];
-            // نرسل استجابة الخطأ ونخرج
-            header('Content-Type: application/json'); echo json_encode($response); exit();
+            return;
         }
     }
     
-    // نرسل استجابة النجاح
     $response = ['success' => true, 'message' => "تم تحديث عدد {$updated_count} من السجلات بنجاح!"];
 }
-
-// --- إذا كان هناك أي معالجة أخرى، يمكن إضافتها هنا ---
-
 ?>
-
