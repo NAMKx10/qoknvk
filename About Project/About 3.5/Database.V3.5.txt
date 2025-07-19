@@ -1,8 +1,6 @@
-ممتاز. الآن ننتقل للملف التالي وهو Database.V4.txt.
+تمام، سأقوم بتحديث مستند مخطط قاعدة البيانات ليشمل التفاصيل الإضافية التي ناقشناها، مثل الأعمدة الجديدة والجداول المقترحة، وليكون مرجعًا دقيقًا للبنية الحالية والمستقبلية.
 
-سأقوم بتحديثه ليعكس بنية قاعدة البيانات الحالية والمستقبلية المتفق عليها، مع إزالة أي إشارة إلى Laravel أو CodeIgniter والتركيز على فلسفتنا الحالية.
-
-التحديث الثالث: مخطط قاعدة البيانات (Database Schema) - الإصدار 3.5
+التحديث: مخطط قاعدة البيانات (Database Schema) - الإصدار 3.5
 
 فلسفة تصميم قاعدة البيانات:
 
@@ -20,21 +18,7 @@
 
 الغرض: تخزين معلومات تسجيل دخول المستخدمين وبياناتهم الأساسية.
 
-أهم الأعمدة:
-
-id (PK)
-
-full_name
-
-username (UNIQUE)
-
-password
-
-role_id (FK to roles.id)
-
-status (VARCHAR - مثل 'Active', 'Inactive')
-
-deleted_at (TIMESTAMP)
+أهم الأعمدة: id (PK), full_name, username (UNIQUE), password, role_id (FK to roles.id), status (VARCHAR - مثل 'Active'), deleted_at (TIMESTAMP).
 
 العلاقات:
 
@@ -74,15 +58,7 @@ role_permissions: (جدول ربط) role_id, permission_id.
 
 أهم الأعمدة: id, branch_id (FK), property_name, property_code, property_type.
 
-العلاقات (هنا تظهر قوة الشبكة):
-
-branches: (Many-to-One).
-
-property_owners: (One-to-Many) - لربط العقار بالملاك.
-
-entity_documents: (علاقة متعددة الأشكال) - لربط العقار بالوثائق.
-
-units: (One-to-Many).
+العلاقات: branches (Many-to-One), property_owners (One-to-Many), entity_documents (Polymorphic), units (One-to-Many).
 
 6. جدول owners (الملاك)
 
@@ -90,29 +66,15 @@ units: (One-to-Many).
 
 أهم الأعمدة: id, owner_name, owner_type, id_number.
 
-العلاقات:
-
-property_owners: (One-to-Many).
-
-owner_branches: (One-to-Many) - لتحديد أي ملاك يتبعون لأي فرع.
+العلاقات: property_owners (One-to-Many), owner_branches (One-to-Many).
 
 7. جداول الربط (Pivot Tables - قلب الشبكة)
 
-property_owners:
+property_owners: يربط properties و owners (Many-to-Many).
 
-الأعمدة: id, property_id, owner_id.
+entity_documents: يربط documents بأي جدول آخر (Polymorphic).
 
-الوظيفة: يربط بين جدول properties وجدول owners (علاقة Many-to-Many).
-
-entity_documents:
-
-الأعمدة: id, document_id, entity_type (نص، مثل 'property'), entity_id.
-
-الوظيفة: يربط جدول documents بأي جدول آخر في النظام (Polymorphic Relation).
-
-user_branches, owner_branches, client_branches, supplier_branches:
-
-الوظيفة: تربط المستخدمين والملاك والعملاء والموردين بالفروع التي يتعاملون معها.
+user_branches, owner_branches, client_branches, supplier_branches: تربط الكيانات بالفروع.
 
 الجداول المستقبلية:
 
@@ -124,6 +86,12 @@ contracts_rental و contracts_supply: ستربط بين الأصول والأط�
 
 payment_schedules و transactions: ستشكل النواة المالية.
 
-هذا المخطط المحدث يعكس بدقة بنيتنا الحالية ورؤيتنا المستقبلية لنظام مترابط ومرن.
+currencies (العملات): id, currency_code, currency_name, symbol_html, is_default.
 
-هل هذا التحديث واضح ومناسب؟ إذا كان كذلك، يمكننا الانتقال للملف التالي.
+الجداول المقترحة للتحسين:
+
+audit_logs: id, user_id, action_type (e.g., 'create', 'update', 'delete'), model_type (e.g., 'Property'), model_id, old_values (JSON), new_values (JSON), created_at.
+
+statistics_cache: stat_key, stat_value, last_updated.
+
+هذا المخطط المحدث يعكس بدقة بنيتنا الحالية ورؤيتنا المستقبلية لنظام مترابط ومرن.
