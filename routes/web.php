@@ -18,7 +18,7 @@ return [
     'owners/add'        => ['path' => 'owners/add_view.php', 'title' => 'إضافة مالك'],
     'owners/edit'       => ['path' => 'owners/edit_view.php', 'title' => 'تعديل مالك'],
     'owners/branches_modal' => ['path' => 'owners/branches_modal_view.php', 'title' => 'إدارة فروع المالك'],
-    'branches'          => ['path' => 'branches/branches_view.php', 'title' => 'إدارة الفروع'],
+    'branches' => ['path' => 'branches/branches_controller.php', 'title' => 'إدارة الفروع'],
     'branches/add'      => ['path' => 'branches/add_view.php', 'title' => 'إضافة فرع'],
     'branches/edit'     => ['path' => 'branches/edit_view.php', 'title' => 'تعديل فرع'],
     'properties' => ['path' => 'properties/properties_controller.php', 'title' => 'إدارة العقارات'],
@@ -29,22 +29,23 @@ return [
     'properties/batch_add'         => ['path' => 'properties/properties_batch_add_controller.php', 'title' => 'إدخال متعدد للعقارات'],
     'properties/handle_batch_add'  => ['path' => ''], // معالج فقط
 
-    'units'             => ['path' => 'units/units_view.php', 'title' => 'إدارة الوحدات'],
+    'units'             => ['path' => 'units/units_controller.php', 'title' => 'إدارة الوحدات'],
     'units/add'         => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
+    'units/edit'        => ['path' => 'units/edit_view.php', 'title' => 'تعديل وحدة'],
     'clients'           => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'],
     'clients/add'       => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'],
     'suppliers'         => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'],
     'suppliers/add'     => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'],
     // العقود والمالية
     'contracts'         => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'],
-    'contracts/view'    => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'contracts/view'       => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     'contracts/delete'      => ['path' => '', 'title' => 'حذف عقد'], // <--- السطر الجديد
-    'supply_contracts'  => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
-    'supply_contracts/view' => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'supply_contracts'       => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
+    'supply_contracts/view'  => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     // إدارة النظام
-    'documents'         => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
-    'documents/add'     => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
-    'documents/edit'    => ['path' => 'documents/edit_view.php', 'title' => 'تعديل وثيقة'],
+    'documents'              => ['path' => 'documents/documents_view.php', 'title' => 'إدارة الوثائق'],
+    'documents/add'          => ['path' => 'documents/add_view.php', 'title' => 'إضافة وثيقة'],
+    'documents/edit'         => ['path' => 'documents/edit_view.php', 'title' => 'تعديل وثيقة'],
     'documents/get_custom_fields_schema_ajax' => ['path' => ''], // معالج فقط
     'documents/get_entities_for_linking_ajax' => ['path' => ''],
     'documents/get_linked_entities_ajax'      => ['path' => ''],
