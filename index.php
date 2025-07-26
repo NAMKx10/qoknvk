@@ -13,7 +13,6 @@ define('ROOT_PATH', __DIR__);
 require_once ROOT_PATH . '/config/database.php';
 require_once ROOT_PATH . '/src/core/functions.php';
 require_once ROOT_PATH . '/src/core/db_functions.php'; 
-require_once ROOT_PATH . '/src/libraries/Database.php';
 
 // 3. تحديد الصفحة المطلوبة
 $page = $_GET['page'] ?? 'dashboard';
@@ -23,11 +22,23 @@ require_once ROOT_PATH . '/app/security.php';
 
 // 5. معالجة الطلبات أو عرض الواجهات
 $handler_pages = [
-    'handle_login', 'logout', 'users/delete', 'properties/delete', 'contracts/delete', 
-    'documents/delete', 'roles/delete', 'permissions/delete', 'permissions/delete_group',
-    'settings/delete_lookup_option', 'settings/delete_lookup_group', 'archive/restore',
-    'archive/force_delete', 'archive/batch_action', 'properties/batch_action',
-    'properties/handle_batch_edit', 'properties/handle_batch_add'
+    'handle_login',
+    'logout',
+    'users/delete',
+    'contracts/delete', 
+    'documents/delete',
+    'roles/delete',
+    'permissions/delete',
+    'permissions/delete_group',
+    'settings/delete_lookup_option',
+    'settings/delete_lookup_group',
+    'archive/restore',
+    'archive/force_delete',
+    'archive/batch_action',
+    'properties/delete',
+    'properties/batch_action',
+    'properties/handle_batch_edit',
+    'properties/handle_batch_add',
 ];
 
 $is_ajax_request = ($page !== 'handle_login' && strpos($page, 'handle_') !== false) || strpos($page, '_ajax') !== false;
