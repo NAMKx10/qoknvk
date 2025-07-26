@@ -55,7 +55,7 @@
                     <th>الحالة</th>
                     <th>اسم المستأجر</th>
                     <th>ملاحظات</th>
-                    <th class="w-1"></th>
+                    <th class="w-1">الاجراءات</th>
                 </tr>
             </thead>
             <tbody>
