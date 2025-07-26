@@ -213,4 +213,28 @@ function formatCurrency($amount, $currency_code = null) {
     }
 }
 
+/**
+ * دالة مخصصة ومحسنة لحساب مدة العقد بالسنوات والشهور والأيام.
+ * تتعامل مع مفهوم "الشهر الكامل" بشكل صحيح.
+ *
+ * @param string $start_date_str تاريخ البداية 'Y-m-d'
+ * @param string $end_date_str تاريخ النهاية 'Y-m-d'
+ * @return string المدة المنسقة (مثال: "1 سنة, 0 شهر, 0 يوم")
+ */
+function calculate_contract_duration($start_date_str, $end_date_str) {
+    $start = new DateTime($start_date_str);
+    $end = new DateTime($end_date_str);
+    
+    // نضيف يوما واحدا لتاريخ النهاية ليشمل اليوم الأخير في الحساب
+    $end->modify('+1 day');
+    
+    $interval = $start->diff($end);
+    
+    $years = $interval->y;
+    $months = $interval->m;
+    $days = $interval->d;
+    
+    return "{$years} س, {$months} ش, {$days} ي";
+}
+
 ?>
