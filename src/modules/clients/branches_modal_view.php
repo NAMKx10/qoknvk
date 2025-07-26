@@ -1,9 +1,7 @@
 <?php
-// هذا الكود يتطلب أن يكون ملف index.php قد قام بتضمين database.php و functions.php
 if (!isset($_GET['id'])) { die("Client ID is required."); }
 $client_id = $_GET['id'];
 
-// --- تعديل: جلب نوع الفرع أيضًا ---
 $stmt = $pdo->prepare("
     SELECT b.branch_name, b.branch_type 
     FROM branches b 
@@ -15,39 +13,36 @@ $stmt->execute([$client_id]);
 $branches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<!-- === بداية التنسيق الجديد === -->
-<style>
-    .branch-list-item {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #eee;
-    }
-    .branch-list-item:last-child {
-        border-bottom: none;
-    }
-    .branch-icon {
-        font-size: 1.2rem;
-        color: #6c757d; /* لون رمادي ثانوي */
-        margin-left: 1rem; /* استخدام margin-left للغة العربية */
-    }
-</style>
-
-<div class="list-group list-group-flush">
-    <?php if (empty($branches)): ?>
-        <p class="text-muted p-3">هذا العميل غير مرتبط بأي فرع.</p>
-    <?php else: ?>
-        <?php foreach ($branches as $branch): ?>
-            <div class="branch-list-item">
-                <!-- اختيار أيقونة بناءً على نوع الفرع -->
-                <?php if ($branch['branch_type'] == 'منشأة'): ?>
-                    <i class="fas fa-building branch-icon"></i>
-                <?php else: ?>
-                    <i class="fas fa-user branch-icon"></i>
-                <?php endif; ?>
-                <span><?php echo htmlspecialchars($branch['branch_name']); ?></span>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
+<div class="modal-header">
+    <h5 class="modal-title">الفروع المرتبطة</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<!-- === نهاية التنسيق الجديد === -->
+
+<div class="modal-body p-0">
+    <div class="list-group list-group-flush">
+        <?php if (empty($branches)): ?>
+            <div class="p-4 text-center text-muted">هذا العميل غير مرتبط بأي فرع.</div>
+        <?php else: ?>
+            <?php foreach ($branches as $branch): ?>
+                <div class="list-group-item">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <!-- استخدام أيقونات Tabler Icons لتناسق التصميم -->
+                            <span class="text-muted">
+                                <?php if ($branch['branch_type'] == 'منشأة'): ?>
+                                    <i class="ti ti-building-skyscraper"></i>
+                                <?php else: ?>
+                                    <i class="ti ti-user-circle"></i>
+                                <?php endif; ?>
+                            </span>
+                        </div>
+                        <div class="col">
+                            <div class="text-body d-block"><?= htmlspecialchars($branch['branch_name']); ?></div>
+                            <div class="text-muted d-block mt-n1"><?= htmlspecialchars($branch['branch_type']); ?></div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+</div>
