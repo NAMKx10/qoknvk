@@ -1,20 +1,20 @@
 <?php
 /**
- * app/request_handler.php (النسخة النهائية النظيفة بعد استخدام الدوال المركزية)
+ * app/request_handler.php (النسخة النهائية والمطورة)
  */
 
 if (!defined('IS_HANDLER')) { die('Direct access not allowed.'); }
-
 global $page, $pdo;
 
-// --- القسم الأول: الموجّه الذكي لطلبات AJAX (لم يتغير) ---
-$is_ajax_handler_request = ($page !== 'handle_login' && strpos($page, 'handle_') !== false) || strpos($page, '_ajax') !== false;
+// الطريقة القياسية والآمنة للتحقق مما إذا كان الطلب هو AJAX
+$is_ajax_request = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 
-if ($is_ajax_handler_request) {
-    // ... (هذا القسم يبقى كما هو دون تغيير) ...
+// --- القسم الأول: معالجة طلبات AJAX فقط ---
+if ($is_ajax_request) {
+    
     $response = ['success' => false, 'message' => "المعالج '$page' غير معرّف."];
     $handler_name = explode('/', $page)[0];
-    $handler_path = __DIR__ . '/../handlers/' . $handler_name . '_handler.php';
+    $handler_path = ROOT_PATH . '/handlers/' . $handler_name . '_handler.php';
 
     ob_start();
     try {
@@ -34,41 +34,31 @@ if ($is_ajax_handler_request) {
     exit();
 }
 
-
 // --- القسم الثاني: معالجات إعادة التوجيه (أصبحت الآن أنظف بكثير) ---
 switch ($page) {
     // --- معالجات المصادقة (لم تتغير) ---
+
+    
     case 'handle_login':
-        // ... (هذا القسم يبقى كما هو دون تغيير) ...
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND status = 'Active'");
+        $username = $_POST['username'] ?? ''; $password = $_POST['password'] ?? '';
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND deleted_at IS NULL AND status = 'Active'");
         $stmt->execute([$username]);
         $user = $stmt->fetch();
         if ($user && password_verify($password, $user['password'])) {
             session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['full_name'];
-            header("Location: index.php?page=dashboard");
-            exit();
+            $_SESSION['user_id'] = $user['id']; $_SESSION['username'] = $user['full_name'];
+            header("Location: index.php?page=dashboard"); exit();
         } else {
             $_SESSION['login_error'] = "اسم المستخدم أو كلمة المرور غير صحيحة.";
-            header("Location: index.php?page=login");
-            exit();
+            header("Location: index.php?page=login"); exit();
         }
         break;
 
-    case 'logout':
-        // ... (هذا القسم يبقى كما هو دون تغيير) ...
-        session_start();
-        $_SESSION = [];
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]);
-        }
+        case 'logout':
+        session_start(); $_SESSION = [];
+        if (ini_get("session.use_cookies")) { $params = session_get_cookie_params(); setcookie(session_name(), '', time() - 42000, $params["path"], $params["domain"], $params["secure"], $params["httponly"]); }
         session_destroy();
-        header("Location: index.php?page=login");
-        exit();
+        header("Location: index.php?page=login"); exit();
         break;
 
     case 'branches/delete':
@@ -109,7 +99,8 @@ switch ($page) {
 
 
     // --- معالجات الحذف الناعم (أصبحت تستدعي دالة موحدة) ---
-        case 'users/delete':
+    
+    case 'users/delete':
         // ✨ الحارس الثالث: تأمين عملية الحذف ✨
         if (!has_permission('delete_user')) {
             // إذا حاول الوصول للرابط مباشرة، أعده للصفحة الرئيسية مع رسالة خطأ
@@ -207,6 +198,7 @@ switch ($page) {
 
     // --- معالجات الأرشيف (الآن تستدعي الدوال المركزية) ---
     case 'archive/restore':
+    
     case 'archive/force_delete':
         if (isset($_GET['table']) && isset($_GET['id'])) {
             if ($page === 'archive/restore') {
@@ -256,6 +248,30 @@ switch ($page) {
         exit();
         break;
 
-
+    case 'settings/handle_update':
+        if (!has_permission('manage_settings')) {
+            $_SESSION['error_message'] = "ليس لديك الصلاحية لتنفيذ هذا الإجراء.";
+            header("Location: index.php?page=dashboard"); exit();
+        }
+        try {
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = ?");
+            $toggle_keys = ['enable_delete_confirmation'];
+            foreach ($toggle_keys as $key) { if (!isset($_POST[$key])) { $_POST[$key] = '0'; } }
+            foreach ($_POST as $key => $value) { $stmt->execute([$value, $key]); }
+            $pdo->commit();
+            $_SESSION['success_message'] = "تم حفظ الإعدادات بنجاح.";
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $_SESSION['error_message'] = "حدث خطأ أثناء حفظ الإعدادات.";
+        }
+        header("Location: index.php?page=settings");
+        exit();
+        break;
 }
+
+// إذا لم يتطابق مع أي حالة، أعده للصفحة الرئيسية
+header("Location: index.php?page=dashboard");
+exit();
+
 ?>
