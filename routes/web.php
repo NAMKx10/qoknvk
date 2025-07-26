@@ -32,14 +32,21 @@ return [
     'units'             => ['path' => 'units/units_controller.php', 'title' => 'إدارة الوحدات'],
     'units/add'         => ['path' => 'units/add_view.php', 'title' => 'إضافة وحدة'],
     'units/edit'        => ['path' => 'units/edit_view.php', 'title' => 'تعديل وحدة'],
-    'clients'           => ['path' => 'clients/clients_view.php', 'title' => 'إدارة العملاء'],
+    'clients'           => ['path' => 'clients/clients_controller.php', 'title' => 'إدارة العملاء'],
     'clients/add'       => ['path' => 'clients/add_view.php', 'title' => 'إضافة عميل'],
-    'suppliers'         => ['path' => 'suppliers/suppliers_view.php', 'title' => 'إدارة الموردين'],
+    'clients/edit'      => ['path' => 'clients/edit_view.php', 'title' => 'تعديل عميل'],
+    'clients/branches_modal' => ['path' => 'clients/branches_modal_view.php', 'title' => 'الفروع المرتبطة بالعميل'],
+    'suppliers'         => ['path' => 'suppliers/suppliers_controller.php', 'title' => 'إدارة الموردين'],
     'suppliers/add'     => ['path' => 'suppliers/add_view.php', 'title' => 'إضافة مورد'],
+    'suppliers/edit'    => ['path' => 'suppliers/edit_view.php', 'title' => 'تعديل مورد'],
+    'suppliers/branches_modal' => ['path' => 'suppliers/branches_modal_view.php', 'title' => 'الفروع المرتبطة بالمورد'],   
     // العقود والمالية
-    'contracts'         => ['path' => 'contracts/contracts_view.php', 'title' => 'عقود الإيجار'],
-    'contracts/view'       => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
-    'contracts/delete'      => ['path' => '', 'title' => 'حذف عقد'], // <--- السطر الجديد
+    'contracts'         => ['path' => 'contracts/contracts_controller.php', 'title' => 'عقود الإيجار'],
+    'contracts/add'     => ['path' => 'contracts/add_view.php', 'title' => 'إضافة عقد إيجار'],
+    'contracts/edit'    => ['path' => 'contracts/edit_view.php', 'title' => 'تعديل عقد إيجار'],
+'contracts/units_modal' => ['path' => 'contracts/units_modal_view.php', 'title' => 'الوحدات المرتبطة بالعقد'], // <-- السطر الجديد
+    'contracts/view'    => ['path' => 'contracts/view_view.php', 'title' => 'تفاصيل العقد'],
+    'contracts/delete'  => ['path' => '', 'title' => 'حذف عقد'],
     'supply_contracts'       => ['path' => 'supply_contracts/supply_contracts_view.php', 'title' => 'عقود التوريد'],
     'supply_contracts/view'  => ['path' => 'supply_contracts/view_view.php', 'title' => 'تفاصيل العقد'],
     // إدارة النظام
@@ -68,6 +75,8 @@ return [
     'permissions/edit'          => ['path' => 'permissions/edit_view.php', 'title' => 'تعديل صلاحية'],
     'permissions/delete'        => ['path' => ''], // معالجة فقط
     'archive'           => ['path' => 'archive/archive_view.php', 'title' => 'الأرشيف'],
+    'settings'                  => ['path' => 'settings/settings_controller.php', 'title' => 'الإعدادات العامة'],
+    'settings/handle_update'    => ['path' => '', 'title' => 'حفظ الإعدادات'],
     'settings/lookups' => ['path' => 'settings/lookups_controller.php', 'title' => 'تهيئة المدخلات'],
     'settings/add_lookup_group'     => ['path' => 'settings/add_lookup_group_view.php', 'title' => 'إضافة مجموعة'],
     'settings/edit_lookup_group'    => ['path' => 'settings/edit_lookup_group_view.php', 'title' => 'تعديل مجموعة'],
