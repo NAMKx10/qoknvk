@@ -70,6 +70,9 @@ $is_admin_active = in_array($current_page, $admin_pages);
       <a class="dropdown-item" href="index.php?page=roles">الأدوار</a>
       <a class="dropdown-item" href="index.php?page=permissions">الصلاحيات</a>
       <a class="dropdown-item" href="index.php?page=settings/lookups">تهيئة المدخلات</a>
+      <?php if (has_permission('manage_settings')): ?>
+      <a class="dropdown-item" href="index.php?page=settings">الإعدادات العامة</a>
+      <?php endif; ?>
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="index.php?page=archive">الأرشيف</a>
       <a class="dropdown-item" href="index.php?page=about">حول النظام</a>
